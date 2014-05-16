@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">DoItAll</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="show_graphs">Mostrar gráficos</string>
+        <string name="help">Ayuda</string>
+	<string name="process_finished">Se terminó de cargar satisfactoriamente el gráfico</string>
+    <string name="key_notfound">La clave que indicó no se encuentra en los registros</string>
+    <string name="downloading">Cargando datos...</string>
+    <string name="select">Seleccione</string>
+    <string name="report_type">Lista de tickets</string>
+    <string name="accept">Aceptar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="change_status">Cambia estado de tarea</string>
+    <string name="show_task">Ver tarea</string>
+    <string name="delete_task">Eliminar tarea</string>
+    <string name="add_project_name">Nombre del proyecto a agregar</string>
+    <string name="delete_project_dialog">Nombre del proyecto a eliminar</string>
+    <string name="confirm_delete">¿Realmente desea eliminar esta tarea?</string>
+    <string name="delete_project_text">¿Realmente desea eliminar el proyecto </string>
+    <string name="yes_option">Sí</string>
+    <string name="no_option">No</string>
+    
+    
+  <string-array name="names_report">
+        <item>Por hacer</item>
+        <item>En progreso</item>
+        <item>Finalizados</item>
+        <item>Pospuestos</item>
+        <item>Próxima semana</item>
+        <item>Esta semana</item>
+        <item>Este mes</item>
+        <item>Próximo mes</item>
+    </string-array>
+    
+      <string-array name="names_type_ticket">
+        <item>Arreglo</item>
+        <item>Actividad general</item>
+        <item>Escribir código</item>
+        <item>Idea</item>
+        <item>Revisión</item>
+        <item>Redacción</item>
+        <item>Trámite</item>
+        <item>Actividad física</item>
+    </string-array>
+    
+</resources>
