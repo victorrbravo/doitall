@@ -78,7 +78,6 @@ public class AddTicketActivity extends Activity {
         for(int i=0;i<projects.size();i++){
         	states.add(projects.get(i).getTitle());
         }
-
 		
 		myadapter = new ArrayAdapter<String>(this,  android.R.layout.simple_list_item_1,states);
 		
@@ -91,7 +90,7 @@ public class AddTicketActivity extends Activity {
 		
 		 
 		progress = new ProgressDialog(this);
-		
+	
 		addListenerButton();
         
     }

@@ -64,7 +64,7 @@ public class PrincipalActivity extends ActionBarActivity {
 	private String urlimage;
 	private ListView listtickets;
 	private String currentticket;
-	private ArrayList<String> liststatus;
+	
 	private String lastlisttickets;
  
 	AlertDialog task_dialog; 	
@@ -93,10 +93,7 @@ public class PrincipalActivity extends ActionBarActivity {
 		 currentticket = "";
 		 urlimage = "";
 		 lastlisttickets = "";
-		 
-		 
-		 liststatus  = new ArrayList<String>();
-		 
+				 	 
 		setContentView(R.layout.activity_principal);
 
 		if (savedInstanceState == null) {
@@ -391,23 +388,67 @@ public class PrincipalActivity extends ActionBarActivity {
 	}
 	
 
+	private void showGraphChooseDialog(Context context) {
+    	
+    	final Dialog dialog = new Dialog(context);
+		dialog.setContentView(R.layout.choose_graph_report);
+		dialog.setTitle(getString(R.string.report_type));
+
+		// set the custom dialog components - text, image and button
+		TextView text = (TextView) dialog.findViewById(R.id.text);
+		text.setText(getString(R.string.select_report_graph));
+		ImageView image = (ImageView) dialog.findViewById(R.id.image);
+		image.setImageResource(R.drawable.ic_launcher);
+
+
+		Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
+		// if button is clicked, close the custom dialog
+
+		dialogButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				
+				String myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratres.xml"
+				+ "%20configurekey.Plugins.Graphviz/plugins.graphviz.graphtype:png";
+
+			GetGraphTask mytask = new GetGraphTask("graficar");
+			
+				mytask.execute(myconsult);
+				
+				dialog.dismiss();
+			}
+		});
+
+		Log.d("showInputNameDialog","entrando 8");
+		Button dialogCancel= (Button) dialog.findViewById(R.id.dialogButtonCancel);
+		// if button is clicked, close the custom dialog
+		dialogCancel.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				
+				
+				dialog.dismiss();
+			}
+		});
+		dialog.show();
+		Log.d("show","show");
+    }
+	
 	
 	
 
-	private void showInputNameDialog(Context context,ArrayList<String> states) {
+	private void showInputNameDialog(Context context,ArrayList<String> states, String title) {
     	
-		Log.d("showInputNameDialog","entrando 1");
     	final Dialog dialog = new Dialog(context);
 		dialog.setContentView(R.layout.choose_report);
 		dialog.setTitle(getString(R.string.report_type));
 
-		Log.d("showInputNameDialog","entrando 2");
 		// set the custom dialog components - text, image and button
 		TextView text = (TextView) dialog.findViewById(R.id.text);
-		text.setText(getString(R.string.select));
+		text.setText(getString(R.string.select_report_ticket));
 		ImageView image = (ImageView) dialog.findViewById(R.id.image);
 		image.setImageResource(R.drawable.ic_launcher);
-		Log.d("showInputNameDialog","entrando 3");
+
 		if (states.size() > 0 ) {
 
 			Spinner myselect = (Spinner)dialog.findViewById(R.id.selecttype);
@@ -417,17 +458,15 @@ public class PrincipalActivity extends ActionBarActivity {
 			
 			myselect.setAdapter(myadapter);
 			myadapter.notifyDataSetChanged();
-			Log.d("showInputNameDialog","entrando 4");
 		}
 
 		Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
 		// if button is clicked, close the custom dialog
-		Log.d("showInputNameDialog","entrando 5");
-		if (states.size() > 0 ) {
+
+		if (states.size() > 0  ) {
 			dialogButton.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					Log.d("showInputNameDialog","entrando 6");
 					Spinner myselect = (Spinner)dialog.findViewById(R.id.selecttype);				
 					String mystatus = myselect.getSelectedItem().toString();
 					Log.d("cambiar_estado",mystatus);
@@ -443,7 +482,6 @@ public class PrincipalActivity extends ActionBarActivity {
 			
 		}
 		else {
-			Log.d("showInputNameDialog","entrando 7");
 			dialogButton.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -469,6 +507,8 @@ public class PrincipalActivity extends ActionBarActivity {
 		Log.d("show","show");
     }
 
+	
+	
 	public void makeDeleteOptionsDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -666,7 +706,7 @@ public class PrincipalActivity extends ActionBarActivity {
 		ArrayList<String> newstates = loadStatus(changeTicketStatus(myconsult));
 		Log.d("ItemLong","newstates.count:"+ String.valueOf(newstates.size()));
 		//showStatusDialog(newstates);
-		showInputNameDialog(context,newstates);
+		showInputNameDialog(context,newstates,getString(R.string.state_list_title));
 		Log.d("showstatus","showstatus");		
 
 	}
@@ -706,7 +746,7 @@ public class PrincipalActivity extends ActionBarActivity {
 				
 				Log.d("DialogLog", "1");
 				ArrayList<String> mylist = new ArrayList<String>();
-				showInputNameDialog(view.getContext(),mylist);	
+				showInputNameDialog(view.getContext(),mylist,getString(R.string.ticket_list_title));	
 				 Log.d("DialogLog", "2");
 		
 				
@@ -746,12 +786,7 @@ public class PrincipalActivity extends ActionBarActivity {
 		graphbutton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				String myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratres.xml"
-						+ "%20configurekey.Plugins.Graphviz/plugins.graphviz.graphtype:png";
-
-					GetGraphTask mytask = new GetGraphTask("graficar");
-					
-						mytask.execute(myconsult);
+				showGraphChooseDialog(view.getContext());
 
 			}
 			

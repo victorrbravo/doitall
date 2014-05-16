@@ -10,6 +10,8 @@
     <string name="key_notfound">La clave que indicó no se encuentra en los registros</string>
     <string name="downloading">Cargando datos...</string>
     <string name="select">Seleccione</string>
+    <string name="select_report_graph">Seleccione un gráfico</string>
+    <string name="select_report_ticket">Selecciona Lista de tickets</string>
     <string name="report_type">Lista de tickets</string>
     <string name="accept">Aceptar</string>
     <string name="cancel">Cancelar</string>
@@ -22,6 +24,9 @@
     <string name="delete_project_text">¿Realmente desea eliminar el proyecto </string>
     <string name="yes_option">Sí</string>
     <string name="no_option">No</string>
+    <string name="ticket_list_title">Tareas</string>
+    <string name="graph_list_title">Gráficos</string>
+    <string name="state_list_title">Estados</string>
     
     
   <string-array name="names_report">
@@ -34,7 +39,13 @@
         <item>Este mes</item>
         <item>Próximo mes</item>
     </string-array>
-    
+  
+  <string-array name="graph_report">
+        <item>General</item>
+        <item>Por mes</item>
+        <item>Por semana</item>
+    </string-array>
+  
       <string-array name="names_type_ticket">
         <item>Arreglo</item>
         <item>Actividad general</item>

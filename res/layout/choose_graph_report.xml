@@ -28,7 +28,7 @@
       android:id="@+id/selecttype"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:entries="@array/names_report"
+      android:entries="@array/graph_report"
       android:layout_marginRight="5dp"
        />
     
