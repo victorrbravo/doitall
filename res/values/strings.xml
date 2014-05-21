@@ -27,6 +27,7 @@
     <string name="ticket_list_title">Tareas</string>
     <string name="graph_list_title">Gráficos</string>
     <string name="state_list_title">Estados</string>
+    <string name="not_applicable">n/a</string>
     
     
   <string-array name="names_report">
@@ -42,8 +43,9 @@
   
   <string-array name="graph_report">
         <item>General</item>
-        <item>Por mes</item>
         <item>Por semana</item>
+        <item>Por mes</item>
+        <item>Tareas completadas</item>
     </string-array>
   
       <string-array name="names_type_ticket">

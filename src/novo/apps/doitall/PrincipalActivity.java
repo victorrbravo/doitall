@@ -6,7 +6,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.security.cert.X509Certificate;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -46,7 +48,6 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 
 public class PrincipalActivity extends ActionBarActivity {
@@ -223,7 +224,11 @@ public class PrincipalActivity extends ActionBarActivity {
 			tickets.clear();
 
 			Log.d("SAFETCALLAPI from execute()",resulting);
-			if ( consult.endsWith("listar_ticket") ) {
+			if ( consult.endsWith("ver_ticket") ) {
+				Log.d("ver_ticket","resulting");
+				
+			}
+			else if ( consult.endsWith("listar_ticket") ) {
 
 
 				Log.d("PrincipalActivity","after SAFETCALLAPI");
@@ -332,6 +337,14 @@ public class PrincipalActivity extends ActionBarActivity {
 
 	    		
 	    	}
+	    	else if (consult.startsWith("ver_ticket")) {
+				Intent i = new 
+		                Intent("novo.apps.doitall.ViewTicketActivity");
+				
+				i.putExtra("resulting", resulting);
+				startActivity(i);
+	    		
+	    	}
 	    	else if (consult.startsWith("agregar_ticket")) {
 //		    	Toast toast = Toast.makeText(getApplicationContext(), 
 //		    			"Cambio de estado realizado", Toast.LENGTH_SHORT);
@@ -387,6 +400,7 @@ public class PrincipalActivity extends ActionBarActivity {
 	    }
 	}
 	
+	
 
 	private void showGraphChooseDialog(Context context) {
     	
@@ -400,16 +414,29 @@ public class PrincipalActivity extends ActionBarActivity {
 		ImageView image = (ImageView) dialog.findViewById(R.id.image);
 		image.setImageResource(R.drawable.ic_launcher);
 
-
+		
+		
 		Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
 		// if button is clicked, close the custom dialog
 
 		dialogButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				
-				String myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratres.xml"
-				+ "%20configurekey.Plugins.Graphviz/plugins.graphviz.graphtype:png";
+				String myconsult = "";
+				Spinner typegraph = (Spinner) dialog.findViewById(R.id.graphtype);
+				if (typegraph.getSelectedItemPosition() == 0 ) {
+					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratres.xml"
+					+ "%20configurekey.Plugins.Graphviz/plugins.graphviz.graphtype:png";
+				}
+				else if (typegraph.getSelectedItemPosition() == 1 ) {
+					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleraproximos.xml"
+							+ "%20configurekey.Plugins.Graphviz/plugins.graphviz.graphtype:png";					
+				}
+				else {
+					Log.d("GraphType","Selected none");
+					return;
+				}
+
 
 			GetGraphTask mytask = new GetGraphTask("graficar");
 			
@@ -565,11 +592,11 @@ public class PrincipalActivity extends ActionBarActivity {
 				Log.d("makeTaskOptionsDialog", "changeStatusTask");
 				changeStatusTask(context);
 				break;
-				case 1: //Eliminar
+				case 1: //Ver
 	
-					
+					loadViewTicketActivity();
 					break;
-				case 2: // Ver
+				case 2: // Elimina
 					makeDeleteOptionsDialog();
 					break;
 				default:
@@ -582,7 +609,26 @@ public class PrincipalActivity extends ActionBarActivity {
 		return builder.create();
 	}
 	
-    public void loadSafetReport(String report) {
+    protected void loadViewTicketActivity() {
+		// TODO Auto-generated method stub
+        
+
+    	String myconsult = PrincipalActivity.URL_API + "operacion:Listar_datos%20"+
+    			"Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratodos.xml%20Variable:vTodas_las_tareas"
+    			+"%20parameters.nro_ticket:"+currentticket;
+
+    	Log.d("loadViewTicketActivity","myconsult:"+myconsult);
+
+    	GetGraphTask mytask = new GetGraphTask("ver_ticket");
+
+    	mytask.execute(myconsult);
+
+
+
+	}
+
+
+	public void loadSafetReport(String report) {
     	String currreport = "vToDo";
     	Log.d("Spinner","2:|" + report+"|");
     	if ( report.contentEquals("En progreso")) {
@@ -857,6 +903,7 @@ public class PrincipalActivity extends ActionBarActivity {
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
+	
 	public static class PlaceholderFragment extends Fragment {
 
 		public PlaceholderFragment() {
@@ -871,4 +918,19 @@ public class PrincipalActivity extends ActionBarActivity {
 		}
 	}
 
+    public static String convertDateEpochToFormat(String epoch) {    	
+    	String result = epoch.trim();
+    	if ( result.equalsIgnoreCase("0")) {
+    		result =   "n/a";
+    		return result;
+    	}
+    	long dv = Long.valueOf(epoch)*1000;// its need to be in milisecond
+    	Date df = new java.util.Date(dv);
+    	result = new SimpleDateFormat("dd/MMM/yyyy hh:mma").format(df);
+    	
+    	return result;
+    	
+    }
+
 }
+

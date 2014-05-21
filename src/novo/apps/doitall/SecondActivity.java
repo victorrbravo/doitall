@@ -33,51 +33,31 @@ import android.widget.Toast;
 public class SecondActivity extends Activity {
 	
 	private ProgressDialog progress;
-	private ImageView imagegraph;
+	private ZoomImageView imagegraph;
     private String urlimage; 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
         
-        //---get the data passed in using getStringExtra()---
         urlimage = getIntent().getStringExtra("str1");
         
-//        Toast.makeText(this,urlimage, 
-//            Toast.LENGTH_SHORT).show();
-
-        //---get the data passed in using getIntExtra()---
                 
         
-        imagegraph = (ImageView) findViewById(R.id.imageGraph);
+        imagegraph = (ZoomImageView) findViewById(R.id.imageGraph);
         Log.d("SecondActivity","urlimage:" + urlimage);
         
         
         
-	  	new DownloadImageTask( (ImageView) imagegraph).execute(urlimage);
+	  	new DownloadImageTask( (ZoomImageView) imagegraph).execute(urlimage);
 
-        //---get the Bundle object passed in---
-        //Bundle bundle = getIntent().getExtras();
-
-        //---get the data using the getString()---         
-        //Toast.makeText(this, bundle.getString("str2"), 
-        //    Toast.LENGTH_SHORT).show();
-
-        //---get the data using the getInt() method---
-        //Toast.makeText(this,Integer.toString(bundle.getInt("age2")), 
-        //    Toast.LENGTH_SHORT).show();
-        
-        //---get the custom object passed in---
-//        MyCustomClass obj = (MyCustomClass) getIntent().getSerializableExtra("MyObject");
- //       Toast.makeText(this, obj.Name(), Toast.LENGTH_SHORT).show();
- //       Toast.makeText(this, obj.Email(), Toast.LENGTH_SHORT).show();
     }
 
 
     final class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-	    ImageView bmImage;
+    	ZoomImageView bmImage;
 
-	    public DownloadImageTask(ImageView bmImage) {
+	    public DownloadImageTask(ZoomImageView bmImage) {
 	        this.bmImage = bmImage;
 	    }
 
@@ -104,18 +84,18 @@ public class SecondActivity extends Activity {
         
     public void onClick(View view) {
         //---use an Intent object to return data---
-        Intent i = new Intent();            
+ //       Intent i = new Intent();            
 
         //---use the putExtra() method to return some 
         // value---
-        i.putExtra("age3", 45);
+//        i.putExtra("age3", 45);
 
         //---use the setData() method to return some value---
-        i.setData(Uri.parse(
-            "http://www.learn2develop"));                            
+//        i.setData(Uri.parse(
+//            "http://www.learn2develop"));                            
 
         //---set the result with OK and the Intent object---
-        setResult(RESULT_OK, i);   
+//        setResult(RESULT_OK, i);   
         
         finish();
     }    
