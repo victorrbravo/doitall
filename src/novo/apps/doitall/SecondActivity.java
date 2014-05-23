@@ -33,7 +33,7 @@ import android.widget.Toast;
 public class SecondActivity extends Activity {
 	
 	private ProgressDialog progress;
-	private ZoomImageView imagegraph;
+	private ImageView imagegraph;
     private String urlimage; 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,24 +44,24 @@ public class SecondActivity extends Activity {
         
                 
         
-        imagegraph = (ZoomImageView) findViewById(R.id.imageGraph);
+        imagegraph = (ImageView) findViewById(R.id.imageGraph);
         Log.d("SecondActivity","urlimage:" + urlimage);
         
         
         
-	  	new DownloadImageTask( (ZoomImageView) imagegraph).execute(urlimage);
+	  	new DownloadImageTask( (ImageView) imagegraph).execute(urlimage);
 
     }
 
 
     final class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-    	ZoomImageView bmImage;
+    	ImageView bmImage;
 
-	    public DownloadImageTask(ZoomImageView bmImage) {
+	    public DownloadImageTask(ImageView bmImage) {
 	        this.bmImage = bmImage;
 	    }
 
-	  
+	    
 		protected Bitmap doInBackground(String... urls) {
 	        String urldisplay = urls[0];
 	        Bitmap mIcon11 = null;
@@ -83,20 +83,11 @@ public class SecondActivity extends Activity {
 
         
     public void onClick(View view) {
-        //---use an Intent object to return data---
- //       Intent i = new Intent();            
-
-        //---use the putExtra() method to return some 
-        // value---
-//        i.putExtra("age3", 45);
-
-        //---use the setData() method to return some value---
-//        i.setData(Uri.parse(
-//            "http://www.learn2develop"));                            
-
-        //---set the result with OK and the Intent object---
-//        setResult(RESULT_OK, i);   
-        
+         
+    	Log.d("SecondActivity","Set result");
+    	Intent i = new Intent();
+    	
+    	setResult(1, i);
         finish();
     }    
     

@@ -8,6 +8,7 @@ import java.net.URL;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.net.ssl.HostnameVerifier;
@@ -42,6 +43,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -220,6 +222,12 @@ public class PrincipalActivity extends ActionBarActivity {
 				resulting = callSAFETAPI(lastlisttickets);
 				consult = "borrar_ticket_relistar_ticket";				
 			}
+			else if (consult.contentEquals("modificar_ticket")) {
+				Log.d("modificar_ticket",lastlisttickets);
+				
+				resulting = callSAFETAPI(lastlisttickets);
+				consult = "modificar_ticket_relistar_ticket";				
+			}
 
 			tickets.clear();
 
@@ -253,6 +261,9 @@ public class PrincipalActivity extends ActionBarActivity {
 						ticket.setId(id);
 						ticket.setSummary(summary);
 						ticket.setDescription(desc);
+						ticket.setProject(json_data.getString("proyecto"));
+						ticket.
+						setTentativedate(PrincipalActivity.convertDateEpochToFormat(json_data.getString("tentativedate")));
 						tickets.add(ticket);
 						urlimage = "";
 
@@ -363,6 +374,17 @@ public class PrincipalActivity extends ActionBarActivity {
 		    	
 	    		
 	    	}
+	    	else if (consult.startsWith("modificar_ticket")) {
+	    		Log.d("postExecute","Tarea modificada");
+	    		
+		    	Toast toast = Toast.makeText(getApplicationContext(), 
+		    			"Se modificó la fecha planeada de la tarea", Toast.LENGTH_SHORT);
+		    	adapter.notifyDataSetChanged();
+		    	toast.show();
+		    	
+	    		
+	    	}
+	    	
 	    	else if  (consult.contentEquals("graficar")) {
 			 
 			      Log.d("urlimage",urlimage);
@@ -375,7 +397,7 @@ public class PrincipalActivity extends ActionBarActivity {
 			        i.putExtra("str1", urlimage);
 			        
 			        
-			        startActivityForResult(i, 1);
+			        startActivityForResult(i,1);
 
 		    	  
 		      }
@@ -534,7 +556,57 @@ public class PrincipalActivity extends ActionBarActivity {
 		Log.d("show","show");
     }
 
-	
+	public void makeModifyOptionsDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+		builder.setTitle(getString(R.string.select));
+		builder.setMessage(getString(R.string.confirm_delete));
+
+		final DatePicker input = new DatePicker(this);
+		builder.setView(input);
+
+		builder.setPositiveButton(getString(R.string.yes_option), new DialogInterface.OnClickListener() {
+
+		    public void onClick(DialogInterface dialog, int which) {
+		        // Do do my action here
+
+		        int year = input.getYear();
+		        
+		        Calendar calendar = Calendar.getInstance();
+		        
+		        calendar.set(year,input.getMonth(),input.getDayOfMonth(),23,59,59);
+		        
+		        String fechatentativa = String.valueOf(calendar.getTimeInMillis()/1000) ;
+
+		    	
+				String myconsult = PrincipalActivity.URLFORM_API + 
+						"operacion:modificar_ticket%20id:"+ currentticket+"%20Fecha_tentativa:"
+						+fechatentativa;
+				Log.d("Modificar_ticket...consult:","|"+myconsult+"|");
+				
+				new GetGraphTask("modificar_ticket").execute(myconsult);
+
+		    	Log.d("makeModifyOptionsDialog","Yes");
+		        dialog.dismiss();
+		    }
+
+		});
+
+		builder.setNegativeButton(getString(R.string.no_option), new DialogInterface.OnClickListener() {
+
+		    @Override
+		    public void onClick(DialogInterface dialog, int which) {
+		        // I do not need any action here you might
+		    	Log.d("makeDeleteOptionsDialog","no");
+		        dialog.dismiss();
+		    }
+		});
+
+		AlertDialog alert = builder.create();
+		alert.show();
+		
+		
+	}
 	
 	public void makeDeleteOptionsDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -575,7 +647,7 @@ public class PrincipalActivity extends ActionBarActivity {
 	
 	public AlertDialog makeTaskOptionsDialog(final Context context) {
 		final String[] option = new String[] {getString(R.string.change_status), 
-				getString(R.string.show_task), getString(R.string.delete_task) };
+				getString(R.string.show_task), getString(R.string.delete_task), getString(R.string.modify_date_task) };
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.select_dialog_item, option);
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -599,6 +671,10 @@ public class PrincipalActivity extends ActionBarActivity {
 				case 2: // Elimina
 					makeDeleteOptionsDialog();
 					break;
+				case 3: // Modifica
+					makeModifyOptionsDialog();
+					break;
+					
 				default:
 					break;
 				}
@@ -629,7 +705,9 @@ public class PrincipalActivity extends ActionBarActivity {
 
 
 	public void loadSafetReport(String report) {
-    	String currreport = "vToDo";
+    	String currreport = "vPor_hacer";
+    	String currfile = "/home/panelapp/.safet/flowfiles/carteleratres.xml";
+    	
     	Log.d("Spinner","2:|" + report+"|");
     	if ( report.contentEquals("En progreso")) {
     		Log.d("Spinner","3:" + report);
@@ -638,15 +716,32 @@ public class PrincipalActivity extends ActionBarActivity {
     	else if (report.contentEquals("Pospuestos") ) {
     		currreport = "vPostponed";	
     	}
+    	else if (report.contentEquals(getString(R.string.delayed)))  {
+    		currreport = "vDelayed";	
+    	}
+    	
+    	else if (report.contentEquals(getString(R.string.next_week)) ) {
+    		Log.d("loadSafetReport","nextweek");
+    		currfile = "/home/panelapp/.safet/flowfiles/carteleraproximos.xml";
+    		currreport = "vProxima_semana";
+    		
+    	}
+    	else if (report.contentEquals(getString(R.string.this_week)) ) {
+    		Log.d("loadSafetReport","nextweek");
+    		currfile = "/home/panelapp/.safet/flowfiles/carteleraproximos.xml";
+    		currreport = "vEsta_semana";
+    		
+    	}
+
     	else if (report.contentEquals("Finalizados") ) {
     		currreport = "vFinished";
     	}
     	
+    	String myconsult = PrincipalActivity.URL_API + "operacion:Listar_datos%20"+
+    			"Cargar_archivo_flujo:%20"+currfile+"%20Variable:"+currreport;
 
     	
-    	String myconsult = PrincipalActivity.URL_API + "operacion:Listar_datos%20"+
-    			"Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratres.xml%20Variable:"+currreport;
-
+    	
 
     	GetGraphTask mytask = new GetGraphTask("listar_ticket");
 
@@ -850,7 +945,8 @@ public class PrincipalActivity extends ActionBarActivity {
 		Log.d("requestCode:",String.valueOf(resultCode));
         if (resultCode == 1) {
 
-        	
+        	Log.d("requestCode:",String.valueOf(1));
+        	adapter.notifyDataSetChanged();
             //---if the result is OK--- 
             if (resultCode == RESULT_OK) {
 

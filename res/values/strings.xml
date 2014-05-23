@@ -15,9 +15,11 @@
     <string name="report_type">Lista de tickets</string>
     <string name="accept">Aceptar</string>
     <string name="cancel">Cancelar</string>
+    <string name="close">Cerrar</string>
     <string name="change_status">Cambia estado de tarea</string>
     <string name="show_task">Ver tarea</string>
     <string name="delete_task">Eliminar tarea</string>
+    <string name="modify_date_task">Modificar fecha de la tarea</string>
     <string name="add_project_name">Nombre del proyecto a agregar</string>
     <string name="delete_project_dialog">Nombre del proyecto a eliminar</string>
     <string name="confirm_delete">¿Realmente desea eliminar esta tarea?</string>
@@ -28,6 +30,9 @@
     <string name="graph_list_title">Gráficos</string>
     <string name="state_list_title">Estados</string>
     <string name="not_applicable">n/a</string>
+    <string name="next_week">Próxima semana</string>
+    <string name="this_week">Esta semana</string>
+    <string name="delayed">Retrasados</string>
     
     
   <string-array name="names_report">
@@ -35,8 +40,9 @@
         <item>En progreso</item>
         <item>Finalizados</item>
         <item>Pospuestos</item>
+        <item>Retrasados</item>
         <item>Próxima semana</item>
-        <item>Esta semana</item>
+        <item>Esta semana</item>        
         <item>Este mes</item>
         <item>Próximo mes</item>
     </string-array>

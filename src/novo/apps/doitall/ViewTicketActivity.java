@@ -61,7 +61,7 @@ public class ViewTicketActivity extends Activity {
 				TicketRecord ticket  = new TicketRecord();
 				//String summary = URLDecoder.decode(json_data.getString("resumen"), "UTF-8");
 				SpannableString spanString = new SpannableString("Resumen: " + json_data.getString("resumen"));
-				spanString.setSpan(new StyleSpan(Typeface.BOLD), 0, 8, 0);
+				spanString.setSpan(new StyleSpan(Typeface.BOLD), 0, 8, 0);				
 				summary.setText(spanString);
 				spanString = new SpannableString("Descripción: " + json_data.getString("descripcion"));
 				spanString.setSpan(new StyleSpan(Typeface.BOLD), 0, 12, 0);

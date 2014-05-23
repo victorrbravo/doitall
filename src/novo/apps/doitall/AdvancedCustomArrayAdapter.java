@@ -25,6 +25,8 @@ public class AdvancedCustomArrayAdapter extends BaseAdapter {
         public ImageView imageView;
         public TextView txtTitle;
         public TextView txtDescription;
+        public TextView txtProject;
+        public TextView txtTentativeDate;
     }
     public void setTickets(ArrayList<TicketRecord> t) {
     	tickets = t;
@@ -58,6 +60,11 @@ public class AdvancedCustomArrayAdapter extends BaseAdapter {
             viewContainer.txtDescription = (TextView) 
                 rowView.findViewById(R.id.txtDescription); 
             viewContainer.imageView = (ImageView) rowView.findViewById(R.id.icon);
+            viewContainer.txtTentativeDate = (TextView) 
+                    rowView.findViewById(R.id.tentativedatename); 
+            
+            viewContainer.txtProject = (TextView) 
+                    rowView.findViewById(R.id.projectname); 
 
             //---assign the view container to the rowView---
             rowView.setTag(viewContainer);
@@ -74,6 +81,8 @@ public class AdvancedCustomArrayAdapter extends BaseAdapter {
         //---customize the content of each row based on position---
         viewContainer.txtTitle.setText(tickets.get(position).getSummary());
         viewContainer.txtDescription.setText(tickets.get(position).getDescription());
+        viewContainer.txtTentativeDate.setText(tickets.get(position).getProject());
+        viewContainer.txtProject.setText(tickets.get(position).getTentativedate());
        // viewContainer.txtDescription.setText(presidents[position] + 
        //     " ...Some descriptions here...");
         //viewContainer.imageView.setImageResource(imageIds[position]);

@@ -416,6 +416,7 @@ public class AddTicketActivity extends Activity {
         Spinner typeproject = (Spinner) findViewById(R.id.selectproject);
         Spinner typeticket = (Spinner) findViewById(R.id.selecttypeticket);
         
+
         
 
         int year = tentativepicker.getYear();
@@ -425,13 +426,30 @@ public class AddTicketActivity extends Activity {
         
         calendar.set(year,tentativepicker.getMonth(),tentativepicker.getDayOfMonth(),23,59,59);
         
-        Log.d("Date",calendar.toString());
         
         Log.d("(2)Date:",calendar.toString());
         String seldate = String.valueOf(calendar.getTimeInMillis()/1000) ;
-        urlform = urlform + summary.getText().toString().trim();
-        urlform = urlform + "%20descripcion:" + desc.getText().toString().trim();
+        String mysummary = summary.getText().toString().trim();
+        if (mysummary.isEmpty() ) {
+	    	Toast toast = Toast.makeText(getApplicationContext(), 
+	    			"Debe colocar algún texto en el resumen para poder agregar una tarea", Toast.LENGTH_SHORT);
+	    	toast.show();
+	    	return;
+
+        }
+        urlform = urlform + mysummary;
+        String mydesc = desc.getText().toString().trim();
+        if (!mydesc.isEmpty()) {
+        		urlform = urlform + "%20descripcion:" + mydesc;
+    	}
         int pos = typeproject.getSelectedItemPosition();
+        if (pos < 0) {
+	    	Toast toast = Toast.makeText(getApplicationContext(), 
+	    			"Debe crear/seleccionar un proyecto para agregar una tarea", Toast.LENGTH_SHORT);
+	    	toast.show();
+	    	return;
+        	
+        }
         urlform = urlform + "%20proyecto:" + String.valueOf(projects.get(pos).getProjectid());
         pos = typeticket.getSelectedItemPosition();
         urlform = urlform + "%20tipo:" + typeticket.getSelectedItem().toString();

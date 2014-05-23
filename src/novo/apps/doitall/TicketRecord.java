@@ -3,6 +3,20 @@ package novo.apps.doitall;
 public class TicketRecord {
 	private String summary;
 	private String description;
+	private String project;
+	private String tentativedate;
+	public String getProject() {
+		return project;
+	}
+	public void setProject(String project) {
+		this.project = project;
+	}
+	public String getTentativedate() {
+		return tentativedate;
+	}
+	public void setTentativedate(String tentativedate) {
+		this.tentativedate = tentativedate;
+	}
 	private int projectid;
 	private String id;
 	TicketRecord() {

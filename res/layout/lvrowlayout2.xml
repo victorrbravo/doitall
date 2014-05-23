@@ -5,8 +5,8 @@
 
     <ImageView
         android:id="@+id/icon"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
@@ -29,6 +29,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="12sp" />
+                <TextView
+            android:id="@+id/projectname"
+            android:background="@android:color/darker_gray"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Proyecto"
+            android:textSize="10sp" />
+        <TextView
+            android:id="@+id/tentativedatename"
+            android:text="12/May/2014"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10sp" />        
+        
     </LinearLayout>
 
 </LinearLayout>
