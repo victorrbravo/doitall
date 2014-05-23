@@ -53,6 +53,13 @@
         <item>Por mes</item>
         <item>Tareas completadas</item>
     </string-array>
+  <string-array name="user_list">
+        <item>vbravo</item>
+        <item>goapps</item>
+        <item>cbravo</item>
+        <item>ssole</item>
+    </string-array>
+  
   
       <string-array name="names_type_ticket">
         <item>Arreglo</item>

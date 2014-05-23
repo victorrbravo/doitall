@@ -10,6 +10,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -67,27 +69,53 @@ public class PrincipalActivity extends ActionBarActivity {
 	private String urlimage;
 	private ListView listtickets;
 	private String currentticket;
-	
+	private String currentuser;
+	private String currentauth;
 	private String lastlisttickets;
  
 	AlertDialog task_dialog; 	
 	
+	public static String FIRST_URL_API = "https://gestion.cenditel.gob.ve/intranet/api/";
+	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=panelapp&accion=";
+	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=panelapp&accion=";
 	
-	public static final String URL_API = "https://gestion.cenditel.gob.ve/intranet/api/"+
-			"f3bf4ca25e666d70d6f847b87f448fefba5f2fda/?tipoaccion=console&"+
-			"aplicacion=panelapp&accion=";
 	
-	public static final String URLFORM_API = "https://gestion.cenditel.gob.ve/intranet/api/"+
-			"f3bf4ca25e666d70d6f847b87f448fefba5f2fda/?tipoaccion=form&"+
-			"aplicacion=panelapp&accion=";
+	public static String URL_API; 			
+	public static String URLFORM_API;
+	Map<String, String> usersmap;
+			
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		Log.d("PrincipalActivity","OnCreate");
+		usersmap = new HashMap<String, String>();		
+		usersmap.put("vbravo", "f3bf4ca25e666d70d6f847b87f448fefba5f2fda");
+		usersmap.put("ssole", "aa004ca25e666d70d6f847b87f448fefba5f2aa0");
+		usersmap.put("goapps", "bb004ca25e666d70d6f847b87f448fefba5fbb00");
+		
+		
 		 actionbar = getSupportActionBar();
 		 actionbar.setHomeButtonEnabled(true);
 		 
+		 currentuser = getIntent().getStringExtra("selectuser");
+		 
+		 if (!usersmap.containsKey(currentuser)) {
+			 currentauth = "f3bf4ca25e666d70d6f847b87f448fefba5f2fda";			 
+		 }
+		 else {
+			 currentauth = usersmap.get(currentuser);
+		 }
+		 
+		 Log.d("PrincipalActivity","currentuser"+currentuser);
+		 Log.d("PrincipalActivity","currentauth"+currentauth);
+		 URL_API = FIRST_URL_API + currentauth + SECOND_URL_API;
+		 URLFORM_API = FIRST_URL_API + currentauth + SECOND_URLFORM_API;
+		 Log.d("PrincipalActivity","URL_API"+URL_API);
+		 Log.d("PrincipalActivity","URLFORM_API"+URLFORM_API);
+		 
+	        
 		// actionBar.setSubtitle("Tareas pendientes");
 		 
 		 actionbar.setDisplayShowTitleEnabled(true);

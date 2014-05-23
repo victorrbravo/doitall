@@ -1,0 +1,61 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"     
+    android:layout_height="fill_parent"
+    android:orientation="vertical" 
+    >
+            
+       <TextView
+        android:id="@+id/texttitulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:text="DoitAll - Gestor inteligente de tareas"
+        android:textSize="22sp" />
+        
+	<TextView
+        android:id="@+id/texttipo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:text="Seleccione el usuario"
+        android:textSize="18sp" />
+	            
+     <Spinner
+      android:id="@+id/selectuser"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:entries="@array/user_list"
+       />
+     
+    <View
+                android:layout_width="fill_parent"
+                android:layout_height="1.5dp"
+                android:id="@+id/sepnovisible15"
+                android:background="@android:color/darker_gray"/>
+    
+    
+    <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+              >
+     <Button
+        android:id="@+id/dialogButtonOK"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onClick"
+        android:text=" Aceptar "
+       
+        />     
+         <Button
+        android:id="@+id/dialogButtonCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onCancelClick"
+        android:text=" Cancelar "
+        />
+ </LinearLayout>
+
+  
+</LinearLayout>
+
+
