@@ -2,6 +2,8 @@ package novo.apps.doitall;
 
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -20,6 +22,15 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import novo.apps.doitall.AddTicketActivity.GetGraphTask;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -45,6 +56,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -52,6 +64,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 
 public class PrincipalActivity extends ActionBarActivity {
@@ -75,11 +88,15 @@ public class PrincipalActivity extends ActionBarActivity {
  
 	AlertDialog task_dialog; 	
 	
-	public static String FIRST_URL_API = "https://gestion.cenditel.gob.ve/intranet/api/";
+	//public static String FIRST_URL_API = "https://gestion.cenditel.gob.ve/intranet/api/";
+	//public static String FIRST_URL_GRAPH = "http://gestion.cenditel.gob.ve/media";
+	public static String FIRST_URL_GRAPH = "http://XXXXX/media/";
+	public static String FIRST_URL_API = "http://XXXX/intranet/api/";
 	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=panelapp&accion=";
 	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=panelapp&accion=";
 	
-	
+	public static String PARAMETER_BY_PROJECT;
+	public static String PARAMETER_BY_TYPE;
 	public static String URL_API; 			
 	public static String URLFORM_API;
 	Map<String, String> usersmap;
@@ -89,6 +106,8 @@ public class PrincipalActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		PARAMETER_BY_PROJECT = "";
+		PARAMETER_BY_TYPE = "";		
 		Log.d("PrincipalActivity","OnCreate");
 		usersmap = new HashMap<String, String>();		
 		usersmap.put("vbravo", "f3bf4ca25e666d70d6f847b87f448fefba5f2fda");
@@ -125,8 +144,9 @@ public class PrincipalActivity extends ActionBarActivity {
 		 urlimage = "";
 		 lastlisttickets = "";
 				 	 
+		 Log.d("PrincipalActivity","1");
 		setContentView(R.layout.activity_principal);
-
+		Log.d("PrincipalActivity","2");
 		if (savedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
@@ -142,6 +162,7 @@ public class PrincipalActivity extends ActionBarActivity {
 
 		
 		addListenerOnButton();
+		loadSafetReport("Por_hacer");
 	        
 	}
 	
@@ -167,12 +188,49 @@ public class PrincipalActivity extends ActionBarActivity {
             
          }
 	  
+		 private  String callPlainSAFETAPI(String urldisplay) {
+		        HttpClient httpclient = new DefaultHttpClient();
+		        HttpResponse response;
+		        String responseString = null;
+		        try {
+		        	
+		            response = httpclient.execute(new HttpGet(urldisplay));
+		            StatusLine statusLine = response.getStatusLine();
+		            if(statusLine.getStatusCode() == HttpStatus.SC_OK){
+		                ByteArrayOutputStream out = new ByteArrayOutputStream();
+		                response.getEntity().writeTo(out);
+		                out.close();
+		                responseString = out.toString();
+		            } else{
+		                //Closes the connection.
+		                response.getEntity().getContent().close();
+		                throw new IOException(statusLine.getReasonPhrase());
+		            }
+		        } catch (ClientProtocolException e) {
+			    	Toast toast = Toast.makeText(getApplicationContext(), 
+			    			"Error en la conexión:" + e.getMessage(), Toast.LENGTH_SHORT);
+			    	toast.show();
+		        
+		        } catch (IOException e) {
+			    	Toast toast = Toast.makeText(getApplicationContext(), 
+			    			"Error de lectura de datos:" + e.getMessage(), Toast.LENGTH_SHORT);
+			    	toast.show();
+		        
+		        
+		 		} catch (Exception e) {
+			    	Toast toast = Toast.makeText(getApplicationContext(), 
+			    			"Error:" + e.getMessage(), Toast.LENGTH_SHORT);
+			    	toast.show();
+		 			
+		 		}
+		        return responseString;
+		    } 
 		 
 		private  String callSAFETAPI(String urldisplay) {
 			String result = "";
 			 URL url;
 			    try {
-			        //url = new URL("https://gestion.cenditel.gob.ve/intranet/api/f3bf4ca25e666d70d6f847b87f448fefba5f2fda/?tipoaccion=console&aplicacion=victorrbravo&accion=operacion:Generar_grafico_coloreado%20Cargar_archivo_flujo:/home/victorrbravo/.safet/flowfiles/flujogeneralsesiones.xml%20configurekey.Plugins.Graphviz/plugins.graphviz.graphtype:png");
+			        //url = new URL("https://gestion.cenditel.gob.ve/intranet/api/f3bf4ca25e666d70d6f847b87f448fefba5f2fda/?tipoaccion=console&aplicacion=victorrbravo&accion=operacion:Generar_grafico_coloreado%20Cargar_archivo_flujo:/home/victorrbravo/.safet/flowfiles/flujogeneralsesiones.xml");
 			        url = new URL(urldisplay);
 			        //		url = new URL("http://www.google.com");
 			        
@@ -227,34 +285,44 @@ public class PrincipalActivity extends ActionBarActivity {
 			String urldisplay = urls[0];
 
 
+//			if ( true ) {
+//				resulting =  callPlainSAFETAPI(urldisplay);
+//				Log.d("Plain","Resulting" + resulting);
+//				return resulting;
+//				
+//			}
 
-			resulting = callSAFETAPI(urldisplay);
+			Log.d("mygraph","callPlainSAFETAPI...(1)");
+			Log.d("urldisplay",urldisplay);
+			resulting = callPlainSAFETAPI(urldisplay);
+			Log.d("mygraph","callPlainSAFETAPI...(2)");
+			//resulting = callSAFETAPI(urldisplay);
 			progress.setProgress(50);
 
 			if (consult.contentEquals("cambiar_estado")) {
 				Log.d("LastListTickets",lastlisttickets);
 				
-				resulting = callSAFETAPI(lastlisttickets);
-				consult = "cambiar_estado_relistar_ticket";
+				//resulting = callPlainSAFETAPI(lastlisttickets);
+				//consult = "cambiar_estado_relistar_ticket";
 			}
 			else if (consult.contentEquals("agregar_ticket")) {
 				Log.d("agregar ticket LastListTickets",lastlisttickets);
 				
-				resulting = callSAFETAPI(lastlisttickets);
-				consult = "agregar_ticket_relistar_ticket";
+				//resulting = callPlainSAFETAPI(lastlisttickets);
+				//consult = "agregar_ticket_relistar_ticket";
 				
 			}
 			else if (consult.contentEquals("borrar_ticket")) {
 				Log.d("borrar_ticket",lastlisttickets);
 				
-				resulting = callSAFETAPI(lastlisttickets);
-				consult = "borrar_ticket_relistar_ticket";				
+				//resulting = callPlainSAFETAPI(lastlisttickets);
+				//consult = "borrar_ticket_relistar_ticket";				
 			}
 			else if (consult.contentEquals("modificar_ticket")) {
 				Log.d("modificar_ticket",lastlisttickets);
 				
-				resulting = callSAFETAPI(lastlisttickets);
-				consult = "modificar_ticket_relistar_ticket";				
+				//resulting = callPlainSAFETAPI(lastlisttickets);
+				//consult = "modificar_ticket_relistar_ticket";				
 			}
 
 			tickets.clear();
@@ -344,7 +412,8 @@ public class PrincipalActivity extends ActionBarActivity {
 				}
 			}
 			else if (consult.contentEquals("graficar")) {
-				String mygraph = "https://gestion.cenditel.gob.ve/media/" + resulting;
+				String mygraph = PrincipalActivity.FIRST_URL_GRAPH + resulting;
+				Log.d("mygraph",mygraph);
 				resulting = mygraph;
 				urlimage = mygraph;
 				Log.d("example",mygraph);
@@ -435,19 +504,160 @@ public class PrincipalActivity extends ActionBarActivity {
 		                Intent("novo.apps.doitall.AddTicketActivity");
 
 		        //---use putExtra() to add new key/value pairs---            
-		        i.putExtra("projectlist", urlimage);		  
+		    	i.putExtra("projectlist", urlimage);	
 
-		        i.putExtra("projects", projects);
-		        
+		    	i.putExtra("projects", projects);
+
+
 		        startActivityForResult(i, 2);
 
 	    	}
+	    	
+	    	else if (consult.contentEquals("para_filtro_listar_proyectos")) {
+
+	    		Log.d("makeFilterProjectDialog","makeFilterProjectDialog");		
+	    		makeFilterProjectDialog();	    			
+	    		
+
+	    	}
+	    	
+	    	
 	    	else {
 		        actionbar.setTitle(currenttitle);
 		    	adapter.notifyDataSetChanged();
 	    	}
 	          
 	    }
+	}
+	
+	public void makeFilterProjectDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+		builder.setTitle(getString(R.string.filter_project_dialog));
+	
+		final Spinner input = new Spinner(this);
+		
+		ArrayList<String> mylist = new ArrayList();
+		for(int i=0; i < projects.size(); i++) {		
+			mylist.add(projects.get(i).getTitle());
+		}		 
+		
+		ArrayAdapter<String> myadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,mylist);
+
+		input.setAdapter(myadapter);
+		myadapter.notifyDataSetChanged();
+		
+		builder.setView(input);
+
+
+		builder.setPositiveButton(getString(R.string.accept), new DialogInterface.OnClickListener() {
+
+		    public void onClick(DialogInterface dialog, int which) {
+		        // Do do my action here
+		    	ToggleButton boxproject = (ToggleButton) findViewById(R.id.toggleProject);
+		    	
+		    	String selproject = input.getSelectedItem().toString();
+		    		
+		    	Log.d("....makeFilter","selproject" + selproject);
+		    	
+		    	int pos = input.getSelectedItemPosition();
+		    	
+		    	if ( pos >= 0 && pos < projects.size() ) {
+		    		PrincipalActivity.PARAMETER_BY_PROJECT = "%20parameters.ByProject:" + String.valueOf(projects.get(pos).getProjectid());
+		    		Log.d("PrincipalActivity.PARAMETER_BY_PROJECT", PrincipalActivity.PARAMETER_BY_PROJECT);
+		    		boxproject.setText(selproject);
+		    	}
+		        
+		    }
+
+		});
+
+		builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+
+		    @Override
+		    public void onClick(DialogInterface dialog, int which) {
+		        // I do not need any action here you might
+		    	Log.d("makeFilterOptionsDialog...(1)","...(1)");
+		        dialog.dismiss();
+		        ToggleButton boxproject = ((ToggleButton) findViewById(R.id.toggleProject));
+		      
+		        boxproject.setChecked(false);
+		        
+		        
+		        Log.d("makeFilterOptionsDialog...(1)","...(2)");
+
+	        		        
+		        
+		        
+		    }
+		});
+
+		AlertDialog alert = builder.create();
+		alert.show();
+	}
+
+	public void makeFiltertTypeDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+		builder.setTitle(getString(R.string.filter_type_dialog));
+	
+		final Spinner input = new Spinner(this);
+		
+		String[] mytypes = getResources().getStringArray(R.array.names_type_ticket);
+		
+						
+		
+		ArrayAdapter<String> myadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,mytypes);
+
+		input.setAdapter(myadapter);
+		myadapter.notifyDataSetChanged();
+		
+		builder.setView(input);
+
+
+		builder.setPositiveButton(getString(R.string.accept), new DialogInterface.OnClickListener() {
+
+		    public void onClick(DialogInterface dialog, int which) {
+		        // Do do my action here
+		    	ToggleButton boxtype = (ToggleButton) findViewById(R.id.toggleType);
+		    	
+		    	String seltype = input.getSelectedItem().toString();
+		    		
+		    	Log.d("makeFilterType","seltype" + seltype);
+		    	
+		    	int pos = input.getSelectedItemPosition();
+		    	
+		    	boxtype.setText(seltype);
+		    	PrincipalActivity.PARAMETER_BY_TYPE = "%20parameters.ByType:" + seltype;
+		    	
+		        
+		    }
+
+		});
+
+		builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+
+		    @Override
+		    public void onClick(DialogInterface dialog, int which) {
+		        // I do not need any action here you might
+		    	Log.d("makeFilterOptionsDialog...(1)","...(1)");
+		        dialog.dismiss();
+		        ToggleButton boxtype = ((ToggleButton) findViewById(R.id.toggleType));
+		      
+		        boxtype.setChecked(false);
+		        
+		        PrincipalActivity.PARAMETER_BY_TYPE = "";
+		        
+		        Log.d("makeFilterOptionsDialog...(1)","...(2)");
+
+	        		        
+		        
+		        
+		    }
+		});
+
+		AlertDialog alert = builder.create();
+		alert.show();
 	}
 	
 	
@@ -476,18 +686,33 @@ public class PrincipalActivity extends ActionBarActivity {
 				Spinner typegraph = (Spinner) dialog.findViewById(R.id.graphtype);
 				if (typegraph.getSelectedItemPosition() == 0 ) {
 					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratres.xml"
-					+ "%20configurekey.Plugins.Graphviz/plugins.graphviz.graphtype:png";
+							+PrincipalActivity.PARAMETER_BY_PROJECT
+							+PrincipalActivity.PARAMETER_BY_TYPE;
 				}
 				else if (typegraph.getSelectedItemPosition() == 1 ) {
 					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleraproximos.xml"
-							+ "%20configurekey.Plugins.Graphviz/plugins.graphviz.graphtype:png";					
+							+PrincipalActivity.PARAMETER_BY_PROJECT
+							+PrincipalActivity.PARAMETER_BY_TYPE;
 				}
+				else if (typegraph.getSelectedItemPosition() == 2 ) {
+					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerapormes.xml"
+							+PrincipalActivity.PARAMETER_BY_PROJECT
+							+PrincipalActivity.PARAMETER_BY_TYPE;
+				}
+				else if (typegraph.getSelectedItemPosition() == 3 ) {
+					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerafinalizados.xml"
+							+PrincipalActivity.PARAMETER_BY_PROJECT
+							+PrincipalActivity.PARAMETER_BY_TYPE;
+				}
+				
 				else {
 					Log.d("GraphType","Selected none");
 					return;
 				}
 
 
+				Log.d("showGraph *consult:",myconsult);
+				
 			GetGraphTask mytask = new GetGraphTask("graficar");
 			
 				mytask.execute(myconsult);
@@ -512,7 +737,47 @@ public class PrincipalActivity extends ActionBarActivity {
     }
 	
 	
+	public void onClickedProject(View view) {
+		Log.d("OnClickProject","OnClickProject");
+		ToggleButton boxproject = ((ToggleButton) view); 
+		if (boxproject.isChecked()) {
+			Log.d("boxproject","entering...1");
+			
+			String myconsult = PrincipalActivity.URL_API 
+					+ "operacion:Listar_datos%20Cargar_archivo_flujo:/home/panelapp/.safet/flowfiles/proyectos.xml"+
+	    			"%20Variable:vProyectos";
+
+	    	GetGraphTask mytask = new GetGraphTask("para_filtro_listar_proyectos");
+	    	
+	    	mytask.execute(myconsult);
+	    	Log.d("boxproject","entering...2");
+
+			
+					
+			
+		}
+		else {
+			//boxproject.setText(getString(R.string.filter_any_project));
+			PrincipalActivity.PARAMETER_BY_PROJECT = "";
+			
+		}
+		//view.refreshDrawableState();
+	}
 	
+	public void onClickedType(View view) {
+		Log.d("OnClickType","OnClickType");
+		ToggleButton boxtype = ((ToggleButton) view);
+		if (boxtype.isChecked()) {
+			//boxtype.setText("Trabajo");
+			makeFiltertTypeDialog();
+			
+		}
+		else {
+			PrincipalActivity.PARAMETER_BY_TYPE = "";
+			boxtype.setText(getString(R.string.filter_any_type));
+		}
+		
+	}
 
 	private void showInputNameDialog(Context context,ArrayList<String> states, String title) {
     	
@@ -625,8 +890,11 @@ public class PrincipalActivity extends ActionBarActivity {
 		    @Override
 		    public void onClick(DialogInterface dialog, int which) {
 		        // I do not need any action here you might
-		    	Log.d("makeDeleteOptionsDialog","no");
+		    	Log.d("makeDeleteOptionsDialog","no...(1)");
 		        dialog.dismiss();
+		        
+
+		        Log.d("makeDeleteOptionsDialog","no...(2)");
 		    }
 		});
 
@@ -760,16 +1028,42 @@ public class PrincipalActivity extends ActionBarActivity {
     		currreport = "vEsta_semana";
     		
     	}
+    	else if (report.contentEquals(getString(R.string.this_month)) ) {
+    		Log.d("loadSafetReport","nextweek");
+    		currfile = "/home/panelapp/.safet/flowfiles/cartelerapormes.xml";
+    		currreport = "vEste_mes";
+    		
+    	}
+    	else if (report.contentEquals(getString(R.string.next_month)) ) {
+    		Log.d("loadSafetReport","nextweek");
+    		currfile = "/home/panelapp/.safet/flowfiles/cartelerapormes.xml";
+    		currreport = "vProximo_mes";
+    		
+    	}
+    	else if (report.contentEquals(getString(R.string.after_month)) ) {
+    		Log.d("loadSafetReport","nextweek");
+    		currfile = "/home/panelapp/.safet/flowfiles/cartelerapormes.xml";
+    		currreport = "vSuperior_proximo_mes";
+    		
+    	}
+    	else if (report.contentEquals(getString(R.string.after_week)) ) {
+    		Log.d("loadSafetReport","nextweek");
+    		currfile = "/home/panelapp/.safet/flowfiles/carteleraproximos.xml";
+    		currreport = "vSuperior_proxima_semana";
+    		
+    	}
 
     	else if (report.contentEquals("Finalizados") ) {
     		currreport = "vFinished";
     	}
     	
     	String myconsult = PrincipalActivity.URL_API + "operacion:Listar_datos%20"+
-    			"Cargar_archivo_flujo:%20"+currfile+"%20Variable:"+currreport;
+    			"Cargar_archivo_flujo:%20"+currfile+"%20Variable:"+currreport
+    			+PrincipalActivity.PARAMETER_BY_PROJECT
+    			+PrincipalActivity.PARAMETER_BY_TYPE;
+    			;
 
-    	
-    	
+    	    	
 
     	GetGraphTask mytask = new GetGraphTask("listar_ticket");
 
@@ -778,7 +1072,48 @@ public class PrincipalActivity extends ActionBarActivity {
     }
     
 
-    
+    protected String changePlainTicketStatus(String urldisplay) {
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpResponse response;
+        String responseString = null;
+        try {
+        	
+            response = httpclient.execute(new HttpGet(urldisplay));
+            StatusLine statusLine = response.getStatusLine();
+            if(statusLine.getStatusCode() == HttpStatus.SC_OK){
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                response.getEntity().writeTo(out);
+                out.close();
+                responseString = out.toString();
+            } else{
+                //Closes the connection.
+                response.getEntity().getContent().close();
+                throw new IOException(statusLine.getReasonPhrase());
+            }
+        } catch (ClientProtocolException e) {
+	    	Toast toast = Toast.makeText(getApplicationContext(), 
+	    			"Error en la conexión:" + e.getMessage(), Toast.LENGTH_SHORT);
+	    	toast.show();
+        
+        } catch (IOException e) {
+	    	Toast toast = Toast.makeText(getApplicationContext(), 
+	    			"Error de lectura de datos:" + e.getMessage(), Toast.LENGTH_SHORT);
+	    	toast.show();
+        
+        
+ 		} catch (Exception e) {
+	    	Toast toast = Toast.makeText(getApplicationContext(), 
+	    			"Error:" + e.getMessage(), Toast.LENGTH_SHORT);
+	    	toast.show();
+ 			
+ 		}
+        return responseString;
+
+        
+        
+    }
+
+	
     protected String changeTicketStatus(String urldisplay) {
         String webPage = "";
         
@@ -870,10 +1205,10 @@ public class PrincipalActivity extends ActionBarActivity {
 		"operacion:Siguientes_estados%20Cargar_archivo_flujo:"+
 				"/home/panelapp/.safet/flowfiles/carteleratresf.xml%20Clave:" + currentticket;
 
-		Log.d("setOnItemLongClickListener..myconsult:",myconsult);
+		Log.d("changeStatusTask..myconsult:",myconsult);
 		
-		ArrayList<String> newstates = loadStatus(changeTicketStatus(myconsult));
-		Log.d("ItemLong","newstates.count:"+ String.valueOf(newstates.size()));
+		ArrayList<String> newstates = loadStatus(changePlainTicketStatus(myconsult));
+		Log.d("changeStatusTask","newstates.count:"+ String.valueOf(newstates.size()));
 		//showStatusDialog(newstates);
 		showInputNameDialog(context,newstates,getString(R.string.state_list_title));
 		Log.d("showstatus","showstatus");		

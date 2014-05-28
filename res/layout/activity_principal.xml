@@ -34,13 +34,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_action_new" />
-                
-            
+                  
+             <ToggleButton 
+    android:id="@+id/toggleProject"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textOn="@string/activiting"
+    android:textOff="@string/filter_any_project"
+    android:onClick="onClickedProject"/>
+                  
+             <ToggleButton 
+    android:id="@+id/toggleType"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textOn="@string/activiting"
+    android:textOff="@string/filter_any_type"
+    android:onClick="onClickedType"/>
+             
             </LinearLayout>
   
  <ListView
         android:id="@+id/listTasks"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
     </ListView>
 </LinearLayout>
