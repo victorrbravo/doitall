@@ -1,6 +1,8 @@
 package novo.apps.doitall;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -18,6 +20,13 @@ import javax.net.ssl.X509TrustManager;
 
 import novo.apps.doitall.PrincipalActivity.GetGraphTask;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -114,7 +123,44 @@ public class AddTicketActivity extends Activity {
             
          }
 	  
-		 
+		 private  String callPlainSAFETAPI(String urldisplay) {
+		        HttpClient httpclient = new DefaultHttpClient();
+		        HttpResponse response;
+		        String responseString = null;
+		        try {
+		        	
+		            response = httpclient.execute(new HttpGet(urldisplay));
+		            StatusLine statusLine = response.getStatusLine();
+		            if(statusLine.getStatusCode() == HttpStatus.SC_OK){
+		                ByteArrayOutputStream out = new ByteArrayOutputStream();
+		                response.getEntity().writeTo(out);
+		                out.close();
+		                responseString = out.toString();
+		            } else{
+		                //Closes the connection.
+		                response.getEntity().getContent().close();
+		                throw new IOException(statusLine.getReasonPhrase());
+		            }
+		        } catch (ClientProtocolException e) {
+			    	Toast toast = Toast.makeText(getApplicationContext(), 
+			    			"Error en la conexión:" + e.getMessage(), Toast.LENGTH_SHORT);
+			    	toast.show();
+		        
+		        } catch (IOException e) {
+			    	Toast toast = Toast.makeText(getApplicationContext(), 
+			    			"Error de lectura de datos:" + e.getMessage(), Toast.LENGTH_SHORT);
+			    	toast.show();
+		        
+		        
+		 		} catch (Exception e) {
+			    	Toast toast = Toast.makeText(getApplicationContext(), 
+			    			"Error:" + e.getMessage(), Toast.LENGTH_SHORT);
+			    	toast.show();
+		 			
+		 		}
+		        return responseString;
+		    } 
+ 
 		private  String callSAFETAPI(String urldisplay) {
 			String result = "";
 			 URL url;
@@ -175,20 +221,20 @@ public class AddTicketActivity extends Activity {
 
 
 
-			resulting = callSAFETAPI(urldisplay);
+			resulting = callPlainSAFETAPI(urldisplay);
 			progress.setProgress(50);
 			if (consult.contentEquals("agregar_proyecto")) {
 				String myconsult = PrincipalActivity.URL_API 
 						+ "operacion:Listar_datos%20Cargar_archivo_flujo:/home/panelapp/.safet/flowfiles/proyectos.xml"+
 		    			"%20Variable:vProyectos";
-				resulting = callSAFETAPI(myconsult);
+				resulting = callPlainSAFETAPI(myconsult);
 				consult = "agregar_proyecto_relistar_proyectos";
 			}
 			else if (consult.contentEquals("borrar_proyecto")) {
 				String myconsult = PrincipalActivity.URL_API 
 						+ "operacion:Listar_datos%20Cargar_archivo_flujo:/home/panelapp/.safet/flowfiles/proyectos.xml"+
 		    			"%20Variable:vProyectos";
-				resulting = callSAFETAPI(myconsult);
+				resulting = callPlainSAFETAPI(myconsult);
 				consult = "borrar_proyecto_relistar_proyectos";
 			}
 
@@ -295,6 +341,13 @@ public class AddTicketActivity extends Activity {
 
 		    	
 		    	String title  = input.getText().toString().trim();
+		    	if (title.length() > 9 ) {
+			    	Toast toast = Toast.makeText(getApplicationContext(), 
+			    			"Coloque un nombre de proyecto más corto (menor a 10 caracteres)", Toast.LENGTH_SHORT);
+			    	toast.show();
+
+		    		return;
+		    	}
 				String myconsult = PrincipalActivity.URLFORM_API + 
 						"operacion:agregar_proyecto Titulo:"+ title +" descripcion: "+ title +" tipo:General";
 				

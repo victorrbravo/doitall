@@ -20,7 +20,22 @@
                 android:layout_height="1.5dp"
                 android:id="@+id/sepnovisible15"
                 android:background="@android:color/darker_gray"/>
-    
+     <TextView android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#372c24"
+                android:textSize="18dp"
+                android:text="El gráfico muestra el número de tareas en cada Estado (Por_hacer, Esta semana,etc) "/>
+     <TextView android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#372c24"
+                android:textSize="18dp"
+                android:text="Un color más amarillo indica que existen más tareas en ese Estado "/>
+     <TextView android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#372c24"
+                android:textSize="18dp"
+                android:text="Un color menos amarillo indica que existen menos tareas en ese Estado"/>
+     
     <Button
         android:id="@+id/button1"
         android:layout_width="wrap_content"

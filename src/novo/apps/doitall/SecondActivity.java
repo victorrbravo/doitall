@@ -34,7 +34,8 @@ public class SecondActivity extends Activity {
 	
 	private ProgressDialog progress;
 	private ImageView imagegraph;
-    private String urlimage; 
+    private String urlimage;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +48,7 @@ public class SecondActivity extends Activity {
         imagegraph = (ImageView) findViewById(R.id.imageGraph);
         Log.d("SecondActivity","urlimage:" + urlimage);
         
-        
+		progress = new ProgressDialog(this);
         
 	  	new DownloadImageTask( (ImageView) imagegraph).execute(urlimage);
 
@@ -57,14 +58,24 @@ public class SecondActivity extends Activity {
     final class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
     	ImageView bmImage;
 
-	    public DownloadImageTask(ImageView bmImage) {
+	    
+    	public DownloadImageTask(ImageView bmImage) {
 	        this.bmImage = bmImage;
 	    }
+
+		 protected void onPreExecute() {
+			  progress.setMessage(getString(R.string.downloading));
+		      progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		      progress.setIndeterminate(true);
+		      progress.show();
+           
+        }
 
 	    
 		protected Bitmap doInBackground(String... urls) {
 	        String urldisplay = urls[0];
 	        Bitmap mIcon11 = null;
+	        progress.setProgress(10);
 	        try {
 	        		Log.d("DownloadImage","urldisplay:" + urldisplay);
 	            InputStream in = new java.net.URL(urldisplay).openStream();
@@ -73,11 +84,15 @@ public class SecondActivity extends Activity {
 	            Log.e("Error", e.getMessage());
 	            e.printStackTrace();
 	        }
+	        progress.setProgress(50);
 	        return mIcon11;
 	    }
 
 	    protected void onPostExecute(Bitmap result) {
 	        bmImage.setImageBitmap(result);  
+	    	progress.setProgress(100);
+	    	progress.dismiss();
+
 	    }
 	}
 

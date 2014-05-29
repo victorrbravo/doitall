@@ -85,7 +85,8 @@ public class PrincipalActivity extends ActionBarActivity {
 	private String currentuser;
 	private String currentauth;
 	private String lastlisttickets;
- 
+	private String currfile; 
+	private String currreport;
 	AlertDialog task_dialog; 	
 	
 	//public static String FIRST_URL_API = "https://gestion.cenditel.gob.ve/intranet/api/";
@@ -110,10 +111,6 @@ public class PrincipalActivity extends ActionBarActivity {
 		PARAMETER_BY_TYPE = "";		
 		Log.d("PrincipalActivity","OnCreate");
 		usersmap = new HashMap<String, String>();		
-		usersmap.put("vbravo", "f3bf4ca25e666d70d6f847b87f448fefba5f2fda");
-		usersmap.put("ssole", "aa004ca25e666d70d6f847b87f448fefba5f2aa0");
-		usersmap.put("goapps", "bb004ca25e666d70d6f847b87f448fefba5fbb00");
-		
 		
 		 actionbar = getSupportActionBar();
 		 actionbar.setHomeButtonEnabled(true);
@@ -306,17 +303,18 @@ public class PrincipalActivity extends ActionBarActivity {
 				//consult = "cambiar_estado_relistar_ticket";
 			}
 			else if (consult.contentEquals("agregar_ticket")) {
-				Log.d("agregar ticket LastListTickets",lastlisttickets);
+				Log.d("**agregar ticket LastListTickets",lastlisttickets);
+				
 				
 				//resulting = callPlainSAFETAPI(lastlisttickets);
 				//consult = "agregar_ticket_relistar_ticket";
 				
 			}
 			else if (consult.contentEquals("borrar_ticket")) {
-				Log.d("borrar_ticket",lastlisttickets);
+				//Log.d("borrar_ticket",lastlisttickets);
 				
 				//resulting = callPlainSAFETAPI(lastlisttickets);
-				//consult = "borrar_ticket_relistar_ticket";				
+				//consult = "borrar_ticket_relistar_ticket";
 			}
 			else if (consult.contentEquals("modificar_ticket")) {
 				Log.d("modificar_ticket",lastlisttickets);
@@ -325,7 +323,7 @@ public class PrincipalActivity extends ActionBarActivity {
 				//consult = "modificar_ticket_relistar_ticket";				
 			}
 
-			tickets.clear();
+
 
 			Log.d("SAFETCALLAPI from execute()",resulting);
 			if ( consult.endsWith("ver_ticket") ) {
@@ -334,7 +332,7 @@ public class PrincipalActivity extends ActionBarActivity {
 			}
 			else if ( consult.endsWith("listar_ticket") ) {
 
-
+				tickets.clear();
 				Log.d("PrincipalActivity","after SAFETCALLAPI");
 				
 				lastlisttickets = urldisplay;
@@ -458,6 +456,18 @@ public class PrincipalActivity extends ActionBarActivity {
 //		    			"Cambio de estado realizado", Toast.LENGTH_SHORT);
 //		    	toast.show();
 	    		Log.d("ticket agregado",consult);
+		    	Toast toast = Toast.makeText(getApplicationContext(), 
+		    			"Tarea agregada", Toast.LENGTH_SHORT);
+		    	adapter.notifyDataSetChanged();
+		    	toast.show();
+
+	    		String myconsultdel = PrincipalActivity.URL_API + "operacion:Listar_datos%20"+
+		    			"Cargar_archivo_flujo:%20"+currfile+"%20Variable:"+currreport
+		    			+PrincipalActivity.PARAMETER_BY_PROJECT
+		    			+PrincipalActivity.PARAMETER_BY_TYPE;
+		    			;
+
+		        new GetGraphTask("listar_ticket").execute(myconsultdel);
 	    		
 	    	}
 
@@ -468,6 +478,13 @@ public class PrincipalActivity extends ActionBarActivity {
 		    			"Tarea eliminada", Toast.LENGTH_SHORT);
 		    	adapter.notifyDataSetChanged();
 		    	toast.show();
+				String myconsultdel = PrincipalActivity.URL_API + "operacion:Listar_datos%20"+
+		    			"Cargar_archivo_flujo:%20"+currfile+"%20Variable:"+currreport
+		    			+PrincipalActivity.PARAMETER_BY_PROJECT
+		    			+PrincipalActivity.PARAMETER_BY_TYPE;
+		    			;
+
+		        new GetGraphTask("listar_ticket").execute(myconsultdel);
 		    	
 	    		
 	    	}
@@ -478,6 +495,13 @@ public class PrincipalActivity extends ActionBarActivity {
 		    			"Se modificó la fecha planeada de la tarea", Toast.LENGTH_SHORT);
 		    	adapter.notifyDataSetChanged();
 		    	toast.show();
+	    		String myconsultdel = PrincipalActivity.URL_API + "operacion:Listar_datos%20"+
+		    			"Cargar_archivo_flujo:%20"+currfile+"%20Variable:"+currreport
+		    			+PrincipalActivity.PARAMETER_BY_PROJECT
+		    			+PrincipalActivity.PARAMETER_BY_TYPE;
+		    			;
+
+		        new GetGraphTask("listar_ticket").execute(myconsultdel);
 		    	
 	    		
 	    	}
@@ -923,6 +947,8 @@ public class PrincipalActivity extends ActionBarActivity {
 
 		    	Log.d("makeDeleteOptionsDialog","Yes");
 		        dialog.dismiss();
+
+		    	
 		    }
 
 		});
@@ -1001,8 +1027,8 @@ public class PrincipalActivity extends ActionBarActivity {
 
 
 	public void loadSafetReport(String report) {
-    	String currreport = "vPor_hacer";
-    	String currfile = "/home/panelapp/.safet/flowfiles/carteleratres.xml";
+    	currreport = "vPor_hacer";
+    	currfile = "/home/panelapp/.safet/flowfiles/carteleratres.xml";
     	
     	Log.d("Spinner","2:|" + report+"|");
     	if ( report.contentEquals("En progreso")) {
@@ -1326,15 +1352,17 @@ public class PrincipalActivity extends ActionBarActivity {
         }
         else if (requestCode == 2) {
         	if (resultCode == 3) {
-        		String urlform = PrincipalActivity.URLFORM_API + data.getStringExtra("urlform");
-        		Log.d("PrincipalActivity urlform:",urlform);
-            	GetGraphTask mytask = new GetGraphTask("agregar_ticket");
-
-            	mytask.execute(urlform);
-
-        		 
         		
+        		String urlform = PrincipalActivity.URLFORM_API + data.getStringExtra("urlform");
+        		Log.d("OnActivityResult...","Principal");
+            	GetGraphTask mytask = new GetGraphTask("agregar_ticket");
+            	mytask.execute(urlform);
+            	
         	}
+        	
+        }
+        else if (requestCode == 5) {
+        	Log.d("return from About", "return from About");
         	
         }
     }
@@ -1353,7 +1381,11 @@ public class PrincipalActivity extends ActionBarActivity {
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
+		if (id == R.id.action_about) {
+			Log.d("About","About");
+			Intent i = new 
+	                Intent("novo.apps.doitall.AboutActivity");
+	        startActivityForResult(i,5);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

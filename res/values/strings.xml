@@ -3,6 +3,7 @@
     <string name="app_name">DoItAll</string>
     <string name="hello_world">Hola mundo!</string>
     <string name="action_settings">Preferencias</string>
+    <string name="action_about">Acerca de...</string>    
     <string name="show_graphs">Mostrar gráficos</string>
      <string name="help">Ayuda</string>
 	<string name="process_finished">Se terminó de cargar satisfactoriamente el gráfico</string>
@@ -64,22 +65,23 @@
         <item>Tareas completadas</item>
     </string-array>
   <string-array name="user_list">
-        <item>vbravo</item>
-        <item>goapps</item>
-        <item>cbravo</item>
-        <item>ssole</item>
+        <item>goapps0</item>
+        <item>goapps1</item>
+        <item>goapps2</item>
     </string-array>
   
   
       <string-array name="names_type_ticket">
-        <item>Arreglo</item>
-        <item>Actividad general</item>
-        <item>Escribir código</item>
+		<item>Hogar</item>
+		<item>Trabajo</item>
         <item>Idea</item>
+        <item>Arreglo</item>        
         <item>Revisión</item>
         <item>Redacción</item>
         <item>Trámite</item>
+        <item>Actividad general</item>        
         <item>Actividad física</item>
+                <item>Escribir código</item>
     </string-array>
 
     <string-array name="names_category_ticket">
