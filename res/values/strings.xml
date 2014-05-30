@@ -72,13 +72,13 @@
   
   
       <string-array name="names_type_ticket">
-		<item>Hogar</item>
-		<item>Trabajo</item>
         <item>Idea</item>
         <item>Arreglo</item>        
         <item>Revisión</item>
         <item>Redacción</item>
         <item>Trámite</item>
+		<item>Hogar</item>
+		<item>Trabajo</item>        
         <item>Actividad general</item>        
         <item>Actividad física</item>
                 <item>Escribir código</item>

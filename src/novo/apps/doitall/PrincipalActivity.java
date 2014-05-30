@@ -22,7 +22,7 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import novo.apps.doitall.AddTicketActivity.GetGraphTask;
+//import novo.apps.doitall.AddTicketActivity.GetGraphTask;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -88,11 +88,11 @@ public class PrincipalActivity extends ActionBarActivity {
 	private String currfile; 
 	private String currreport;
 	AlertDialog task_dialog; 	
+	private ArrayList<String>  newstates;
+
 	
-	//public static String FIRST_URL_API = "https://gestion.cenditel.gob.ve/intranet/api/";
-	//public static String FIRST_URL_GRAPH = "http://gestion.cenditel.gob.ve/media";
 	public static String FIRST_URL_GRAPH = "http://XXXXX/media/";
-	public static String FIRST_URL_API = "http://XXXX/intranet/api/";
+	public static String FIRST_URL_API = "http://XXXXX/intranet/api/";
 	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=panelapp&accion=";
 	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=panelapp&accion=";
 	
@@ -111,9 +111,15 @@ public class PrincipalActivity extends ActionBarActivity {
 		PARAMETER_BY_TYPE = "";		
 		Log.d("PrincipalActivity","OnCreate");
 		usersmap = new HashMap<String, String>();		
+		usersmap.put("vbravo", "f3bf4ca25e666d70d6f847b87f448fefba5f2fda");
+		usersmap.put("ssole", "aa004ca25e666d70d6f847b87f448fefba5f2aa0");
+		usersmap.put("goapps0", "bb004ca25e666d70d6f847b87f448fefba5fbb00");
+		usersmap.put("goapps1", "bb004ca25e666d70d6f847b87f448fefba5fcc00");		
+		usersmap.put("goapps2", "bb004ca25e666d70d6f847b87f448fefba5fdd00");		
 		
 		 actionbar = getSupportActionBar();
 		 actionbar.setHomeButtonEnabled(true);
+
 		 
 		 currentuser = getIntent().getStringExtra("selectuser");
 		 
@@ -330,6 +336,12 @@ public class PrincipalActivity extends ActionBarActivity {
 				Log.d("ver_ticket","resulting");
 				
 			}
+			else if (consult.endsWith("siguientes_estados") ) {
+				newstates = loadStatus(resulting);
+				Log.d("changeStatusTask","newstates.count:"+ String.valueOf(newstates.size()));
+				//showStatusDialog(newstates);
+
+			}
 			else if ( consult.endsWith("listar_ticket") ) {
 
 				tickets.clear();
@@ -433,15 +445,27 @@ public class PrincipalActivity extends ActionBarActivity {
 	    	progress.setProgress(100);
 	    	progress.dismiss();
 	    	
-	    	Log.d("GetGraphTask result",consult);
-	        Log.d("ProjectCount:",String.valueOf(projects.size()));
+	    	Log.d("onPostExecute result",consult);
+	        Log.d("**consult:",consult);
 	        
 	    	if (consult.startsWith("cambiar_estado")) {
 		    	Toast toast = Toast.makeText(getApplicationContext(), 
 		    			"Cambio de estado realizado", Toast.LENGTH_SHORT);
 		    	toast.show();
+	    		String myconsultdel = PrincipalActivity.URL_API + "operacion:Listar_datos%20"+
+		    			"Cargar_archivo_flujo:%20"+currfile+"%20Variable:"+currreport
+		    			+PrincipalActivity.PARAMETER_BY_PROJECT
+		    			+PrincipalActivity.PARAMETER_BY_TYPE;
+		    			;
+		        new GetGraphTask("listar_ticket").execute(myconsultdel);
 
 	    		
+	    	}
+	    	else if (consult.startsWith("siguientes_estados")) {
+	    		Log.d("siguientes_estados",String.valueOf(newstates.size()));
+				showStatesNameDialog(newstates,getString(R.string.state_list_title));
+				Log.d("showstatus","showstatus");		
+
 	    	}
 	    	else if (consult.startsWith("ver_ticket")) {
 				Intent i = new 
@@ -495,13 +519,6 @@ public class PrincipalActivity extends ActionBarActivity {
 		    			"Se modificó la fecha planeada de la tarea", Toast.LENGTH_SHORT);
 		    	adapter.notifyDataSetChanged();
 		    	toast.show();
-	    		String myconsultdel = PrincipalActivity.URL_API + "operacion:Listar_datos%20"+
-		    			"Cargar_archivo_flujo:%20"+currfile+"%20Variable:"+currreport
-		    			+PrincipalActivity.PARAMETER_BY_PROJECT
-		    			+PrincipalActivity.PARAMETER_BY_TYPE;
-		    			;
-
-		        new GetGraphTask("listar_ticket").execute(myconsultdel);
 		    	
 	    		
 	    	}
@@ -544,8 +561,6 @@ public class PrincipalActivity extends ActionBarActivity {
 	    		
 
 	    	}
-	    	
-	    	
 	    	else {
 		        actionbar.setTitle(currenttitle);
 		    	adapter.notifyDataSetChanged();
@@ -815,53 +830,27 @@ public class PrincipalActivity extends ActionBarActivity {
 		ImageView image = (ImageView) dialog.findViewById(R.id.image);
 		image.setImageResource(R.drawable.ic_launcher);
 
-		if (states.size() > 0 ) {
-
-			Spinner myselect = (Spinner)dialog.findViewById(R.id.selecttype);
-			
-			ArrayAdapter<String> myadapter;
-			myadapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1,states);
-			
-			myselect.setAdapter(myadapter);
-			myadapter.notifyDataSetChanged();
-		}
 
 		Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
 		// if button is clicked, close the custom dialog
 
-		if (states.size() > 0  ) {
-			dialogButton.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					Spinner myselect = (Spinner)dialog.findViewById(R.id.selecttype);				
-					String mystatus = myselect.getSelectedItem().toString();
-					Log.d("cambiar_estado",mystatus);
-					dialog.dismiss();
-					String idticket = currentticket;
-					String myconsult = PrincipalActivity.URLFORM_API + "operacion:Siguiente_estado%20id:"+ idticket +
-							"%20Siguiente_Estado:"+  mystatus;
-					Log.d("CambiandoEstado...consult:","|"+myconsult+"|");
-					new GetGraphTask("cambiar_estado").execute(myconsult);
-				}
-			});
-			
-			
-		}
-		else {
-			dialogButton.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					Spinner myselect = (Spinner)dialog.findViewById(R.id.selecttype);				
-					String myreport = myselect.getSelectedItem().toString();
-					Log.d("Spinner",myreport);
-					dialog.dismiss();
-					loadSafetReport(myreport);
-				}
-			});
-		}
 
-		Log.d("showInputNameDialog","entrando 8");
+		dialogButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Spinner myselect = (Spinner)dialog.findViewById(R.id.selecttype);				
+				String myreport = myselect.getSelectedItem().toString();
+				Log.d("Spinner",myreport);
+				dialog.dismiss();
+				loadSafetReport(myreport);
+			}
+		});
+
+
+		
+		Log.d("showInputNameDialog() 1","entrando **");
 		Button dialogCancel= (Button) dialog.findViewById(R.id.dialogButtonCancel);
+		Log.d("showInputNameDialog() 2","entrando **");
 		// if button is clicked, close the custom dialog
 		dialogCancel.setOnClickListener(new OnClickListener() {
 			@Override
@@ -869,10 +858,80 @@ public class PrincipalActivity extends ActionBarActivity {
 				dialog.dismiss();
 			}
 		});
+		Log.d("showInputNameDialog() 3","entrando **");
+		Log.d("showInputNameDialog() 4","entrando **");
 		dialog.show();
+		Log.d("showInputNameDialog() 5","entrando **");
 		Log.d("show","show");
     }
 
+
+	private void showStatesNameDialog(ArrayList<String> states, String title) {
+    	
+    	final Dialog dialog = new Dialog(this);
+		dialog.setContentView(R.layout.choose_report);
+		dialog.setTitle(getString(R.string.report_type));
+
+		// set the custom dialog components - text, image and button
+		TextView text = (TextView) dialog.findViewById(R.id.text);
+		text.setText(getString(R.string.select_report_ticket));
+		ImageView image = (ImageView) dialog.findViewById(R.id.image);
+		image.setImageResource(R.drawable.ic_launcher);
+
+
+		Log.d("states size","size() > 0");
+		Spinner myselect = (Spinner)dialog.findViewById(R.id.selecttype);
+
+		ArrayAdapter<String> myadapter;
+		myadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,states);
+
+		myadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+		myselect.setAdapter(myadapter);
+		myadapter.notifyDataSetChanged();
+		Log.d("states size","size() > 0**");
+
+		Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
+		// if button is clicked, close the custom dialog
+
+
+		dialogButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Spinner myselect = (Spinner)dialog.findViewById(R.id.selecttype);				
+				String mystatus = myselect.getSelectedItem().toString();
+				Log.d("cambiar_estado",mystatus);
+				dialog.dismiss();
+				String idticket = currentticket;
+				String myconsult = PrincipalActivity.URLFORM_API + "operacion:Siguiente_estado%20id:"+ idticket +
+						"%20Siguiente_Estado:"+  mystatus;
+				Log.d("CambiandoEstado...consult:","|"+myconsult+"|");
+				new GetGraphTask("cambiar_estado").execute(myconsult);
+			}
+		});
+
+			
+	
+	
+		
+		Log.d("showInputNameDialog() 1","entrando **");
+		Button dialogCancel= (Button) dialog.findViewById(R.id.dialogButtonCancel);
+		Log.d("showInputNameDialog() 2","entrando **");
+		// if button is clicked, close the custom dialog
+		dialogCancel.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				dialog.dismiss();
+			}
+		});
+		Log.d("showInputNameDialog() 3","(3)entrando **");
+		Log.d("showInputNameDialog() 4","(4)entrando **");
+		dialog.show();
+		Log.d("showInputNameDialog() 5","entrando **");
+		Log.d("show","show");
+    }
+
+	
 	public void makeModifyOptionsDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -984,7 +1043,7 @@ public class PrincipalActivity extends ActionBarActivity {
 				switch (which) {
 				case 0: // Cambiar estado
 				Log.d("makeTaskOptionsDialog", "changeStatusTask");
-				changeStatusTask(context);
+				changeStatusTask();
 				break;
 				case 1: //Ver
 	
@@ -1224,7 +1283,7 @@ public class PrincipalActivity extends ActionBarActivity {
 
     // Agregando botón de cargar datos
 	
-	public void changeStatusTask(Context context) {
+	public void changeStatusTask() {
 	
 		
 		String myconsult = PrincipalActivity.URL_API +
@@ -1233,11 +1292,7 @@ public class PrincipalActivity extends ActionBarActivity {
 
 		Log.d("changeStatusTask..myconsult:",myconsult);
 		
-		ArrayList<String> newstates = loadStatus(changePlainTicketStatus(myconsult));
-		Log.d("changeStatusTask","newstates.count:"+ String.valueOf(newstates.size()));
-		//showStatusDialog(newstates);
-		showInputNameDialog(context,newstates,getString(R.string.state_list_title));
-		Log.d("showstatus","showstatus");		
+        new GetGraphTask("siguientes_estados").execute(myconsult);		
 
 	}
 	
