@@ -341,9 +341,9 @@ public class AddTicketActivity extends Activity {
 
 		    	
 		    	String title  = input.getText().toString().trim();
-		    	if (title.length() > 9 ) {
+		    	if (title.length() > 15 ) {
 			    	Toast toast = Toast.makeText(getApplicationContext(), 
-			    			"Coloque un nombre de proyecto más corto (menor a 10 caracteres)", Toast.LENGTH_SHORT);
+			    			"Coloque un nombre de proyecto más corto (menor a 15 caracteres)", Toast.LENGTH_SHORT);
 			    	toast.show();
 
 		    		return;

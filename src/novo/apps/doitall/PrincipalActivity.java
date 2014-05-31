@@ -92,7 +92,7 @@ public class PrincipalActivity extends ActionBarActivity {
 
 	
 	public static String FIRST_URL_GRAPH = "http://XXXXX/media/";
-	public static String FIRST_URL_API = "http://XXXXX/intranet/api/";
+	public static String FIRST_URL_API = "http://XXXXXX/intranet/api/";
 	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=panelapp&accion=";
 	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=panelapp&accion=";
 	
@@ -296,6 +296,13 @@ public class PrincipalActivity extends ActionBarActivity {
 //			}
 
 			Log.d("mygraph","callPlainSAFETAPI...(1)");
+			urldisplay = urldisplay.replace("á", "%E1");
+			urldisplay = urldisplay.replace("é", "%E9");
+			urldisplay = urldisplay.replace("í", "%ED");
+			urldisplay = urldisplay.replace("ó", "%F3");
+			urldisplay = urldisplay.replace("ú", "%FA");
+			urldisplay = urldisplay.replace("ñ", "%F1");
+			urldisplay = urldisplay.replace("Ñ", "%D1");
 			Log.d("urldisplay",urldisplay);
 			resulting = callPlainSAFETAPI(urldisplay);
 			Log.d("mygraph","callPlainSAFETAPI...(2)");
