@@ -4,6 +4,7 @@
     <string name="hello_world">Hola mundo!</string>
     <string name="action_settings">Preferencias</string>
     <string name="action_about">Acerca de...</string>    
+    <string name="action_search">Buscar</string>
     <string name="show_graphs">Mostrar gráficos</string>
      <string name="help">Ayuda</string>
 	<string name="process_finished">Se terminó de cargar satisfactoriamente el gráfico</string>
@@ -11,7 +12,7 @@
     <string name="downloading">Cargando datos...</string>
     <string name="select">Seleccione</string>
     <string name="select_report_graph">Seleccione un gráfico</string>
-    <string name="select_report_ticket">Selecciona Lista de tickets</string>
+    <string name="select_report_ticket">Selecciona un lista a mostrar</string>
     <string name="report_type">Gestión de tareas</string>
     <string name="accept">Aceptar</string>
     <string name="cancel">Cancelar</string>
@@ -41,17 +42,22 @@
     <string name="next_month">Próximo mes</string>
     <string name="this_month">Este mes</string>
     <string name="after_month">Despúes del próximo mes</string>
-    <string name="delayed">Retrasados</string>
+    <string name="delayed">Atrasadas</string>
+    <string name="finished">Finalizadas</string>
+        <string name="completed_after_week">Semana anterior (Completadas)</string>
+        <string name="completed_this_week">Esta semana (Completadas)</string>
     
     
   <string-array name="names_report">
         <item>Por hacer</item>
         <item>En progreso</item>
-        <item>Finalizados</item>
-        <item>Pospuestos</item>
-        <item>Retrasados</item>        
+        <item>Finalizadas</item>
+        <item>Pospuestas</item>
+        <item>Atrasadas</item>        
         <item>Esta semana</item>        
         <item>Este mes</item>
+        <item>Semana anterior (Completadas)</item>
+        <item>Esta semana (Completadas)</item>
         <item>Próxima semana</item>
         <item>Próximo mes</item>
         <item>Despúes de la próxima semana</item>
@@ -62,7 +68,8 @@
         <item>General</item>
         <item>Por semana</item>
         <item>Por mes</item>
-        <item>Tareas completadas</item>
+        <item>Completadas por mes</item>
+        <item>Completadas por semana</item>
     </string-array>
   <string-array name="user_list">
         <item>goapps0</item>

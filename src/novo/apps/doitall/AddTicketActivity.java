@@ -90,7 +90,6 @@ public class AddTicketActivity extends Activity {
 		
 		myadapter = new ArrayAdapter<String>(this,  android.R.layout.simple_list_item_1,states);
 		
-		
 		myselect.setAdapter(myadapter);
 		myadapter.notifyDataSetChanged();
 		

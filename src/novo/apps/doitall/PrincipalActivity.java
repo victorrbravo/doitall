@@ -24,6 +24,12 @@ import javax.net.ssl.X509TrustManager;
 
 //import novo.apps.doitall.AddTicketActivity.GetGraphTask;
 
+
+
+
+
+
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -42,9 +48,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.MenuItemCompat.OnActionExpandListener;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -52,6 +63,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
@@ -91,13 +103,14 @@ public class PrincipalActivity extends ActionBarActivity {
 	private ArrayList<String>  newstates;
 
 	
-	public static String FIRST_URL_GRAPH = "http://XXXXX/media/";
-	public static String FIRST_URL_API = "http://XXXXXX/intranet/api/";
+	public static String FIRST_URL_GRAPH = "http://XXXX/media/";
+	public static String FIRST_URL_API = "http://XXXX/intranet/api/";
 	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=panelapp&accion=";
 	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=panelapp&accion=";
 	
 	public static String PARAMETER_BY_PROJECT;
 	public static String PARAMETER_BY_TYPE;
+	public static String PARAMETER_BY_SEARCH;
 	public static String URL_API; 			
 	public static String URLFORM_API;
 	Map<String, String> usersmap;
@@ -109,6 +122,7 @@ public class PrincipalActivity extends ActionBarActivity {
 		
 		PARAMETER_BY_PROJECT = "";
 		PARAMETER_BY_TYPE = "";		
+		PARAMETER_BY_SEARCH = "";
 		Log.d("PrincipalActivity","OnCreate");
 		usersmap = new HashMap<String, String>();		
 		usersmap.put("vbravo", "f3bf4ca25e666d70d6f847b87f448fefba5f2fda");
@@ -750,6 +764,11 @@ public class PrincipalActivity extends ActionBarActivity {
 							+PrincipalActivity.PARAMETER_BY_PROJECT
 							+PrincipalActivity.PARAMETER_BY_TYPE;
 				}
+				else if (typegraph.getSelectedItemPosition() == 4 ) {
+					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerafinalizadosporsemana.xml"
+							+PrincipalActivity.PARAMETER_BY_PROJECT
+							+PrincipalActivity.PARAMETER_BY_TYPE;
+				}
 				
 				else {
 					Log.d("GraphType","Selected none");
@@ -1104,6 +1123,15 @@ public class PrincipalActivity extends ActionBarActivity {
     	else if (report.contentEquals("Pospuestos") ) {
     		currreport = "vPostponed";	
     	}
+    	else if (report.contentEquals(getString(R.string.completed_after_week)) ) {
+    		currreport = "vSemana_anterior";	
+    		currfile = "/home/panelapp/.safet/flowfiles/cartelerafinalizadosporsemana.xml";
+    	}
+    	else if (report.contentEquals(getString(R.string.completed_this_week)) ) {
+    		currreport = "vEsta_semana";	
+    		currfile = "/home/panelapp/.safet/flowfiles/cartelerafinalizadosporsemana.xml";
+    	}
+    	
     	else if (report.contentEquals(getString(R.string.delayed)))  {
     		currreport = "vDelayed";	
     	}
@@ -1141,11 +1169,10 @@ public class PrincipalActivity extends ActionBarActivity {
     	else if (report.contentEquals(getString(R.string.after_week)) ) {
     		Log.d("loadSafetReport","nextweek");
     		currfile = "/home/panelapp/.safet/flowfiles/carteleraproximos.xml";
-    		currreport = "vSuperior_proxima_semana";
-    		
+    		currreport = "vSuperior_proxima_semana";    		
     	}
 
-    	else if (report.contentEquals("Finalizados") ) {
+    	else if (report.contentEquals(getString(R.string.finished)) ) {
     		currreport = "vFinished";
     	}
     	
@@ -1434,7 +1461,61 @@ public class PrincipalActivity extends ActionBarActivity {
 
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.principal, menu);
-		return true;
+			
+		 
+		    
+
+		    // When using the support library, the setOnActionExpandListener() method is
+		    // static and accepts the MenuItem object as an argument
+		  MenuItem searchItem = menu.findItem(R.id.action_search);
+
+		final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
+
+	    
+	    searchView.setOnQueryTextListener(new OnQueryTextListener() {
+	        @Override
+	        public boolean onQueryTextChange(String newText) {
+	            if (newText.length() > 0) {
+	                // Search
+	            	Log.d("Search","Search (1)");
+
+	            } else {
+	                // Do something when there's no input
+	            	
+	            }
+	            return false;
+	        }
+	        @Override
+	        public boolean onQueryTextSubmit(String query) { 
+
+	        	Log.d("Search","Search (3)");
+	            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+	            imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
+
+	            Toast.makeText(getBaseContext(), "Búsqueda realida con éxito", Toast.LENGTH_SHORT).show();
+	            setSupportProgressBarIndeterminateVisibility(true);
+
+	            Log.d("Search","Search (4)");
+
+	            currfile = "/home/panelapp/.safet/flowfiles/cartelerabusqueda.xml";
+	            currreport = "vBusqueda";
+				PrincipalActivity.PARAMETER_BY_SEARCH = "%20parameters.ByPattern:" + query;
+	            
+	    		String myconsult = PrincipalActivity.URL_API + "operacion:Listar_datos%20"+
+		    			"Cargar_archivo_flujo:%20"+currfile+"%20Variable:"+currreport
+		    			+"%20"+PrincipalActivity.PARAMETER_BY_SEARCH;
+		    			
+		    			
+	    		Log.d("Search myconsult",myconsult);
+		        new GetGraphTask("listar_ticket").execute(myconsult);
+
+	            return false; 
+	        }
+	    });
+	    
+	    
+	    return true;
 	}
 
 	@Override
