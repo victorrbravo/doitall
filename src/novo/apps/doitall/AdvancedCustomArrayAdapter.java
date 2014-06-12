@@ -12,7 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import android.content.*;
 public class AdvancedCustomArrayAdapter extends BaseAdapter {
     private final Activity context;
     private  ArrayList<TicketRecord> tickets;
@@ -63,6 +63,7 @@ public class AdvancedCustomArrayAdapter extends BaseAdapter {
             viewContainer.txtTentativeDate = (TextView) 
                     rowView.findViewById(R.id.tentativedatename); 
             
+
             viewContainer.txtProject = (TextView) 
                     rowView.findViewById(R.id.projectname); 
 
@@ -81,8 +82,10 @@ public class AdvancedCustomArrayAdapter extends BaseAdapter {
         //---customize the content of each row based on position---
         viewContainer.txtTitle.setText(tickets.get(position).getSummary());
         viewContainer.txtDescription.setText(tickets.get(position).getDescription());
+        viewContainer.txtProject.setText(tickets.get(position).getTentativedate()+" - " + 
+        tickets.get(position).getFinishdate());
         viewContainer.txtTentativeDate.setText(tickets.get(position).getProject());
-        viewContainer.txtProject.setText(tickets.get(position).getTentativedate());
+
        // viewContainer.txtDescription.setText(presidents[position] + 
        //     " ...Some descriptions here...");
         //viewContainer.imageView.setImageResource(imageIds[position]);

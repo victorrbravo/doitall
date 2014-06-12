@@ -5,6 +5,11 @@ public class TicketRecord {
 	private String description;
 	private String project;
 	private String tentativedate;
+	private String finishdate;
+	private String owner;
+	private String status;
+	private String type;
+	
 	public String getProject() {
 		return project;
 	}
@@ -45,6 +50,30 @@ public class TicketRecord {
 	}
 	public void setId(String id) {
 		this.id = id;
+	}
+	public String getFinishdate() {
+		return finishdate;
+	}
+	public void setFinishdate(String finishdate) {
+		this.finishdate = finishdate;
+	}
+	public String getOwner() {
+		return owner;
+	}
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
 	}
 	
 	

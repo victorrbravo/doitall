@@ -102,15 +102,20 @@ public class PrincipalActivity extends ActionBarActivity {
 	AlertDialog task_dialog; 	
 	private ArrayList<String>  newstates;
 
+//	public static String FIRST_URL_GRAPH = "http://gestion.cenditel.gob.ve/media/";
+//	public static String FIRST_URL_API = "http://gestion.cenditel.gob.ve/intranet/api/";
 	
-	public static String FIRST_URL_GRAPH = "http://XXXX/media/";
-	public static String FIRST_URL_API = "http://XXXX/intranet/api/";
+	public static String FIRST_URL_GRAPH = "http://216.119.142.167/media/";
+	public static String FIRST_URL_API = "http://216.119.142.167/intranet/api/";
 	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=panelapp&accion=";
 	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=panelapp&accion=";
 	
 	public static String PARAMETER_BY_PROJECT;
 	public static String PARAMETER_BY_TYPE;
 	public static String PARAMETER_BY_SEARCH;
+	public static String DESCRIPTION_PROJECT_PARAMS;
+	public static String DESCRIPTION_TYPE_PARAMS;
+	
 	public static String URL_API; 			
 	public static String URLFORM_API;
 	Map<String, String> usersmap;
@@ -123,6 +128,9 @@ public class PrincipalActivity extends ActionBarActivity {
 		PARAMETER_BY_PROJECT = "";
 		PARAMETER_BY_TYPE = "";		
 		PARAMETER_BY_SEARCH = "";
+		DESCRIPTION_PROJECT_PARAMS = "";
+		DESCRIPTION_TYPE_PARAMS = "";
+		
 		Log.d("PrincipalActivity","OnCreate");
 		usersmap = new HashMap<String, String>();		
 		usersmap.put("vbravo", "f3bf4ca25e666d70d6f847b87f448fefba5f2fda");
@@ -391,11 +399,30 @@ public class PrincipalActivity extends ActionBarActivity {
 						ticket.setProject(json_data.getString("proyecto"));
 						ticket.
 						setTentativedate(PrincipalActivity.convertDateEpochToFormat(json_data.getString("tentativedate")));
+						String newfinish = json_data.getString("finishdate");
+						if (newfinish.contentEquals("0")) {
+							ticket.
+							setFinishdate(getString(R.string.nocomplete));
+						}
+						else  {
+							ticket.
+							setFinishdate(PrincipalActivity.convertDateEpochToFormat(newfinish));
+
+						}
+						ticket.setOwner(json_data.getString("owner"));
+						ticket.setType(json_data.getString("type"));
+						ticket.setStatus(json_data.getString("status"));
+						
+						
 						tickets.add(ticket);
 						urlimage = "";
 
 					}
-					currenttitle = jall.getString("safetvariable");
+					currenttitle = jall.getString("safetvariable")+ PrincipalActivity.DESCRIPTION_PROJECT_PARAMS
+							+ PrincipalActivity.DESCRIPTION_TYPE_PARAMS;
+					
+					
+					
 					Log.d("checkpoint","1");
 					adapter.setTickets(tickets);
 					Log.d("checkpoint","2");
@@ -617,7 +644,9 @@ public class PrincipalActivity extends ActionBarActivity {
 		    	ToggleButton boxproject = (ToggleButton) findViewById(R.id.toggleProject);
 		    	
 		    	String selproject = input.getSelectedItem().toString();
-		    		
+		    
+		    	PrincipalActivity.DESCRIPTION_PROJECT_PARAMS =  "-" + selproject;
+		    			
 		    	Log.d("....makeFilter","selproject" + selproject);
 		    	
 		    	int pos = input.getSelectedItemPosition();
@@ -625,9 +654,15 @@ public class PrincipalActivity extends ActionBarActivity {
 		    	if ( pos >= 0 && pos < projects.size() ) {
 		    		PrincipalActivity.PARAMETER_BY_PROJECT = "%20parameters.ByProject:" + String.valueOf(projects.get(pos).getProjectid());
 		    		Log.d("PrincipalActivity.PARAMETER_BY_PROJECT", PrincipalActivity.PARAMETER_BY_PROJECT);
-		    		boxproject.setText(selproject);
+		    		//boxproject.setText(selproject);
 		    	}
 		        
+		    	actionbar.setTitle(currenttitle + PrincipalActivity.DESCRIPTION_PROJECT_PARAMS
+		    			+ PrincipalActivity.DESCRIPTION_TYPE_PARAMS);
+		    	Toast toast = Toast.makeText(getApplicationContext(), 
+		    			getString(R.string.need_refresh), Toast.LENGTH_SHORT);
+		    	toast.show();
+
 		    }
 
 		});
@@ -642,7 +677,7 @@ public class PrincipalActivity extends ActionBarActivity {
 		        ToggleButton boxproject = ((ToggleButton) findViewById(R.id.toggleProject));
 		      
 		        boxproject.setChecked(false);
-		        
+		        PrincipalActivity.DESCRIPTION_PROJECT_PARAMS = "";
 		        
 		        Log.d("makeFilterOptionsDialog...(1)","...(2)");
 
@@ -687,10 +722,16 @@ public class PrincipalActivity extends ActionBarActivity {
 		    	
 		    	int pos = input.getSelectedItemPosition();
 		    	
-		    	boxtype.setText(seltype);
+		    	//boxtype.setText(seltype);
 		    	PrincipalActivity.PARAMETER_BY_TYPE = "%20parameters.ByType:" + seltype;
-		    	
+		    	PrincipalActivity.DESCRIPTION_TYPE_PARAMS = "-" + seltype;
 		        
+		    	actionbar.setTitle(actionbar.getTitle() + PrincipalActivity.DESCRIPTION_PROJECT_PARAMS
+		    			+ PrincipalActivity.DESCRIPTION_TYPE_PARAMS);
+		    	Toast toast = Toast.makeText(getApplicationContext(), 
+		    			getString(R.string.need_refresh), Toast.LENGTH_SHORT);
+		    	toast.show();
+
 		    }
 
 		});
@@ -707,7 +748,7 @@ public class PrincipalActivity extends ActionBarActivity {
 		        boxtype.setChecked(false);
 		        
 		        PrincipalActivity.PARAMETER_BY_TYPE = "";
-		        
+		        PrincipalActivity.DESCRIPTION_TYPE_PARAMS = "";
 		        Log.d("makeFilterOptionsDialog...(1)","...(2)");
 
 	        		        
@@ -760,14 +801,18 @@ public class PrincipalActivity extends ActionBarActivity {
 							+PrincipalActivity.PARAMETER_BY_TYPE;
 				}
 				else if (typegraph.getSelectedItemPosition() == 3 ) {
-					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerafinalizados.xml"
+					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerafinalizadosporsemana.xml"
 							+PrincipalActivity.PARAMETER_BY_PROJECT
 							+PrincipalActivity.PARAMETER_BY_TYPE;
 				}
 				else if (typegraph.getSelectedItemPosition() == 4 ) {
-					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerafinalizadosporsemana.xml"
+					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerafinalizados.xml"
 							+PrincipalActivity.PARAMETER_BY_PROJECT
 							+PrincipalActivity.PARAMETER_BY_TYPE;
+				}
+				else if (typegraph.getSelectedItemPosition() == 5 ) {
+					myconsult = PrincipalActivity.URL_API +
+							"operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratodos.xml%20Autofiltro:%20por_proyecto";
 				}
 				
 				else {
@@ -822,8 +867,10 @@ public class PrincipalActivity extends ActionBarActivity {
 			
 		}
 		else {
+			Log.d("OnClickProject","OnClickProject Off");
 			//boxproject.setText(getString(R.string.filter_any_project));
 			PrincipalActivity.PARAMETER_BY_PROJECT = "";
+			PrincipalActivity.DESCRIPTION_PROJECT_PARAMS = "";
 			
 		}
 		//view.refreshDrawableState();
@@ -839,7 +886,8 @@ public class PrincipalActivity extends ActionBarActivity {
 		}
 		else {
 			PrincipalActivity.PARAMETER_BY_TYPE = "";
-			boxtype.setText(getString(R.string.filter_any_type));
+			PrincipalActivity.DESCRIPTION_TYPE_PARAMS = "";
+			//boxtype.setText(getString(R.string.filter_any_type));
 		}
 		
 	}
@@ -1123,13 +1171,13 @@ public class PrincipalActivity extends ActionBarActivity {
     	else if (report.contentEquals("Pospuestos") ) {
     		currreport = "vPostponed";	
     	}
-    	else if (report.contentEquals(getString(R.string.completed_after_week)) ) {
-    		currreport = "vSemana_anterior";	
-    		currfile = "/home/panelapp/.safet/flowfiles/cartelerafinalizadosporsemana.xml";
-    	}
     	else if (report.contentEquals(getString(R.string.completed_this_week)) ) {
     		currreport = "vEsta_semana";	
     		currfile = "/home/panelapp/.safet/flowfiles/cartelerafinalizadosporsemana.xml";
+    	}
+    	else if (report.contentEquals(getString(R.string.all_tickets)) ) {
+    		currreport = "Todos";	
+    		currfile = "/home/panelapp/.safet/flowfiles/cartelerabusqueda.xml";
     	}
     	
     	else if (report.contentEquals(getString(R.string.delayed)))  {
@@ -1500,14 +1548,18 @@ public class PrincipalActivity extends ActionBarActivity {
 
 	            currfile = "/home/panelapp/.safet/flowfiles/cartelerabusqueda.xml";
 	            currreport = "vBusqueda";
-				PrincipalActivity.PARAMETER_BY_SEARCH = "%20parameters.ByPattern:" + query;
+	            String newquery = query.replace(" ","%20");
+				PrincipalActivity.PARAMETER_BY_SEARCH = "%20parameters.ByPattern:" + newquery;
 	            
 	    		String myconsult = PrincipalActivity.URL_API + "operacion:Listar_datos%20"+
 		    			"Cargar_archivo_flujo:%20"+currfile+"%20Variable:"+currreport
-		    			+"%20"+PrincipalActivity.PARAMETER_BY_SEARCH;
+		    			+"%20"+PrincipalActivity.PARAMETER_BY_SEARCH
+		    			+"%20"+PrincipalActivity.PARAMETER_BY_PROJECT
+		    			+"%20"+PrincipalActivity.PARAMETER_BY_TYPE;
+
 		    			
 		    			
-	    		Log.d("Search myconsult",myconsult);
+	    		Log.d("SEARCH CONSULT:",myconsult);
 		        new GetGraphTask("listar_ticket").execute(myconsult);
 
 	            return false; 

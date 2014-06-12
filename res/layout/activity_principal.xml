@@ -8,11 +8,12 @@
    
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="match_parent"            
             android:orientation="vertical" >
             
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
                 android:layout_height="wrap_content" >
             
           
@@ -34,22 +35,36 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_action_new" />
+               
                   
-             <ToggleButton 
-    android:id="@+id/toggleProject"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:textOn="@string/activiting"
-    android:textOff="@string/filter_any_project"
-    android:onClick="onClickedProject"/>
                   
-             <ToggleButton 
-    android:id="@+id/toggleType"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:textOn="@string/activiting"
-    android:textOff="@string/filter_any_type"
-    android:onClick="onClickedType"/>
+<ToggleButton
+        android:layout_width="wrap_content"
+        android:id="@+id/toggleProject"
+        android:layout_height="wrap_content"        
+        android:layout_margin="10dp"
+        android:background="@drawable/checkp"
+        android:textOn=""
+        android:textOff=""
+        android:focusable="false"
+        android:onClick="onClickedProject"
+        android:focusableInTouchMode="false"
+        android:layout_centerVertical="true"/>
+
+<ToggleButton 
+        android:id="@+id/toggleType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/checkt"
+        android:layout_margin="10dp"
+        android:textOn=""
+        android:textOff=""
+        android:focusable="false"
+    android:onClick="onClickedType"
+        android:focusableInTouchMode="false"
+        android:layout_centerVertical="true"/>
+                          
+                  
              
             </LinearLayout>
   

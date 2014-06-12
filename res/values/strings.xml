@@ -26,8 +26,8 @@
     <string name="filter_project_dialog">Filtrar por proyecto</string>
 	<string name="filter_type_dialog">Filtrar por tipo</string>    
     <string name="activiting">Activando...</string>
-    <string name="filter_any_project">C/proyecto</string>
-    <string name="filter_any_type">C/tipo</string>
+    <string name="filter_any_project">Por proyecto</string>
+    <string name="filter_any_type">Por tipo</string>
     <string name="confirm_delete">¿Realmente desea eliminar esta tarea?</string>
     <string name="delete_project_text">¿Realmente desea eliminar el proyecto </string>
     <string name="yes_option">Sí</string>
@@ -36,6 +36,7 @@
     <string name="graph_list_title">Gráficos</string>
     <string name="state_list_title">Estados</string>
     <string name="not_applicable">n/a</string>
+    <string name="all_tickets">Todas las tareas</string>
     <string name="next_week">Próxima semana</string>
     <string name="this_week">Esta semana</string>
     <string name="after_week">Despúes de la próxima semana</string>
@@ -44,6 +45,10 @@
     <string name="after_month">Despúes del próximo mes</string>
     <string name="delayed">Atrasadas</string>
     <string name="finished">Finalizadas</string>
+    <string name="nocomplete">sin completar</string>    
+    <string name="planned">Planificado:</string>    
+    <string name="need_refresh">Necesita presionar el botón de refrescamiento o gráfico para aplicar el filtro seleccionado</string>
+   
         <string name="completed_after_week">Semana anterior (Completadas)</string>
         <string name="completed_this_week">Esta semana (Completadas)</string>
     
@@ -54,6 +59,7 @@
         <item>Finalizadas</item>
         <item>Pospuestas</item>
         <item>Atrasadas</item>        
+        <item>Todas las tareas</item>        
         <item>Esta semana</item>        
         <item>Este mes</item>
         <item>Semana anterior (Completadas)</item>
@@ -68,10 +74,13 @@
         <item>General</item>
         <item>Por semana</item>
         <item>Por mes</item>
-        <item>Completadas por mes</item>
-        <item>Completadas por semana</item>
+        <item>Por semana (completadas)</item>
+        <item>Por mes (completadas)</item>        
+        <item>Por proyecto</item>
     </string-array>
   <string-array name="user_list">
+        <item>vbravo</item>
+        <item>ssole</item>
         <item>goapps0</item>
         <item>goapps1</item>
         <item>goapps2</item>
