@@ -103,7 +103,7 @@ public class PrincipalActivity extends ActionBarActivity {
 	private ArrayList<String>  newstates;
 
 	
-	public static String FIRST_URL_GRAPH = "http://XXX/media/";
+	public static String FIRST_URL_GRAPH = "http://XXXX/media/";
 	public static String FIRST_URL_API = "http://XXXX/intranet/api/";
 	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=panelapp&accion=";
 	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=panelapp&accion=";
