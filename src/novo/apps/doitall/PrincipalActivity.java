@@ -102,11 +102,9 @@ public class PrincipalActivity extends ActionBarActivity {
 	AlertDialog task_dialog; 	
 	private ArrayList<String>  newstates;
 
-//	public static String FIRST_URL_GRAPH = "http://gestion.cenditel.gob.ve/media/";
-//	public static String FIRST_URL_API = "http://gestion.cenditel.gob.ve/intranet/api/";
 	
-	public static String FIRST_URL_GRAPH = "http://216.119.142.167/media/";
-	public static String FIRST_URL_API = "http://216.119.142.167/intranet/api/";
+	public static String FIRST_URL_GRAPH = "http://XXX/media/";
+	public static String FIRST_URL_API = "http://XXXX/intranet/api/";
 	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=panelapp&accion=";
 	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=panelapp&accion=";
 	
