@@ -20,7 +20,7 @@
     <string name="change_status">Cambia estado de tarea</string>
     <string name="show_task">Ver tarea</string>
     <string name="delete_task">Eliminar tarea</string>
-    <string name="modify_date_task">Modificar fecha de la tarea</string>
+    <string name="modify_date_task">Nueva fecha de la tarea</string>
     <string name="add_project_name">Nombre del proyecto a agregar</string>
     <string name="delete_project_dialog">Nombre del proyecto a eliminar</string>
     <string name="filter_project_dialog">Filtrar por proyecto</string>
@@ -47,6 +47,8 @@
     <string name="finished">Finalizadas</string>
     <string name="nocomplete">sin completar</string>    
     <string name="planned">Planificado:</string>    
+    <string name="delete_data_connect">Borrar datos de conexión</string>
+    <string name="ask_delete_data_connect">¿Está seguro de eliminar los datos de recordación de conexión?</string>
     <string name="need_refresh">Necesita presionar el botón de refrescamiento o gráfico para aplicar el filtro seleccionado</string>
    
         <string name="completed_after_week">Semana anterior (Completadas)</string>
@@ -79,10 +81,12 @@
         <item>Por proyecto</item>
     </string-array>
   <string-array name="user_list">
-   
+        <item>vbravo</item>
+        <item>ssole</item>
         <item>goapps0</item>
         <item>goapps1</item>
         <item>goapps2</item>
+        <item>mlara</item>
     </string-array>
   
   

@@ -79,8 +79,17 @@ public class AdvancedCustomArrayAdapter extends BaseAdapter {
             viewContainer = (ViewContainer) rowView.getTag();
         }
 
+        if ( tickets.get(position).getStatus().contentEquals("Finished")) {
+        	viewContainer.imageView.setImageResource(R.drawable.closefolder);
+        }
+        else {
+        	viewContainer.imageView.setImageResource(R.drawable.yellowsoftware);
+        	
+        	
+        }
         //---customize the content of each row based on position---
         viewContainer.txtTitle.setText(tickets.get(position).getSummary());
+        
         viewContainer.txtDescription.setText(tickets.get(position).getDescription());
         viewContainer.txtProject.setText(tickets.get(position).getTentativedate()+" - " + 
         tickets.get(position).getFinishdate());

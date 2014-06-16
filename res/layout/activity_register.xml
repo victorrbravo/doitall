@@ -46,29 +46,56 @@
           <TextView android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:textColor="#372c24"
-                android:text="Usuario"/>
-		     <EditText
-		      android:id="@+id/selectuser"
-		      android:layout_width="fill_parent"
-		      android:layout_height="wrap_content"
-		      android:layout_marginTop="5dip"
-              android:singleLine="true"
-              android:editable="false"		      
-		      android:layout_gravity="center"
-		       />
-          
-          <!--  Password Label -->
-          <TextView android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:textColor="#372c24"
-                android:text="Clave"/>
+                android:text="Nombre de la cuenta"/>
           <EditText android:layout_width="fill_parent"
-                android:id="@+id/selectpass"
+              	android:id="@+id/accountname"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dip"
                 android:singleLine="true"
-                android:editable="false"
+                />
+          <TextView android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#372c24"
+                android:text="Correo electrónico"/>
+          <EditText android:layout_width="fill_parent"
+              	 android:id="@+id/email"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dip"
+                android:singleLine="true"
+                />
+          <TextView android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#372c24"
+                android:text="Nombre completo"/>
+          <EditText android:layout_width="fill_parent"
+                android:id="@+id/fullname"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dip"
+                android:singleLine="true"
+                />
+          
+          <TextView android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#372c24"
+                android:text="Contraseña"/>
+          <EditText android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/password1"
+                android:layout_marginTop="5dip"
+                android:singleLine="true"
                 android:password="true"/>
+          
+          <TextView android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#372c24"
+                android:text="Repita contraseña"/>
+          <EditText android:layout_width="fill_parent"
+                android:id="@+id/password2"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dip"
+                android:singleLine="true"
+                android:password="true"/>
+          
           <!-- Login button -->
           <Button android:id="@+id/dialogButtonOK"
                 android:layout_width="fill_parent"
@@ -76,18 +103,6 @@
                 android:layout_marginTop="10dip"
                 android:onClick="onClick"
                 android:text="Aceptar"/>
-          <!-- Link to Registration Screen -->
-          <TextView android:id="@+id/link_to_register"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="40dip"
-                android:layout_marginBottom="40dip"
-                android:onClick="onRegisterClick"
-                android:clickable="true"
-                android:text="Regístrese aquí"
-                android:gravity="center"
-                android:textSize="20dip"
-                android:textColor="#0b84aa"/>
  
         </LinearLayout>
         <!-- Login Form Ends -->

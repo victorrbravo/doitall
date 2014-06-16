@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.net.ssl.HostnameVerifier;
@@ -25,18 +27,17 @@ import javax.net.ssl.X509TrustManager;
 //import novo.apps.doitall.AddTicketActivity.GetGraphTask;
 
 
-
-
-
-
-
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -50,6 +51,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.ArrayMap;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.MenuItemCompat.OnActionExpandListener;
 import android.support.v7.app.ActionBar;
@@ -103,8 +105,9 @@ public class PrincipalActivity extends ActionBarActivity {
 	private ArrayList<String>  newstates;
 
 	
-	public static String FIRST_URL_GRAPH = "http://XXXX/media/";
-	public static String FIRST_URL_API = "http://XXXX/intranet/api/";
+	public static String URL_SERVER = "http://XXXX/intranet/register";
+	public static String FIRST_URL_GRAPH = "http://XXXXX/media/";
+	public static String FIRST_URL_API = "http://XXXXX/intranet/api/";
 	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=panelapp&accion=";
 	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=panelapp&accion=";
 	
@@ -131,27 +134,31 @@ public class PrincipalActivity extends ActionBarActivity {
 		
 		Log.d("PrincipalActivity","OnCreate");
 		usersmap = new HashMap<String, String>();		
-		usersmap.put("vbravo", "f3bf4ca25e666d70d6f847b87f448fefba5f2fda");
-		usersmap.put("ssole", "aa004ca25e666d70d6f847b87f448fefba5f2aa0");
-		usersmap.put("goapps0", "bb004ca25e666d70d6f847b87f448fefba5fbb00");
-		usersmap.put("goapps1", "bb004ca25e666d70d6f847b87f448fefba5fcc00");		
-		usersmap.put("goapps2", "bb004ca25e666d70d6f847b87f448fefba5fdd00");		
+	//	 usersmap.put("mlara","d893b97f6944b2fe1de3f014d34104c3b2cdfbe3");
 		
 		 actionbar = getSupportActionBar();
 		 actionbar.setHomeButtonEnabled(true);
 
 		 
 		 currentuser = getIntent().getStringExtra("selectuser");
+		 String ticket = getIntent().getStringExtra("selectauth");
+		 String pass  = getIntent().getStringExtra("selectpass");
 		 
-		 if (!usersmap.containsKey(currentuser)) {
-			 currentauth = "f3bf4ca25e666d70d6f847b87f448fefba5f2fda";			 
+		 if (pass.isEmpty() ) {
+			 if (!usersmap.containsKey(currentuser)) {
+				 currentauth = ticket;			 
+			 }
+			 else {
+				 currentauth = usersmap.get(currentuser);
+			 }
 		 }
 		 else {
-			 currentauth = usersmap.get(currentuser);
+			 
+			 
 		 }
 		 
-		 Log.d("PrincipalActivity","currentuser"+currentuser);
-		 Log.d("PrincipalActivity","currentauth"+currentauth);
+		 Log.d("PrincipalActivity","currentuser (pass):"+currentuser);
+		 Log.d("PrincipalActivity","currentauth(pass):"+currentauth);
 		 URL_API = FIRST_URL_API + currentauth + SECOND_URL_API;
 		 URLFORM_API = FIRST_URL_API + currentauth + SECOND_URLFORM_API;
 		 Log.d("PrincipalActivity","URL_API"+URL_API);
@@ -211,6 +218,7 @@ public class PrincipalActivity extends ActionBarActivity {
             
          }
 	  
+
 		 private  String callPlainSAFETAPI(String urldisplay) {
 		        HttpClient httpclient = new DefaultHttpClient();
 		        HttpResponse response;
@@ -416,8 +424,7 @@ public class PrincipalActivity extends ActionBarActivity {
 						urlimage = "";
 
 					}
-					currenttitle = jall.getString("safetvariable")+ PrincipalActivity.DESCRIPTION_PROJECT_PARAMS
-							+ PrincipalActivity.DESCRIPTION_TYPE_PARAMS;
+					currenttitle = jall.getString("safetvariable");
 					
 					
 					
@@ -608,7 +615,8 @@ public class PrincipalActivity extends ActionBarActivity {
 
 	    	}
 	    	else {
-		        actionbar.setTitle(currenttitle);
+		        actionbar.setTitle(currenttitle + PrincipalActivity.DESCRIPTION_PROJECT_PARAMS
+		        		+ PrincipalActivity.DESCRIPTION_TYPE_PARAMS.replace("%20"," "));
 		    	adapter.notifyDataSetChanged();
 	    	}
 	          
@@ -639,7 +647,6 @@ public class PrincipalActivity extends ActionBarActivity {
 
 		    public void onClick(DialogInterface dialog, int which) {
 		        // Do do my action here
-		    	ToggleButton boxproject = (ToggleButton) findViewById(R.id.toggleProject);
 		    	
 		    	String selproject = input.getSelectedItem().toString();
 		    
@@ -656,7 +663,7 @@ public class PrincipalActivity extends ActionBarActivity {
 		    	}
 		        
 		    	actionbar.setTitle(currenttitle + PrincipalActivity.DESCRIPTION_PROJECT_PARAMS
-		    			+ PrincipalActivity.DESCRIPTION_TYPE_PARAMS);
+		    			+ PrincipalActivity.DESCRIPTION_TYPE_PARAMS.replace("%20"," "));
 		    	Toast toast = Toast.makeText(getApplicationContext(), 
 		    			getString(R.string.need_refresh), Toast.LENGTH_SHORT);
 		    	toast.show();
@@ -721,11 +728,13 @@ public class PrincipalActivity extends ActionBarActivity {
 		    	int pos = input.getSelectedItemPosition();
 		    	
 		    	//boxtype.setText(seltype);
+		    	seltype = seltype.replace(" ", "%20");
 		    	PrincipalActivity.PARAMETER_BY_TYPE = "%20parameters.ByType:" + seltype;
 		    	PrincipalActivity.DESCRIPTION_TYPE_PARAMS = "-" + seltype;
+		        Log.d("BoxType","seltype:" + seltype);
 		        
-		    	actionbar.setTitle(actionbar.getTitle() + PrincipalActivity.DESCRIPTION_PROJECT_PARAMS
-		    			+ PrincipalActivity.DESCRIPTION_TYPE_PARAMS);
+		    	actionbar.setTitle(currenttitle + PrincipalActivity.DESCRIPTION_PROJECT_PARAMS
+		    			+ PrincipalActivity.DESCRIPTION_TYPE_PARAMS.replace("%20"," "));
 		    	Toast toast = Toast.makeText(getApplicationContext(), 
 		    			getString(R.string.need_refresh), Toast.LENGTH_SHORT);
 		    	toast.show();
@@ -1003,12 +1012,50 @@ public class PrincipalActivity extends ActionBarActivity {
 		Log.d("show","show");
     }
 
+	public void makeDeleteDataConnectDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+		builder.setTitle(getString(R.string.select));
+		builder.setMessage(getString(R.string.ask_delete_data_connect));
+
+		builder.setPositiveButton(getString(R.string.yes_option), new DialogInterface.OnClickListener() {
+
+		    public void onClick(DialogInterface dialog, int which) {
+		        // Do do my action here
+
+		    	GenTicket mytask = new GenTicket(getBaseContext());
+
+		    	mytask.deleteTicket();
+		    	Log.d("makeDeleteDataConnectDialog","Yes");
+		        dialog.dismiss();
+		    	
+		    }
+
+		});
+
+		builder.setNegativeButton(getString(R.string.no_option), new DialogInterface.OnClickListener() {
+
+		    @Override
+		    public void onClick(DialogInterface dialog, int which) {
+		        // I do not need any action here you might
+		    	Log.d("makeDeleteDataConnectDialog","no");
+		        dialog.dismiss();
+		    }
+		});
+
+		AlertDialog alert = builder.create();
+		alert.show();
+
+		
+		
+	}
+
 	
 	public void makeModifyOptionsDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 		builder.setTitle(getString(R.string.select));
-		builder.setMessage(getString(R.string.confirm_delete));
+		builder.setMessage(getString(R.string.modify_date_task));
 
 		final DatePicker input = new DatePicker(this);
 		builder.setView(input);
@@ -1580,6 +1627,11 @@ public class PrincipalActivity extends ActionBarActivity {
 	                Intent("novo.apps.doitall.AboutActivity");
 	        startActivityForResult(i,5);
 			return true;
+		} 
+		else if (id == R.id.delete_data_connect) {
+			
+			makeDeleteDataConnectDialog();
+			
 		}
 		return super.onOptionsItemSelected(item);
 	}
