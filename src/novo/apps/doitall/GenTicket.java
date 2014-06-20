@@ -16,6 +16,10 @@ import android.widget.Toast;
 public class GenTicket {
 	private final String filename = "currentinfoaboutauth.conf";
 	private String currentTicket;
+	public void setCurrentTicket(String currentTicket) {
+		this.currentTicket = currentTicket;
+	}
+
 	private String currentUser;
 	public String getCurrentUser() {
 		return currentUser;

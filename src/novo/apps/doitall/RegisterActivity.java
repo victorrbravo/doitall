@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -61,12 +63,83 @@ public class RegisterActivity extends Activity {
         EditText email = (EditText) findViewById(R.id.email);
         EditText pass1 = (EditText) findViewById(R.id.password1);
         EditText pass2 = (EditText) findViewById(R.id.password2);
-    	mymap.put("account", account.getText().toString().trim());
-    	mymap.put("email", email.getText().toString().trim());
-    	mymap.put("fullname", fullname.getText().toString().trim());
-    	mymap.put("passwordone", pass1.getText().toString().trim());
-    	mymap.put("passwordtwo", pass2.getText().toString().trim());
+        String myaccount = account.getText().toString().trim();
+    	mymap.put("account", myaccount);
+    	String myemail = email.getText().toString().trim();
+    	mymap.put("email", myemail);
+    	String myfull = fullname.getText().toString().trim();
+    	mymap.put("fullname", myfull);
+    	String mypass1 = pass1.getText().toString().trim();
+    	mymap.put("passwordone", mypass1);
+    	String mypass2 = pass2.getText().toString().trim();
+    	mymap.put("passwordtwo", mypass2);
 
+    	if (myaccount.isEmpty()) {
+    		Toast toast = Toast.makeText(getApplicationContext(), 
+	    			"El campo \"nombre de la cuenta\" no puede estar vacío", Toast.LENGTH_SHORT);
+    		toast.show();
+    		return;
+    	}
+    	Pattern mPattern = Pattern.compile("^([a-z0-9]{4,})$");
+
+        Matcher matcher = mPattern.matcher(myaccount);               
+        if(!matcher.find()) {
+        	Toast toast = Toast.makeText(getApplicationContext(), 
+	    			"El nombre de la cuenta debe ser en minúsculas y mayor o igual a cuatro (4) caracteres", Toast.LENGTH_SHORT);
+    		toast.show();
+    		return;
+        }
+    	
+    	if (myemail.isEmpty()) {
+    		Toast toast = Toast.makeText(getApplicationContext(), 
+	    			"El campo \"correo\" no puede estar vacío", Toast.LENGTH_SHORT);
+    		toast.show();
+    		return;
+    	}
+        if(!android.util.Patterns.EMAIL_ADDRESS.matcher(myemail).matches()) {
+        	Toast toast = Toast.makeText(getApplicationContext(), 
+	    			"El campo \"correo\" no corresponde con el formato de correo electrónico", Toast.LENGTH_SHORT);
+    		toast.show();
+    		return;
+        }
+
+    	
+    	if (myfull.isEmpty()) {
+    		Toast toast = Toast.makeText(getApplicationContext(), 
+	    			"El campo \"Nombre completo\" no puede estar vacío", Toast.LENGTH_SHORT);
+    		toast.show();
+    		return;
+    	}
+    	Pattern fPattern = Pattern.compile("^([a-zA-Z\\s0-9]{4,})$");
+
+        Matcher fmatcher = fPattern.matcher(myfull);               
+        if(!fmatcher.find()) {
+        	Toast toast = Toast.makeText(getApplicationContext(), 
+	    			"El campo  \"Nombre completo\" solo admite mayúsculas, minúsculas, espacios y nùmeros y "+
+        	"debe ser mayor o igual a cuatro(4) caracteres", Toast.LENGTH_SHORT);
+    		toast.show();
+    		return;
+        }
+    	
+    	if (mypass1.isEmpty()) {
+    		Toast toast = Toast.makeText(getApplicationContext(), 
+	    			"El campo \"contraseña\" no puede estar vacío", Toast.LENGTH_SHORT);
+    		toast.show();
+    		return;
+    	}
+    	if (mypass2.isEmpty()) {
+    		Toast toast = Toast.makeText(getApplicationContext(), 
+	    			"Debe repetir la contraseña para poder realizar el registro", Toast.LENGTH_SHORT);
+    		toast.show();
+    		return;
+    	}
+
+    	if (!mypass1.contentEquals(mypass2) ) {
+    		Toast toast = Toast.makeText(getApplicationContext(), 
+	    			"La contrase ña y su repetición deben ser iguales", Toast.LENGTH_SHORT);
+    		toast.show();
+    		return;
+    	}
     	
     	String selectuser = account.getText().toString().trim();
     	String selectauth  = mygentask.generateNewTicket();

@@ -27,6 +27,8 @@ import javax.net.ssl.X509TrustManager;
 //import novo.apps.doitall.AddTicketActivity.GetGraphTask;
 
 
+
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
@@ -47,6 +49,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -96,6 +99,7 @@ public class PrincipalActivity extends ActionBarActivity {
 	private String urlimage;
 	private ListView listtickets;
 	private String currentticket;
+	private String currentdate;
 	private String currentuser;
 	private String currentauth;
 	private String lastlisttickets;
@@ -106,8 +110,9 @@ public class PrincipalActivity extends ActionBarActivity {
 
 	
 	public static String URL_SERVER = "http://XXXX/intranet/register";
+	public static String URL_SERVER_LOGIN = "http://XXXX/intranet/login";
 	public static String FIRST_URL_GRAPH = "http://XXXXX/media/";
-	public static String FIRST_URL_API = "http://XXXXX/intranet/api/";
+	public static String FIRST_URL_API = "http://XXXX/intranet/api/";
 	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=panelapp&accion=";
 	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=panelapp&accion=";
 	
@@ -117,8 +122,10 @@ public class PrincipalActivity extends ActionBarActivity {
 	public static String DESCRIPTION_PROJECT_PARAMS;
 	public static String DESCRIPTION_TYPE_PARAMS;
 	
+	public static int isclosing;
 	public static String URL_API; 			
 	public static String URLFORM_API;
+	public static final String CURRENTDATEFORMAT = "dd/MMM/yyyy hh:mma";
 	Map<String, String> usersmap;
 			
 
@@ -132,8 +139,14 @@ public class PrincipalActivity extends ActionBarActivity {
 		DESCRIPTION_PROJECT_PARAMS = "";
 		DESCRIPTION_TYPE_PARAMS = "";
 		
+		isclosing = 0;
 		Log.d("PrincipalActivity","OnCreate");
 		usersmap = new HashMap<String, String>();		
+//		usersmap.put("vbravo", "f3bf4ca25e666d70d6f847b87f448fefba5f2fda");
+		usersmap.put("ssole", "aa004ca25e666d70d6f847b87f448fefba5f2aa0");
+		usersmap.put("goapps0", "bb004ca25e666d70d6f847b87f448fefba5fbb00");
+		usersmap.put("goapps1", "bb004ca25e666d70d6f847b87f448fefba5fcc00");		
+		usersmap.put("goapps2", "bb004ca25e666d70d6f847b87f448fefba5fdd00");
 	//	 usersmap.put("mlara","d893b97f6944b2fe1de3f014d34104c3b2cdfbe3");
 		
 		 actionbar = getSupportActionBar();
@@ -143,19 +156,20 @@ public class PrincipalActivity extends ActionBarActivity {
 		 currentuser = getIntent().getStringExtra("selectuser");
 		 String ticket = getIntent().getStringExtra("selectauth");
 		 String pass  = getIntent().getStringExtra("selectpass");
+		 currentauth = ticket;
 		 
-		 if (pass.isEmpty() ) {
-			 if (!usersmap.containsKey(currentuser)) {
-				 currentauth = ticket;			 
-			 }
-			 else {
-				 currentauth = usersmap.get(currentuser);
-			 }
-		 }
-		 else {
-			 
-			 
-		 }
+//		 if (pass.isEmpty() ) {
+//			 if (!usersmap.containsKey(currentuser)) {
+//				 currentauth = ticket;			 
+//			 }
+//			 else {
+//				 currentauth = usersmap.get(currentuser);
+//			 }
+//		 }
+//		 else {
+//			 
+//			 
+//		 }
 		 
 		 Log.d("PrincipalActivity","currentuser (pass):"+currentuser);
 		 Log.d("PrincipalActivity","currentauth(pass):"+currentauth);
@@ -171,6 +185,7 @@ public class PrincipalActivity extends ActionBarActivity {
 	//	 actionbar.setDisplayHomeAsUpEnabled(true);
 		
 		 currentticket = "";
+		 currentdate = "";
 		 urlimage = "";
 		 lastlisttickets = "";
 				 	 
@@ -195,19 +210,60 @@ public class PrincipalActivity extends ActionBarActivity {
 		loadSafetReport("Por_hacer");
 	        
 	}
-	
-    
-    
+//	@Override
+//	public void finish() {
+//	    System.out.println("finish activity");          
+//	    System.runFinalizersOnExit(true) ;          
+//	    super.finish();
+//	    android.os.Process.killProcess(android.os.Process.myPid());
+//	}
+//    
+//	@Override
+//	public void onBackPressed() {
+//		
+//		 if (isclosing == 0) {
+//			 Toast toast = Toast.makeText(getApplicationContext(), 
+// 	    			"Debe presionar de nuevo el botón para cerrar Doitall", Toast.LENGTH_SHORT);
+//     		toast.show();
+//     		isclosing = isclosing  +1;
+//			 return;
+//		 }
+//		
+//		 this.finish();
+//		 
+//	}
     
 	final class GetGraphTask extends AsyncTask<String, Void, String> {
 
 		private String consult;
 		private String resulting;
+		private String dataticket;
 		
+		public String getDataticket() {
+			return dataticket;
+		}
+
+		public void setDataticket(String dataticket) {
+			this.dataticket = dataticket;
+		}
+
+
+
+		private boolean addticket;
+		
+		public boolean isAddticket() {
+			return addticket;
+		}
+
+		public void setAddticket(boolean addticket) {
+			this.addticket = addticket;
+		}
+
 		public GetGraphTask(String c) {
 			
 	        super();
 	        consult = c;
+	        isclosing = 0;
 	    }
 		
 		 protected void onPreExecute() {
@@ -316,12 +372,6 @@ public class PrincipalActivity extends ActionBarActivity {
 			String urldisplay = urls[0];
 
 
-//			if ( true ) {
-//				resulting =  callPlainSAFETAPI(urldisplay);
-//				Log.d("Plain","Resulting" + resulting);
-//				return resulting;
-//				
-//			}
 
 			Log.d("mygraph","callPlainSAFETAPI...(1)");
 			urldisplay = urldisplay.replace("á", "%E1");
@@ -521,17 +571,19 @@ public class PrincipalActivity extends ActionBarActivity {
 
 	    	}
 	    	else if (consult.startsWith("ver_ticket")) {
-				Intent i = new 
-		                Intent("novo.apps.doitall.ViewTicketActivity");
-				
-				i.putExtra("resulting", resulting);
-				startActivity(i);
+	    		if (isAddticket() ) {
+					Intent i = new 
+			                Intent("novo.apps.doitall.ViewTicketActivity");
+					
+					i.putExtra("resulting", resulting);
+					startActivity(i);
+	    		}
+	    		else {
+	    			callPreListprojects(false,resulting);
+	    		}
 	    		
 	    	}
 	    	else if (consult.startsWith("agregar_ticket")) {
-//		    	Toast toast = Toast.makeText(getApplicationContext(), 
-//		    			"Cambio de estado realizado", Toast.LENGTH_SHORT);
-//		    	toast.show();
 	    		Log.d("ticket agregado",consult);
 		    	Toast toast = Toast.makeText(getApplicationContext(), 
 		    			"Tarea agregada", Toast.LENGTH_SHORT);
@@ -572,6 +624,15 @@ public class PrincipalActivity extends ActionBarActivity {
 		    			"Se modificó la fecha planeada de la tarea", Toast.LENGTH_SHORT);
 		    	adapter.notifyDataSetChanged();
 		    	toast.show();
+
+	    		String myconsultdel = PrincipalActivity.URL_API + "operacion:Listar_datos%20"+
+		    			"Cargar_archivo_flujo:%20"+currfile+"%20Variable:"+currreport
+		    			+PrincipalActivity.PARAMETER_BY_PROJECT
+		    			+PrincipalActivity.PARAMETER_BY_TYPE;
+		    			;
+
+		        new GetGraphTask("listar_ticket").execute(myconsultdel);
+
 		    	
 	    		
 	    	}
@@ -594,17 +655,8 @@ public class PrincipalActivity extends ActionBarActivity {
 		      }
 	    	else if (consult.contentEquals("listar_proyectos")) {
 				Log.d("**ButtonNew","executing addTicket");
-		        Intent i = new 
-		                Intent("novo.apps.doitall.AddTicketActivity");
 
-		        //---use putExtra() to add new key/value pairs---            
-		    	i.putExtra("projectlist", urlimage);	
-
-		    	i.putExtra("projects", projects);
-
-
-		        startActivityForResult(i, 2);
-
+				callAddTicketActivity(isAddticket(),getDataticket());
 	    	}
 	    	
 	    	else if (consult.contentEquals("para_filtro_listar_proyectos")) {
@@ -621,6 +673,22 @@ public class PrincipalActivity extends ActionBarActivity {
 	    	}
 	          
 	    }
+	}
+	
+	public void callAddTicketActivity(boolean addticket, String dataticket) {
+		
+        Intent i = new 
+                Intent("novo.apps.doitall.AddTicketActivity");
+
+        //---use putExtra() to add new key/value pairs---
+    	i.putExtra("projectlist", urlimage);		
+    	i.putExtra("projects", projects);
+    	i.putExtra("addticket", addticket);
+       	i.putExtra("dataticket", dataticket);
+
+
+        startActivityForResult(i, 2);
+		
 	}
 	
 	public void makeFilterProjectDialog() {
@@ -1056,8 +1124,35 @@ public class PrincipalActivity extends ActionBarActivity {
 
 		builder.setTitle(getString(R.string.select));
 		builder.setMessage(getString(R.string.modify_date_task));
+    	Calendar calendar = Calendar.getInstance();
+    	
+    	
+    	Log.d("makeModifyOptionsDialog", "Seltext:currentdate:" + currentdate);
+    	
+    	
+    	
+    	SimpleDateFormat sf = new SimpleDateFormat(PrincipalActivity.CURRENTDATEFORMAT);
 
+    	try {
+    		calendar.setTime(sf.parse(currentdate));
+    	}
+    	catch(Exception e){
+    		
+	    	Toast toast = Toast.makeText(getApplicationContext(), 
+	    			getString(R.string.error_dateparse), Toast.LENGTH_SHORT);
+
+	    	Log.d("Exception",e.getMessage());
+	    	
+    		return;
+    	}
+    	
+    	
+		
 		final DatePicker input = new DatePicker(this);
+    	Log.d("makeModifyOptionsDialog", "Seltext:year:" + String.valueOf(calendar.get(Calendar.YEAR)));
+    	input.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), 
+    			calendar.get(Calendar.DAY_OF_MONTH), null);
+
 		builder.setView(input);
 
 		builder.setPositiveButton(getString(R.string.yes_option), new DialogInterface.OnClickListener() {
@@ -1147,7 +1242,8 @@ public class PrincipalActivity extends ActionBarActivity {
 	
 	public AlertDialog makeTaskOptionsDialog(final Context context) {
 		final String[] option = new String[] {getString(R.string.change_status), 
-				getString(R.string.show_task), getString(R.string.delete_task), getString(R.string.modify_date_task) };
+				getString(R.string.show_task), getString(R.string.delete_task), getString(R.string.modify_date_task),
+				getString(R.string.modify_data_task) };
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.select_dialog_item, option);
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -1166,13 +1262,16 @@ public class PrincipalActivity extends ActionBarActivity {
 				break;
 				case 1: //Ver
 	
-					loadViewTicketActivity();
+					loadViewTicketActivity(true);
 					break;
 				case 2: // Elimina
 					makeDeleteOptionsDialog();
 					break;
-				case 3: // Modifica
+				case 3: // Modifica fecha de la tarea
 					makeModifyOptionsDialog();
+					break;
+				case 4: // Modifica datos de la tarea
+					loadViewTicketActivity(false);
 					break;
 					
 				default:
@@ -1185,7 +1284,7 @@ public class PrincipalActivity extends ActionBarActivity {
 		return builder.create();
 	}
 	
-    protected void loadViewTicketActivity() {
+    protected void loadViewTicketActivity(boolean addticket) {
 		// TODO Auto-generated method stub
         
 
@@ -1195,7 +1294,9 @@ public class PrincipalActivity extends ActionBarActivity {
 
     	Log.d("loadViewTicketActivity","myconsult:"+myconsult);
 
+    	
     	GetGraphTask mytask = new GetGraphTask("ver_ticket");
+    	mytask.setAddticket(addticket);
 
     	mytask.execute(myconsult);
 
@@ -1436,6 +1537,11 @@ public class PrincipalActivity extends ActionBarActivity {
 				TicketRecord ticket = (TicketRecord) listtickets.getItemAtPosition(position);
 				String idticket = ticket.getId();
 				currentticket = idticket;
+				currentdate = ticket.getTentativedate();
+				
+				Log.d("Selecting","IdTicket:|" + currentticket + "|");
+				Log.d("Selecting","Tentativedate:|" + currentdate + "|");
+				
 				task_dialog = makeTaskOptionsDialog(view.getContext());
 				task_dialog.show();
 				
@@ -1477,16 +1583,8 @@ public class PrincipalActivity extends ActionBarActivity {
 		newticketbutton.setOnClickListener(new OnClickListener() {					
 			@Override
 			public void onClick(View view) {
-				String myconsult = PrincipalActivity.URL_API 
-						+ "operacion:Listar_datos%20Cargar_archivo_flujo:/home/panelapp/.safet/flowfiles/proyectos.xml"+
-		    			"%20Variable:vProyectos";
 
-		    	GetGraphTask mytask = new GetGraphTask("listar_proyectos");
-		    	
-		    	mytask.execute(myconsult);
-		    	
-
-							
+				callPreListprojects(true,"");
 			}
 		});
 		
@@ -1507,6 +1605,19 @@ public class PrincipalActivity extends ActionBarActivity {
 		
 	}
 
+    public void callPreListprojects(boolean addticket, String dataticket) {
+		String myconsult = PrincipalActivity.URL_API 
+				+ "operacion:Listar_datos%20Cargar_archivo_flujo:/home/panelapp/.safet/flowfiles/proyectos.xml"+
+    			"%20Variable:vProyectos";
+
+    	GetGraphTask mytask = new GetGraphTask("listar_proyectos");
+
+    	mytask.setDataticket(dataticket);
+    	mytask.setAddticket(addticket);
+    	mytask.execute(myconsult);
+    	
+
+    }
 
 	public void onActivityResult(int requestCode, 
             int resultCode, Intent data)
@@ -1520,23 +1631,15 @@ public class PrincipalActivity extends ActionBarActivity {
         	adapter.notifyDataSetChanged();
             //---if the result is OK--- 
             if (resultCode == RESULT_OK) {
-
-                //---get the result using getIntExtra()---
-//                Toast.makeText(this, Integer.toString(
-//                        data.getIntExtra("age3", 0)), 
-//                        Toast.LENGTH_SHORT).show();      
-//
-//                //---get the result using getData()---
-//                Uri url = data.getData();
-//                Toast.makeText(this, url.toString(), 
-//                        Toast.LENGTH_SHORT).show();
             }            
         }
         else if (requestCode == 2) {
         	if (resultCode == 3) {
         		
         		String urlform = PrincipalActivity.URLFORM_API + data.getStringExtra("urlform");
-        		Log.d("OnActivityResult...","Principal");
+        		Log.d("OnActivityResult...","*Principal");
+        		
+        		Log.d("urlform...",urlform);
             	GetGraphTask mytask = new GetGraphTask("agregar_ticket");
             	mytask.execute(urlform);
             	
@@ -1633,6 +1736,14 @@ public class PrincipalActivity extends ActionBarActivity {
 			makeDeleteDataConnectDialog();
 			
 		}
+		else if (id == R.id.help_action_link) {
+			 Intent intent = new Intent();
+			 intent.setAction(Intent.ACTION_VIEW);
+			 intent.addCategory(Intent.CATEGORY_BROWSABLE);
+			 intent.setData(Uri.parse("https://github.com/victorrbravo/doitall/wiki/Ayuda-de-Doitall"));
+			 startActivity(intent);
+			
+		}
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -1662,7 +1773,7 @@ public class PrincipalActivity extends ActionBarActivity {
     	}
     	long dv = Long.valueOf(epoch)*1000;// its need to be in milisecond
     	Date df = new java.util.Date(dv);
-    	result = new SimpleDateFormat("dd/MMM/yyyy hh:mma").format(df);
+    	result = new SimpleDateFormat(PrincipalActivity.CURRENTDATEFORMAT).format(df);
     	
     	return result;
     	

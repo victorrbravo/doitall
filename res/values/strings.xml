@@ -20,7 +20,11 @@
     <string name="change_status">Cambia estado de tarea</string>
     <string name="show_task">Ver tarea</string>
     <string name="delete_task">Eliminar tarea</string>
-    <string name="modify_date_task">Nueva fecha de la tarea</string>
+    <string name="error_dataticket">Ocurrió un error al procesar la información de la tarea</string>
+    <string name="modify_date_task">Cambiar fecha de la tarea</string>
+    <string name="ocurr_error">Ocurrió un error:</string>
+    <string name="error_dateparse">Ocurrió un error al tratar de leer la fecha</string>
+   <string name="modify_data_task">Modificar datos de la tarea</string>
     <string name="add_project_name">Nombre del proyecto a agregar</string>
     <string name="delete_project_dialog">Nombre del proyecto a eliminar</string>
     <string name="filter_project_dialog">Filtrar por proyecto</string>
@@ -47,10 +51,10 @@
     <string name="finished">Finalizadas</string>
     <string name="nocomplete">sin completar</string>    
     <string name="planned">Planificado:</string>    
+    <string name="help_action">Cómo usar doitall</string>
     <string name="delete_data_connect">Borrar datos de conexión</string>
     <string name="ask_delete_data_connect">¿Está seguro de eliminar los datos de recordación de conexión?</string>
-    <string name="need_refresh">Necesita presionar el botón de refrescamiento o gráfico para aplicar el filtro seleccionado</string>
-   
+    <string name="need_refresh">Necesita presionar el botón de refrescamiento o gráfico para aplicar el filtro seleccionado</string>   
         <string name="completed_after_week">Semana anterior (Completadas)</string>
         <string name="completed_this_week">Esta semana (Completadas)</string>
     

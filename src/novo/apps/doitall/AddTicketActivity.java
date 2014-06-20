@@ -9,7 +9,7 @@ import java.net.URL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
+
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -18,7 +18,6 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import novo.apps.doitall.PrincipalActivity.GetGraphTask;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -38,13 +37,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -60,23 +63,37 @@ public class AddTicketActivity extends Activity {
     private String urlimage;
     private ArrayList<ProjectRecord> projects;
     private String urlform;
+    private String dataticket;
+    private String currentticket;
     private Spinner myselect;
     private DatePicker tentativepicker;
     private ProgressDialog progress;
     ArrayList<String> states;
 	ArrayAdapter<String> myadapter;
+	private boolean addticket;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
+    	
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_ticket);
+        currentticket = "0";
+        
         projects = (ArrayList<ProjectRecord>) getIntent().getSerializableExtra("projects");
 
         tentativepicker = (DatePicker) findViewById(R.id.tentativedate);
         
+        
+        addticket = getIntent().getBooleanExtra("addticket",true);
+        
+        
+        dataticket = getIntent().getStringExtra("dataticket");
+        
+                
         //tentativepicker.setCalendarViewShown(true);
         
         Log.d("projects AddTicket",String.valueOf(projects.size()));
+
 
         myselect = (Spinner) findViewById(R.id.selectproject);
         states = new ArrayList<String>();
@@ -94,9 +111,8 @@ public class AddTicketActivity extends Activity {
 		myadapter.notifyDataSetChanged();
 		
 		
-		urlform = "operacion:agregar_ticket%20resumen:";
 		
-		 
+				 
 		progress = new ProgressDialog(this);
 	
 		addListenerButton();
@@ -426,8 +442,32 @@ public class AddTicketActivity extends Activity {
     
     
     private void addListenerButton() {
-		ImageButton addbutton = (ImageButton) findViewById(R.id.buttonaddproject);
+
+		Button buttonclose = (Button) findViewById(R.id.buttonclose);
+		
+		if (!addticket) {
+			
+			buttonclose.setText("Modificar");
+//	        Log.d("dataticket",dataticket);
+//	    	Toast toast = Toast.makeText(getApplicationContext(), 
+//	    			dataticket, Toast.LENGTH_SHORT);
+//	    	toast.show();
+			processDataticket();
+			urlform = "operacion:modificar_ticket%20id:";
+			Log.d("AddTicket","No");
+
+		}
+		else {
+			Log.d("AddTicket","Yes");
+			urlform = "operacion:agregar_ticket%20resumen:";
+			buttonclose.setText("Agregar");
+		}
+
+		Log.d("urlfom",urlform);
+    	ImageButton addbutton = (ImageButton) findViewById(R.id.buttonaddproject);
 		ImageButton delbutton = (ImageButton) findViewById(R.id.buttondeleteproject);
+		
+			
 		
 		addbutton.setOnClickListener(new OnClickListener() {
 						
@@ -453,6 +493,95 @@ public class AddTicketActivity extends Activity {
     	
     }
 
+    private void processDataticket() {
+        EditText summary = (EditText) findViewById(R.id.summary);
+        EditText desc = (EditText) findViewById(R.id.desc);
+        Spinner typeproject = (Spinner) findViewById(R.id.selectproject);
+        Spinner typeticket = (Spinner) findViewById(R.id.selecttypeticket);
+    	
+        try {	
+        	JSONObject jall = new JSONObject(dataticket);
+
+        	JSONArray jArray = jall.getJSONArray("safetlist");
+        	if (jArray.length() == 0) {
+        		Toast toast = Toast.makeText(getApplicationContext(), 
+        				getString(R.string.error_dataticket), Toast.LENGTH_SHORT);
+        		toast.show();			
+        		return;
+        	}
+
+
+
+        	JSONObject json_data = jArray.getJSONObject(0);
+        	currentticket = json_data.getString("id");
+        	String summtext = json_data.getString("resumen");
+        	summary.setText(summtext);
+        	String descriptiontext = json_data.getString("descripcion");
+        	desc.setText(descriptiontext);
+
+        	ArrayAdapter<String> array_spinner=(ArrayAdapter<String>)typeproject.getAdapter();
+        	typeproject.setSelection(array_spinner.getPosition(json_data.getString("proyecto")));
+
+        	ArrayAdapter<String> array_spinner1=(ArrayAdapter<String>)typeticket.getAdapter();
+        	typeticket.setSelection(array_spinner1.getPosition(json_data.getString("tipo")));
+
+        	Calendar calendar = Calendar.getInstance();
+        	
+        	
+        	String tentativedate = json_data.getString("tentativedate");
+        	Log.d("ModifyTicket", "Seltext:tentativedate:" + tentativedate);
+        	
+        	
+        	long  seldate = Integer.valueOf(tentativedate);
+        	
+        	seldate = seldate*1000;
+        	Log.d("ModifyTicket", "Seltext:seldate:" + String.valueOf(seldate));
+        	calendar.setTimeInMillis(seldate);
+        	
+        	Log.d("ModifyTicket", "Seltext:year:" + String.valueOf(calendar.get(Calendar.YEAR)));
+        	tentativepicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), 
+        			calendar.get(Calendar.DAY_OF_MONTH), null);
+        	//tentativepicker.setCa
+        	
+
+        	//String summary = URLDecoder.decode(json_data.getString("resumen"), "UTF-8");
+        	//				SpannableString spanString = new SpannableString("Resumen: " + );
+        	//				spanString.setSpan(new StyleSpan(Typeface.BOLD), 0, 8, 0);				
+        	//				summary.setText(spanString);
+        	//				spanString = new SpannableString("Descripción: " + json_data.getString("descripcion"));
+        	//				spanString.setSpan(new StyleSpan(Typeface.BOLD), 0, 12, 0);
+        	//				desc.setText(spanString);
+        	//				spanString = new SpannableString("Tipo de tarea: " + json_data.getString("tipo"));
+        	//				spanString.setSpan(new StyleSpan(Typeface.BOLD), 0, 13, 0);				
+        	//				type.setText(spanString);
+        	//				spanString = new SpannableString("Proyecto al que pertenece: " + json_data.getString("proyecto"));
+        	//				spanString.setSpan(new StyleSpan(Typeface.BOLD), 0, 25, 0);								
+        	//				project.setText(spanString);
+        	//				spanString = new SpannableString("Estado de la tarea: " + json_data.getString("status"));
+        	//				spanString.setSpan(new StyleSpan(Typeface.BOLD), 0, 18, 0);												
+        	//				status.setText(spanString);
+        	//				spanString = new SpannableString("Propietario: " + json_data.getString("propietario"));
+        	//				spanString.setSpan(new StyleSpan(Typeface.BOLD), 0, 12, 0);																
+        	//				owner.setText(spanString);
+        	//				spanString = new SpannableString("Fecha planificada:" 
+        	//						+ PrincipalActivity.convertDateEpochToFormat(json_data.getString("tentativedate")));
+        	//				spanString.setSpan(new StyleSpan(Typeface.BOLD), 0, 17, 0);																
+        	//				
+        	//				tentative.setText(spanString);
+
+
+        } catch(Exception e) {
+        	Log.e("JSON", "Ocurrio un error:"+ e.toString());
+    		Toast toast = Toast.makeText(getApplicationContext(), 
+    				getString(R.string.ocurr_error)+e.getMessage(), Toast.LENGTH_SHORT);
+    		toast.show();			
+        	
+        	//e.printStackTrace();
+
+        }
+
+
+    }
         
     public void onClick(View view) {
         //---use an Intent object to return data---
@@ -489,7 +618,12 @@ public class AddTicketActivity extends Activity {
 	    	return;
 
         }
+        if (!addticket) {
+        	urlform = urlform + currentticket+ "%20resumen:";
+        }
+        
         urlform = urlform + mysummary;
+        
         String mydesc = desc.getText().toString().trim();
         if (!mydesc.isEmpty()) {
         		urlform = urlform + "%20descripcion:" + mydesc;
@@ -517,12 +651,14 @@ public class AddTicketActivity extends Activity {
         Log.d("addTicket urlform", urlform);
         
         
+        
         i.putExtra("urlform", urlform);
 
         //---set the result with OK and the Intent object---
         
-        setResult(3, i);   
-        
+           
+        Log.d("urlform",urlform);
+        setResult(3, i);
         finish();
     }    
     public void onClickCancel(View view) {
