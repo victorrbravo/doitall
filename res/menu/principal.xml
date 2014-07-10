@@ -16,10 +16,16 @@
         android:orderInCategory="100"
         android:title="@string/delete_data_connect"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/disable_projects"
+        android:orderInCategory="100"
+        android:title="@string/disable_projects"
+        app:showAsAction="never"/>
     
     <item
         android:id="@+id/help_action_link"
         android:orderInCategory="100"
+        android:title="ayuda"
         android:icon="@drawable/ic_action_help"
         app:showAsAction="always"/>
     

@@ -72,6 +72,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
@@ -109,12 +110,12 @@ public class PrincipalActivity extends ActionBarActivity {
 	private ArrayList<String>  newstates;
 
 	
-	public static String URL_SERVER = "http://XXXX/intranet/register";
-	public static String URL_SERVER_LOGIN = "http://XXXX/intranet/login";
-	public static String FIRST_URL_GRAPH = "http://XXXXX/media/";
-	public static String FIRST_URL_API = "http://XXXX/intranet/api/";
-	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=panelapp&accion=";
-	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=panelapp&accion=";
+	public static String URL_SERVER = "http://XXXXX/intranet/register";
+	public static String URL_SERVER_LOGIN = "http://XXXXXX/intranet/login";
+	public static String FIRST_URL_GRAPH = "http://XXXXXXX/media/";
+	public static String FIRST_URL_API = "http://XXXXXX/intranet/api/";
+	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=paneltest&accion=";
+	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=paneltest&accion=";
 	
 	public static String PARAMETER_BY_PROJECT;
 	public static String PARAMETER_BY_TYPE;
@@ -232,7 +233,8 @@ public class PrincipalActivity extends ActionBarActivity {
 //		 this.finish();
 //		 
 //	}
-    
+    	
+	
 	final class GetGraphTask extends AsyncTask<String, Void, String> {
 
 		private String consult;
@@ -703,8 +705,10 @@ public class PrincipalActivity extends ActionBarActivity {
 			mylist.add(projects.get(i).getTitle());
 		}		 
 		
-		ArrayAdapter<String> myadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,mylist);
+		//ArrayAdapter<String> myadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,mylist);
 
+		ArrayAdapter<String> myadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice,mylist);
+		
 		input.setAdapter(myadapter);
 		myadapter.notifyDataSetChanged();
 		
@@ -861,33 +865,33 @@ public class PrincipalActivity extends ActionBarActivity {
 				String myconsult = "";
 				Spinner typegraph = (Spinner) dialog.findViewById(R.id.graphtype);
 				if (typegraph.getSelectedItemPosition() == 0 ) {
-					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratres.xml"
+					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/paneltest/.safet/flowfiles/carteleratres.xml"
 							+PrincipalActivity.PARAMETER_BY_PROJECT
 							+PrincipalActivity.PARAMETER_BY_TYPE;
 				}
 				else if (typegraph.getSelectedItemPosition() == 1 ) {
-					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleraproximos.xml"
+					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/paneltest/.safet/flowfiles/carteleraproximos.xml"
 							+PrincipalActivity.PARAMETER_BY_PROJECT
 							+PrincipalActivity.PARAMETER_BY_TYPE;
 				}
 				else if (typegraph.getSelectedItemPosition() == 2 ) {
-					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerapormes.xml"
+					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/paneltest/.safet/flowfiles/cartelerapormes.xml"
 							+PrincipalActivity.PARAMETER_BY_PROJECT
 							+PrincipalActivity.PARAMETER_BY_TYPE;
 				}
 				else if (typegraph.getSelectedItemPosition() == 3 ) {
-					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerafinalizadosporsemana.xml"
+					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/paneltest/.safet/flowfiles/cartelerafinalizadosporsemana.xml"
 							+PrincipalActivity.PARAMETER_BY_PROJECT
 							+PrincipalActivity.PARAMETER_BY_TYPE;
 				}
 				else if (typegraph.getSelectedItemPosition() == 4 ) {
-					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerafinalizados.xml"
+					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/paneltest/.safet/flowfiles/cartelerafinalizados.xml"
 							+PrincipalActivity.PARAMETER_BY_PROJECT
 							+PrincipalActivity.PARAMETER_BY_TYPE;
 				}
 				else if (typegraph.getSelectedItemPosition() == 5 ) {
 					myconsult = PrincipalActivity.URL_API +
-							"operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratodos.xml%20Autofiltro:%20por_proyecto";
+							"operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/paneltest/.safet/flowfiles/carteleratodos.xml%20Autofiltro:%20por_proyecto";
 				}
 				
 				else {
@@ -929,7 +933,7 @@ public class PrincipalActivity extends ActionBarActivity {
 			Log.d("boxproject","entering...1");
 			
 			String myconsult = PrincipalActivity.URL_API 
-					+ "operacion:Listar_datos%20Cargar_archivo_flujo:/home/panelapp/.safet/flowfiles/proyectos.xml"+
+					+ "operacion:Listar_datos%20Cargar_archivo_flujo:/home/paneltest/.safet/flowfiles/proyectos.xml"+
 	    			"%20Variable:vProyectos";
 
 	    	GetGraphTask mytask = new GetGraphTask("para_filtro_listar_proyectos");
@@ -1289,7 +1293,7 @@ public class PrincipalActivity extends ActionBarActivity {
         
 
     	String myconsult = PrincipalActivity.URL_API + "operacion:Listar_datos%20"+
-    			"Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratodos.xml%20Variable:vTodas_las_tareas"
+    			"Cargar_archivo_flujo:%20/home/paneltest/.safet/flowfiles/carteleratodos.xml%20Variable:vTodas_las_tareas"
     			+"%20parameters.nro_ticket:"+currentticket;
 
     	Log.d("loadViewTicketActivity","myconsult:"+myconsult);
@@ -1307,23 +1311,29 @@ public class PrincipalActivity extends ActionBarActivity {
 
 	public void loadSafetReport(String report) {
     	currreport = "vPor_hacer";
-    	currfile = "/home/panelapp/.safet/flowfiles/carteleratres.xml";
+    	currfile = "/home/paneltest/.safet/flowfiles/carteleratres.xml";
     	
     	Log.d("Spinner","2:|" + report+"|");
     	if ( report.contentEquals("En progreso")) {
     		Log.d("Spinner","3:" + report);
     		currreport = "vProgress";
     	}
-    	else if (report.contentEquals("Pospuestos") ) {
+    	else if (report.contentEquals("Pospuestas") ) {
     		currreport = "vPostponed";	
     	}
     	else if (report.contentEquals(getString(R.string.completed_this_week)) ) {
     		currreport = "vEsta_semana";	
-    		currfile = "/home/panelapp/.safet/flowfiles/cartelerafinalizadosporsemana.xml";
+    		currfile = "/home/paneltest/.safet/flowfiles/cartelerafinalizadosporsemana.xml";
     	}
+    	else if (report.contentEquals(getString(R.string.completed_after_week)) ) {
+    		currreport = "vSemana_anterior";	
+    		currfile = "/home/paneltest/.safet/flowfiles/cartelerafinalizadosporsemana.xml";
+    	}
+    	
     	else if (report.contentEquals(getString(R.string.all_tickets)) ) {
+    		
     		currreport = "Todos";	
-    		currfile = "/home/panelapp/.safet/flowfiles/cartelerabusqueda.xml";
+    		currfile = "/home/paneltest/.safet/flowfiles/cartelerabusqueda.xml";
     	}
     	
     	else if (report.contentEquals(getString(R.string.delayed)))  {
@@ -1332,37 +1342,37 @@ public class PrincipalActivity extends ActionBarActivity {
     	
     	else if (report.contentEquals(getString(R.string.next_week)) ) {
     		Log.d("loadSafetReport","nextweek");
-    		currfile = "/home/panelapp/.safet/flowfiles/carteleraproximos.xml";
+    		currfile = "/home/paneltest/.safet/flowfiles/carteleraproximos.xml";
     		currreport = "vProxima_semana";
     		
     	}
     	else if (report.contentEquals(getString(R.string.this_week)) ) {
     		Log.d("loadSafetReport","nextweek");
-    		currfile = "/home/panelapp/.safet/flowfiles/carteleraproximos.xml";
+    		currfile = "/home/paneltest/.safet/flowfiles/carteleraproximos.xml";
     		currreport = "vEsta_semana";
     		
     	}
     	else if (report.contentEquals(getString(R.string.this_month)) ) {
     		Log.d("loadSafetReport","nextweek");
-    		currfile = "/home/panelapp/.safet/flowfiles/cartelerapormes.xml";
+    		currfile = "/home/paneltest/.safet/flowfiles/cartelerapormes.xml";
     		currreport = "vEste_mes";
     		
     	}
     	else if (report.contentEquals(getString(R.string.next_month)) ) {
     		Log.d("loadSafetReport","nextweek");
-    		currfile = "/home/panelapp/.safet/flowfiles/cartelerapormes.xml";
+    		currfile = "/home/paneltest/.safet/flowfiles/cartelerapormes.xml";
     		currreport = "vProximo_mes";
     		
     	}
     	else if (report.contentEquals(getString(R.string.after_month)) ) {
     		Log.d("loadSafetReport","nextweek");
-    		currfile = "/home/panelapp/.safet/flowfiles/cartelerapormes.xml";
+    		currfile = "/home/paneltest/.safet/flowfiles/cartelerapormes.xml";
     		currreport = "vSuperior_proximo_mes";
     		
     	}
     	else if (report.contentEquals(getString(R.string.after_week)) ) {
     		Log.d("loadSafetReport","nextweek");
-    		currfile = "/home/panelapp/.safet/flowfiles/carteleraproximos.xml";
+    		currfile = "/home/paneltest/.safet/flowfiles/carteleraproximos.xml";
     		currreport = "vSuperior_proxima_semana";    		
     	}
 
@@ -1516,7 +1526,7 @@ public class PrincipalActivity extends ActionBarActivity {
 		
 		String myconsult = PrincipalActivity.URL_API +
 		"operacion:Siguientes_estados%20Cargar_archivo_flujo:"+
-				"/home/panelapp/.safet/flowfiles/carteleratresf.xml%20Clave:" + currentticket;
+				"/home/paneltest/.safet/flowfiles/carteleratresf.xml%20Clave:" + currentticket;
 
 		Log.d("changeStatusTask..myconsult:",myconsult);
 		
@@ -1607,7 +1617,7 @@ public class PrincipalActivity extends ActionBarActivity {
 
     public void callPreListprojects(boolean addticket, String dataticket) {
 		String myconsult = PrincipalActivity.URL_API 
-				+ "operacion:Listar_datos%20Cargar_archivo_flujo:/home/panelapp/.safet/flowfiles/proyectos.xml"+
+				+ "operacion:Listar_datos%20Cargar_archivo_flujo:/home/paneltest/.safet/flowfiles/proyectos.xml"+
     			"%20Variable:vProyectos";
 
     	GetGraphTask mytask = new GetGraphTask("listar_proyectos");
@@ -1694,7 +1704,7 @@ public class PrincipalActivity extends ActionBarActivity {
 
 	            Log.d("Search","Search (4)");
 
-	            currfile = "/home/panelapp/.safet/flowfiles/cartelerabusqueda.xml";
+	            currfile = "/home/paneltest/.safet/flowfiles/cartelerabusqueda.xml";
 	            currreport = "vBusqueda";
 	            String newquery = query.replace(" ","%20");
 				PrincipalActivity.PARAMETER_BY_SEARCH = "%20parameters.ByPattern:" + newquery;

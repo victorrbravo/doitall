@@ -52,6 +52,7 @@
     <string name="nocomplete">sin completar</string>    
     <string name="planned">Planificado:</string>    
     <string name="help_action">Cómo usar doitall</string>
+    <string name="disable_projects">Desactivar proyectos</string>
     <string name="delete_data_connect">Borrar datos de conexión</string>
     <string name="ask_delete_data_connect">¿Está seguro de eliminar los datos de recordación de conexión?</string>
     <string name="need_refresh">Necesita presionar el botón de refrescamiento o gráfico para aplicar el filtro seleccionado</string>   

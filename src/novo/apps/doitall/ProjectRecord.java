@@ -11,8 +11,19 @@ public class ProjectRecord implements Serializable {
 	private String title;
 	private String description;
 	private String type;
+	private boolean selected;
 	
 	
+	public boolean isSelected() {
+		return selected;
+	}
+
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
+
+
 	ProjectRecord() {
 		Log.d("ProjectRecord 1","ProjectRecord 1");
 	}

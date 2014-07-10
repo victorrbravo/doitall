@@ -8,7 +8,7 @@
    
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"            
+            android:layout_height="wrap_content"            
             android:orientation="vertical" >
             
             <LinearLayout
@@ -38,15 +38,16 @@
                
                   
                   
-<ToggleButton
-        android:layout_width="wrap_content"
+<ToggleButton        
         android:id="@+id/toggleProject"
-        android:layout_height="wrap_content"        
-        android:layout_margin="10dp"
-        android:background="@drawable/checkp"
+        android:layout_height="wrap_content"
+		android:layout_width="wrap_content"       
+        android:background="@null"
+	    android:drawableRight="@drawable/checkp"
         android:textOn=""
         android:textOff=""
         android:focusable="false"
+          android:paddingLeft="5dp"
         android:onClick="onClickedProject"
         android:focusableInTouchMode="false"
         android:layout_centerVertical="true"/>
@@ -55,8 +56,9 @@
         android:id="@+id/toggleType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/checkt"
-        android:layout_margin="10dp"
+        android:background="@null"
+        android:paddingLeft="5dp"
+	    android:drawableRight="@drawable/checkt"        
         android:textOn=""
         android:textOff=""
         android:focusable="false"
@@ -64,6 +66,19 @@
         android:focusableInTouchMode="false"
         android:layout_centerVertical="true"/>
                           
+<ToggleButton 
+        android:id="@+id/toggleDateFrom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:paddingLeft="5dp"
+	    android:drawableRight="@drawable/checkd"        
+        android:textOn=""
+        android:textOff=""
+        android:focusable="false"
+    android:onClick="onClickedType"
+        android:focusableInTouchMode="false"
+        android:layout_centerVertical="true"/>
                   
              
             </LinearLayout>
