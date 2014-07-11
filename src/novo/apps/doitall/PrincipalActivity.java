@@ -111,9 +111,9 @@ public class PrincipalActivity extends ActionBarActivity {
 
 	
 	public static String URL_SERVER = "http://XXXXX/intranet/register";
-	public static String URL_SERVER_LOGIN = "http://XXXXXX/intranet/login";
-	public static String FIRST_URL_GRAPH = "http://XXXXXXX/media/";
-	public static String FIRST_URL_API = "http://XXXXXX/intranet/api/";
+	public static String URL_SERVER_LOGIN = "http://XXXXX/intranet/login";
+	public static String FIRST_URL_GRAPH = "http://XXXXXX/media/";
+	public static String FIRST_URL_API = "http://XXXXXXX/intranet/api/";
 	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=paneltest&accion=";
 	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=paneltest&accion=";
 	
@@ -199,11 +199,13 @@ public class PrincipalActivity extends ActionBarActivity {
 		}
 		tickets = new ArrayList<TicketRecord>();
 		projects = new ArrayList<ProjectRecord>();
+		Log.d("Advance","1");
 		adapter = 
 	            new AdvancedCustomArrayAdapter(this);
+		Log.d("Advance","2");
 		listtickets = (ListView) findViewById(R.id.listTasks);
 		listtickets.setAdapter(adapter);
-
+		Log.d("Advance","3");
 		progress = new ProgressDialog(this);
 
 		
@@ -707,8 +709,10 @@ public class PrincipalActivity extends ActionBarActivity {
 		
 		//ArrayAdapter<String> myadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,mylist);
 
-		ArrayAdapter<String> myadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice,mylist);
+		//ArrayAdapter<String> myadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice,mylist);
 		
+		ProjectAdapter myadapter = new ProjectAdapter(this);
+		myadapter.setProjects(projects);
 		input.setAdapter(myadapter);
 		myadapter.notifyDataSetChanged();
 		

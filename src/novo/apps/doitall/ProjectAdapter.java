@@ -10,27 +10,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.content.*;
-public class AdvancedCustomArrayAdapter extends BaseAdapter {
-    private final Activity context;
-    private  ArrayList<TicketRecord> tickets;
 
-    public AdvancedCustomArrayAdapter(Activity context) {        
+
+public class ProjectAdapter extends BaseAdapter {
+    private final Activity context;
+    private  ArrayList<ProjectRecord> projects;
+
+    public ProjectAdapter(Activity context) {        
        this.context = context;   
     }
 
-    static class ViewContainer {
-        public ImageView imageView;
-        public TextView txtTitle;
-        public TextView txtDescription;
+    static class ViewContainer1 {
         public TextView txtProject;
-        public TextView txtTentativeDate;
+        public CheckBox selected;
     }
-    
-    public void setTickets(ArrayList<TicketRecord> t) {
-    	tickets = t;
+    public void setProjects(ArrayList<ProjectRecord> t) {
+    	projects = t;
     }
     
     
@@ -38,7 +37,7 @@ public class AdvancedCustomArrayAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup parent) {
-        ViewContainer viewContainer;
+        ViewContainer1 viewContainer;
         View rowView = view;
 
         //---print the index of the row to examine---
@@ -50,24 +49,17 @@ public class AdvancedCustomArrayAdapter extends BaseAdapter {
             Log.d("CustomArrayAdapter", "New");
             
             LayoutInflater inflater = context.getLayoutInflater();
-            rowView = inflater.inflate(R.layout.lvrowlayout2, null, true);
+            rowView = inflater.inflate(R.layout.checkrow, null, true);
 
             //---create a view container object---
-            viewContainer = new ViewContainer();        
+            viewContainer = new ViewContainer1();        
 
             //---get the references to all the views in the row---
-            viewContainer.txtTitle = (TextView) 
-                rowView.findViewById(R.id.txtPresidentName); 
-            viewContainer.txtDescription = (TextView) 
-                rowView.findViewById(R.id.txtDescription); 
-            viewContainer.imageView = (ImageView) rowView.findViewById(R.id.icon);
-            viewContainer.txtTentativeDate = (TextView) 
-                    rowView.findViewById(R.id.tentativedatename); 
-            
-
             viewContainer.txtProject = (TextView) 
-                    rowView.findViewById(R.id.projectname); 
-
+                rowView.findViewById(R.id.labelproject); 
+            viewContainer.selected = (CheckBox) 
+                rowView.findViewById(R.id.checkproject); 
+            
             //---assign the view container to the rowView---
             rowView.setTag(viewContainer);
         } else { 
@@ -77,25 +69,15 @@ public class AdvancedCustomArrayAdapter extends BaseAdapter {
             //---retrieve the previously assigned tag to get
             // a reference to all the views; bypass the findViewByID() process,
             // which is computationally expensive---
-            viewContainer = (ViewContainer) rowView.getTag();
+            viewContainer = (ViewContainer1) rowView.getTag();
         }
 
-        if ( tickets.get(position).getStatus().contentEquals("Finished")) {
-        	viewContainer.imageView.setImageResource(R.drawable.closefolder);
-        }
-        else {
-        	viewContainer.imageView.setImageResource(R.drawable.yellowsoftware);
-        	
-        	
-        }
-        //---customize the content of each row based on position---
-        viewContainer.txtTitle.setText(tickets.get(position).getSummary());
         
-        viewContainer.txtDescription.setText(tickets.get(position).getDescription());
-        viewContainer.txtProject.setText(tickets.get(position).getTentativedate()+" - " + 
-        tickets.get(position).getFinishdate());
-        viewContainer.txtTentativeDate.setText(tickets.get(position).getProject());
-
+        //---customize the content of each row based on position---
+        viewContainer.txtProject.setText(projects.get(position).getTitle());
+        
+        viewContainer.selected.setChecked(projects.get(position).isSelected());
+       
        // viewContainer.txtDescription.setText(presidents[position] + 
        //     " ...Some descriptions here...");
         //viewContainer.imageView.setImageResource(imageIds[position]);
@@ -108,10 +90,10 @@ public class AdvancedCustomArrayAdapter extends BaseAdapter {
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub
-		if (tickets == null ) 
+		if (projects == null ) 
 			return 0;
 		
-		return tickets.size();
+		return projects.size();
 	}
 
 
@@ -120,10 +102,10 @@ public class AdvancedCustomArrayAdapter extends BaseAdapter {
 	@Override
 	public Object getItem(int position) {
 		// TODO Auto-generated method stub
-		if (tickets == null ) 
+		if (projects == null ) 
 			return null;
 
-		return tickets.get(position);
+		return projects.get(position);
 	}
 
 
