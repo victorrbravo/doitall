@@ -65,7 +65,7 @@ public class SecondActivity extends Activity {
 
 		 protected void onPreExecute() {
 			  progress.setMessage(getString(R.string.downloading));
-		      progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		      progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		      progress.setIndeterminate(true);
 		      progress.show();
            

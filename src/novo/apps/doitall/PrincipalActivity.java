@@ -110,23 +110,26 @@ public class PrincipalActivity extends ActionBarActivity {
 	private ArrayList<String>  newstates;
 
 	
-	public static String URL_SERVER = "http://XXXXX/intranet/register";
-	public static String URL_SERVER_LOGIN = "http://XXXXX/intranet/login";
+	public static String URL_SERVER = "http://XXXXXX/intranet/register";
+	public static String URL_SERVER_LOGIN = "http://XXXXXX/intranet/login";
 	public static String FIRST_URL_GRAPH = "http://XXXXXX/media/";
-	public static String FIRST_URL_API = "http://XXXXXXX/intranet/api/";
-	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=paneltest&accion=";
-	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=paneltest&accion=";
+	public static String FIRST_URL_API = "http://XXXXXX/intranet/api/";
+	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=panelapp&accion=";
+	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=panelapp&accion=";
 	
 	public static String PARAMETER_BY_PROJECT;
 	public static String PARAMETER_BY_TYPE;
+	public static String PARAMETER_BY_DATE1;
 	public static String PARAMETER_BY_SEARCH;
 	public static String DESCRIPTION_PROJECT_PARAMS;
 	public static String DESCRIPTION_TYPE_PARAMS;
+	public static String DESCRIPTION_DATE1_PARAMS;
 	
 	public static int isclosing;
 	public static String URL_API; 			
 	public static String URLFORM_API;
 	public static final String CURRENTDATEFORMAT = "dd/MMM/yyyy hh:mma";
+	public static final String ONLYDATEFORMAT = "dd/MMM/yyyy";
 	Map<String, String> usersmap;
 			
 
@@ -136,19 +139,15 @@ public class PrincipalActivity extends ActionBarActivity {
 		
 		PARAMETER_BY_PROJECT = "";
 		PARAMETER_BY_TYPE = "";		
+		PARAMETER_BY_DATE1 = "";		
 		PARAMETER_BY_SEARCH = "";
 		DESCRIPTION_PROJECT_PARAMS = "";
 		DESCRIPTION_TYPE_PARAMS = "";
+		DESCRIPTION_DATE1_PARAMS = "";
 		
 		isclosing = 0;
 		Log.d("PrincipalActivity","OnCreate");
 		usersmap = new HashMap<String, String>();		
-//		usersmap.put("vbravo", "f3bf4ca25e666d70d6f847b87f448fefba5f2fda");
-		usersmap.put("ssole", "aa004ca25e666d70d6f847b87f448fefba5f2aa0");
-		usersmap.put("goapps0", "bb004ca25e666d70d6f847b87f448fefba5fbb00");
-		usersmap.put("goapps1", "bb004ca25e666d70d6f847b87f448fefba5fcc00");		
-		usersmap.put("goapps2", "bb004ca25e666d70d6f847b87f448fefba5fdd00");
-	//	 usersmap.put("mlara","d893b97f6944b2fe1de3f014d34104c3b2cdfbe3");
 		
 		 actionbar = getSupportActionBar();
 		 actionbar.setHomeButtonEnabled(true);
@@ -207,10 +206,14 @@ public class PrincipalActivity extends ActionBarActivity {
 		listtickets.setAdapter(adapter);
 		Log.d("Advance","3");
 		progress = new ProgressDialog(this);
+		progress.setIcon(R.drawable.logo);
+		progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 
 		
 		addListenerOnButton();
 		loadSafetReport("Por_hacer");
+		
+		
 	        
 	}
 //	@Override
@@ -272,7 +275,7 @@ public class PrincipalActivity extends ActionBarActivity {
 		
 		 protected void onPreExecute() {
 			  progress.setMessage(getString(R.string.downloading));
-		      progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		      //progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		      progress.setIndeterminate(true);
 		      progress.show();
             
@@ -459,14 +462,17 @@ public class PrincipalActivity extends ActionBarActivity {
 						ticket.setProject(json_data.getString("proyecto"));
 						ticket.
 						setTentativedate(PrincipalActivity.convertDateEpochToFormat(json_data.getString("tentativedate")));
+						ticket.setEpochtentativedate(Long.parseLong(json_data.getString("tentativedate")));
 						String newfinish = json_data.getString("finishdate");
 						if (newfinish.contentEquals("0")) {
 							ticket.
 							setFinishdate(getString(R.string.nocomplete));
+							ticket.setEpochfinishdate(0l);
 						}
 						else  {
 							ticket.
 							setFinishdate(PrincipalActivity.convertDateEpochToFormat(newfinish));
+							ticket.setEpochfinishdate(Long.parseLong(newfinish));
 
 						}
 						ticket.setOwner(json_data.getString("owner"));
@@ -562,7 +568,8 @@ public class PrincipalActivity extends ActionBarActivity {
 	    		String myconsultdel = PrincipalActivity.URL_API + "operacion:Listar_datos%20"+
 		    			"Cargar_archivo_flujo:%20"+currfile+"%20Variable:"+currreport
 		    			+PrincipalActivity.PARAMETER_BY_PROJECT
-		    			+PrincipalActivity.PARAMETER_BY_TYPE;
+		    			+PrincipalActivity.PARAMETER_BY_TYPE
+		    			+PrincipalActivity.PARAMETER_BY_DATE1;
 		    			;
 		        new GetGraphTask("listar_ticket").execute(myconsultdel);
 
@@ -597,7 +604,8 @@ public class PrincipalActivity extends ActionBarActivity {
 	    		String myconsultdel = PrincipalActivity.URL_API + "operacion:Listar_datos%20"+
 		    			"Cargar_archivo_flujo:%20"+currfile+"%20Variable:"+currreport
 		    			+PrincipalActivity.PARAMETER_BY_PROJECT
-		    			+PrincipalActivity.PARAMETER_BY_TYPE;
+		    			+PrincipalActivity.PARAMETER_BY_TYPE
+		    			+PrincipalActivity.PARAMETER_BY_DATE1;
 		    			;
 
 		        new GetGraphTask("listar_ticket").execute(myconsultdel);
@@ -614,8 +622,9 @@ public class PrincipalActivity extends ActionBarActivity {
 				String myconsultdel = PrincipalActivity.URL_API + "operacion:Listar_datos%20"+
 		    			"Cargar_archivo_flujo:%20"+currfile+"%20Variable:"+currreport
 		    			+PrincipalActivity.PARAMETER_BY_PROJECT
-		    			+PrincipalActivity.PARAMETER_BY_TYPE;
-		    			;
+		    			+PrincipalActivity.PARAMETER_BY_TYPE
+		    			+PrincipalActivity.PARAMETER_BY_DATE1;
+		    			
 
 		        new GetGraphTask("listar_ticket").execute(myconsultdel);
 		    	
@@ -632,8 +641,9 @@ public class PrincipalActivity extends ActionBarActivity {
 	    		String myconsultdel = PrincipalActivity.URL_API + "operacion:Listar_datos%20"+
 		    			"Cargar_archivo_flujo:%20"+currfile+"%20Variable:"+currreport
 		    			+PrincipalActivity.PARAMETER_BY_PROJECT
-		    			+PrincipalActivity.PARAMETER_BY_TYPE;
-		    			;
+		    			+PrincipalActivity.PARAMETER_BY_TYPE
+		    			+PrincipalActivity.PARAMETER_BY_DATE1;
+		    			
 
 		        new GetGraphTask("listar_ticket").execute(myconsultdel);
 
@@ -672,7 +682,8 @@ public class PrincipalActivity extends ActionBarActivity {
 	    	}
 	    	else {
 		        actionbar.setTitle(currenttitle + PrincipalActivity.DESCRIPTION_PROJECT_PARAMS
-		        		+ PrincipalActivity.DESCRIPTION_TYPE_PARAMS.replace("%20"," "));
+		        		+ PrincipalActivity.DESCRIPTION_TYPE_PARAMS.replace("%20"," ")
+		        		+ PrincipalActivity.DESCRIPTION_DATE1_PARAMS.replace("%20"," "));
 		    	adapter.notifyDataSetChanged();
 	    	}
 	          
@@ -707,12 +718,12 @@ public class PrincipalActivity extends ActionBarActivity {
 			mylist.add(projects.get(i).getTitle());
 		}		 
 		
-		//ArrayAdapter<String> myadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,mylist);
+		ArrayAdapter<String> myadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,mylist);
 
 		//ArrayAdapter<String> myadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice,mylist);
 		
-		ProjectAdapter myadapter = new ProjectAdapter(this);
-		myadapter.setProjects(projects);
+		//ProjectAdapter myadapter = new ProjectAdapter(this);
+		//myadapter.setProjects(projects);
 		input.setAdapter(myadapter);
 		myadapter.notifyDataSetChanged();
 		
@@ -739,7 +750,8 @@ public class PrincipalActivity extends ActionBarActivity {
 		    	}
 		        
 		    	actionbar.setTitle(currenttitle + PrincipalActivity.DESCRIPTION_PROJECT_PARAMS
-		    			+ PrincipalActivity.DESCRIPTION_TYPE_PARAMS.replace("%20"," "));
+		    			+ PrincipalActivity.DESCRIPTION_TYPE_PARAMS.replace("%20"," ")
+		    			+PrincipalActivity.DESCRIPTION_DATE1_PARAMS.replace("%20"," "));
 		    	Toast toast = Toast.makeText(getApplicationContext(), 
 		    			getString(R.string.need_refresh), Toast.LENGTH_SHORT);
 		    	toast.show();
@@ -869,33 +881,42 @@ public class PrincipalActivity extends ActionBarActivity {
 				String myconsult = "";
 				Spinner typegraph = (Spinner) dialog.findViewById(R.id.graphtype);
 				if (typegraph.getSelectedItemPosition() == 0 ) {
-					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/paneltest/.safet/flowfiles/carteleratres.xml"
+					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratres.xml"
 							+PrincipalActivity.PARAMETER_BY_PROJECT
-							+PrincipalActivity.PARAMETER_BY_TYPE;
+							+PrincipalActivity.PARAMETER_BY_TYPE
+							+PrincipalActivity.PARAMETER_BY_DATE1;
 				}
 				else if (typegraph.getSelectedItemPosition() == 1 ) {
-					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/paneltest/.safet/flowfiles/carteleraproximos.xml"
+					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleraproximos.xml"
 							+PrincipalActivity.PARAMETER_BY_PROJECT
-							+PrincipalActivity.PARAMETER_BY_TYPE;
+							+PrincipalActivity.PARAMETER_BY_TYPE
+							+PrincipalActivity.PARAMETER_BY_DATE1;
 				}
 				else if (typegraph.getSelectedItemPosition() == 2 ) {
-					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/paneltest/.safet/flowfiles/cartelerapormes.xml"
+					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerapormes.xml"
 							+PrincipalActivity.PARAMETER_BY_PROJECT
-							+PrincipalActivity.PARAMETER_BY_TYPE;
+							+PrincipalActivity.PARAMETER_BY_TYPE
+							+PrincipalActivity.PARAMETER_BY_DATE1;
 				}
 				else if (typegraph.getSelectedItemPosition() == 3 ) {
-					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/paneltest/.safet/flowfiles/cartelerafinalizadosporsemana.xml"
+					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerafinalizadosporsemana.xml"
 							+PrincipalActivity.PARAMETER_BY_PROJECT
-							+PrincipalActivity.PARAMETER_BY_TYPE;
+							+PrincipalActivity.PARAMETER_BY_TYPE
+							+PrincipalActivity.PARAMETER_BY_DATE1;
 				}
 				else if (typegraph.getSelectedItemPosition() == 4 ) {
-					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/paneltest/.safet/flowfiles/cartelerafinalizados.xml"
+					myconsult = PrincipalActivity.URL_API +"operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerafinalizados.xml"
 							+PrincipalActivity.PARAMETER_BY_PROJECT
-							+PrincipalActivity.PARAMETER_BY_TYPE;
+							+PrincipalActivity.PARAMETER_BY_TYPE
+							+PrincipalActivity.PARAMETER_BY_DATE1;
 				}
 				else if (typegraph.getSelectedItemPosition() == 5 ) {
 					myconsult = PrincipalActivity.URL_API +
-							"operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/paneltest/.safet/flowfiles/carteleratodos.xml%20Autofiltro:%20por_proyecto";
+							"operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratodos.xml%20Autofiltro:%20por_proyecto";
+				}
+				else if (typegraph.getSelectedItemPosition() == 6 ) {
+					myconsult = PrincipalActivity.URL_API +
+							"operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratodos.xml%20Autofiltro:%20por_tipo";
 				}
 				
 				else {
@@ -937,7 +958,7 @@ public class PrincipalActivity extends ActionBarActivity {
 			Log.d("boxproject","entering...1");
 			
 			String myconsult = PrincipalActivity.URL_API 
-					+ "operacion:Listar_datos%20Cargar_archivo_flujo:/home/paneltest/.safet/flowfiles/proyectos.xml"+
+					+ "operacion:Listar_datos%20Cargar_archivo_flujo:/home/panelapp/.safet/flowfiles/proyectos.xml"+
 	    			"%20Variable:vProyectos";
 
 	    	GetGraphTask mytask = new GetGraphTask("para_filtro_listar_proyectos");
@@ -975,6 +996,25 @@ public class PrincipalActivity extends ActionBarActivity {
 		
 	}
 
+	public void onClickedDate(View view) {
+		Log.d("OnClickType","OnClickDatee");
+		ToggleButton boxdate = ((ToggleButton) view);
+		if (boxdate.isChecked()) {
+			//boxtype.setText("Trabajo");
+			Log.d("Click","DateFrom button");
+			
+			makePutParameterDateDialog();
+			
+		}
+		else {
+			PrincipalActivity.PARAMETER_BY_DATE1 = "";
+			PrincipalActivity.DESCRIPTION_DATE1_PARAMS = "";
+			//boxtype.setText(getString(R.string.filter_any_type));
+		}
+		
+	}
+
+	
 	private void showInputNameDialog(Context context,ArrayList<String> states, String title) {
     	
     	final Dialog dialog = new Dialog(context);
@@ -1022,6 +1062,34 @@ public class PrincipalActivity extends ActionBarActivity {
 		Log.d("show","show");
     }
 
+	private ArrayList<String> changeNames(ArrayList<String> states) {
+		Map inmap = new HashMap<String, String>();		
+		inmap.put("Finished", "Finalizada");
+		inmap.put("Progress", "En Progreso");
+		inmap.put("Postponed", "Pospuesta");
+		inmap.put("ToDo", "Por hacer");
+		
+		Map outmap = new HashMap<String, String>();
+		outmap.put("Finalizada","Finished");
+		outmap.put("En Progreso","Progress");
+		outmap.put("Pospuesta","Postponed");
+		outmap.put("Por hacer","ToDo");
+		
+		ArrayList<String> result = new ArrayList<String>();
+		
+		for(String s: states) {
+			String news = s;
+			if (inmap.containsKey(s)) {
+				news  = (String) inmap.get(s); 
+			}
+			else if (outmap.containsKey(s)) {
+				news  = (String) outmap.get(s);
+			}				
+			result.add(news);
+		}
+		
+		return result;
+	}
 
 	private void showStatesNameDialog(ArrayList<String> states, String title) {
     	
@@ -1040,7 +1108,8 @@ public class PrincipalActivity extends ActionBarActivity {
 		Spinner myselect = (Spinner)dialog.findViewById(R.id.selecttype);
 
 		ArrayAdapter<String> myadapter;
-		myadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,states);
+		ArrayList<String> newstates = changeNames(states);
+		myadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,newstates);
 
 		myadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
@@ -1057,7 +1126,12 @@ public class PrincipalActivity extends ActionBarActivity {
 			public void onClick(View v) {
 				Spinner myselect = (Spinner)dialog.findViewById(R.id.selecttype);				
 				String mystatus = myselect.getSelectedItem().toString();
-				Log.d("cambiar_estado",mystatus);
+				ArrayList<String> newstates = new ArrayList<String>();
+				newstates.add(mystatus);
+				newstates = changeNames(newstates);
+				
+				mystatus = newstates.get(0);
+				Log.d("FULL cambiar_estado",mystatus);
 				dialog.dismiss();
 				String idticket = currentticket;
 				String myconsult = PrincipalActivity.URLFORM_API + "operacion:Siguiente_estado%20id:"+ idticket +
@@ -1126,6 +1200,77 @@ public class PrincipalActivity extends ActionBarActivity {
 		
 	}
 
+	public void makePutParameterDateDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+		builder.setTitle(getString(R.string.filter_by_date1));
+		builder.setMessage(getString(R.string.parameter_datefrom));
+    	Calendar calendar = Calendar.getInstance();
+    	
+     	
+    	
+    	
+		
+		final DatePicker input = new DatePicker(this);
+    	Log.d("makePutParameterDateDialog", "Seltext:year:" + String.valueOf(calendar.get(Calendar.YEAR)));
+    	input.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), 
+    			calendar.get(Calendar.DAY_OF_MONTH), null);
+
+		builder.setView(input);
+
+		builder.setPositiveButton(getString(R.string.yes_option), new DialogInterface.OnClickListener() {
+
+		    public void onClick(DialogInterface dialog, int which) {
+		        // Do do my action here
+
+		        int year = input.getYear();
+		        
+		        Calendar calendar = Calendar.getInstance();
+		        
+		        calendar.set(year,input.getMonth(),input.getDayOfMonth(),0,0,0);
+		        
+		        String fechatentativa = String.valueOf(calendar.getTimeInMillis()/1000-86399);
+		        
+		        
+		    	PrincipalActivity.PARAMETER_BY_DATE1 = "%20parameters.ByDate1:" + fechatentativa;
+		    	PrincipalActivity.DESCRIPTION_DATE1_PARAMS = "-" + convertDateEpochToOnlyFormat(fechatentativa);
+		        Log.d("BoxDate1","seldate1:" + fechatentativa);
+
+
+		        dialog.dismiss();
+		    }
+
+		});
+
+		builder.setNegativeButton(getString(R.string.no_option), new DialogInterface.OnClickListener() {
+
+		    @Override
+		    public void onClick(DialogInterface dialog, int which) {
+		        // I do not need any action here you might
+		    	Log.d("makeDeleteOptionsDialog","no...(1)");
+		        dialog.dismiss();
+		        ToggleButton boxdate1 = ((ToggleButton) findViewById(R.id.toggleDateFrom));
+		      
+		        boxdate1.setChecked(false);
+		        
+		        PrincipalActivity.PARAMETER_BY_DATE1 = "";
+		        PrincipalActivity.DESCRIPTION_DATE1_PARAMS = "";
+
+
+		        Log.d("makePutParametersDialog","no...(2)");
+		    }
+		});
+
+		AlertDialog alert = builder.create();
+		Log.d("show","1");
+		alert.show();
+		Log.d("show","2");
+		
+		
+	}
+
+	
+	
 	
 	public void makeModifyOptionsDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -1297,7 +1442,7 @@ public class PrincipalActivity extends ActionBarActivity {
         
 
     	String myconsult = PrincipalActivity.URL_API + "operacion:Listar_datos%20"+
-    			"Cargar_archivo_flujo:%20/home/paneltest/.safet/flowfiles/carteleratodos.xml%20Variable:vTodas_las_tareas"
+    			"Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratodos.xml%20Variable:vTodas_las_tareas"
     			+"%20parameters.nro_ticket:"+currentticket;
 
     	Log.d("loadViewTicketActivity","myconsult:"+myconsult);
@@ -1315,7 +1460,7 @@ public class PrincipalActivity extends ActionBarActivity {
 
 	public void loadSafetReport(String report) {
     	currreport = "vPor_hacer";
-    	currfile = "/home/paneltest/.safet/flowfiles/carteleratres.xml";
+    	currfile = "/home/panelapp/.safet/flowfiles/carteleratres.xml";
     	
     	Log.d("Spinner","2:|" + report+"|");
     	if ( report.contentEquals("En progreso")) {
@@ -1327,17 +1472,17 @@ public class PrincipalActivity extends ActionBarActivity {
     	}
     	else if (report.contentEquals(getString(R.string.completed_this_week)) ) {
     		currreport = "vEsta_semana";	
-    		currfile = "/home/paneltest/.safet/flowfiles/cartelerafinalizadosporsemana.xml";
+    		currfile = "/home/panelapp/.safet/flowfiles/cartelerafinalizadosporsemana.xml";
     	}
     	else if (report.contentEquals(getString(R.string.completed_after_week)) ) {
     		currreport = "vSemana_anterior";	
-    		currfile = "/home/paneltest/.safet/flowfiles/cartelerafinalizadosporsemana.xml";
+    		currfile = "/home/panelapp/.safet/flowfiles/cartelerafinalizadosporsemana.xml";
     	}
     	
     	else if (report.contentEquals(getString(R.string.all_tickets)) ) {
     		
     		currreport = "Todos";	
-    		currfile = "/home/paneltest/.safet/flowfiles/cartelerabusqueda.xml";
+    		currfile = "/home/panelapp/.safet/flowfiles/cartelerabusqueda.xml";
     	}
     	
     	else if (report.contentEquals(getString(R.string.delayed)))  {
@@ -1346,37 +1491,37 @@ public class PrincipalActivity extends ActionBarActivity {
     	
     	else if (report.contentEquals(getString(R.string.next_week)) ) {
     		Log.d("loadSafetReport","nextweek");
-    		currfile = "/home/paneltest/.safet/flowfiles/carteleraproximos.xml";
+    		currfile = "/home/panelapp/.safet/flowfiles/carteleraproximos.xml";
     		currreport = "vProxima_semana";
     		
     	}
     	else if (report.contentEquals(getString(R.string.this_week)) ) {
     		Log.d("loadSafetReport","nextweek");
-    		currfile = "/home/paneltest/.safet/flowfiles/carteleraproximos.xml";
+    		currfile = "/home/panelapp/.safet/flowfiles/carteleraproximos.xml";
     		currreport = "vEsta_semana";
     		
     	}
     	else if (report.contentEquals(getString(R.string.this_month)) ) {
     		Log.d("loadSafetReport","nextweek");
-    		currfile = "/home/paneltest/.safet/flowfiles/cartelerapormes.xml";
+    		currfile = "/home/panelapp/.safet/flowfiles/cartelerapormes.xml";
     		currreport = "vEste_mes";
     		
     	}
     	else if (report.contentEquals(getString(R.string.next_month)) ) {
     		Log.d("loadSafetReport","nextweek");
-    		currfile = "/home/paneltest/.safet/flowfiles/cartelerapormes.xml";
+    		currfile = "/home/panelapp/.safet/flowfiles/cartelerapormes.xml";
     		currreport = "vProximo_mes";
     		
     	}
     	else if (report.contentEquals(getString(R.string.after_month)) ) {
     		Log.d("loadSafetReport","nextweek");
-    		currfile = "/home/paneltest/.safet/flowfiles/cartelerapormes.xml";
+    		currfile = "/home/panelapp/.safet/flowfiles/cartelerapormes.xml";
     		currreport = "vSuperior_proximo_mes";
     		
     	}
     	else if (report.contentEquals(getString(R.string.after_week)) ) {
     		Log.d("loadSafetReport","nextweek");
-    		currfile = "/home/paneltest/.safet/flowfiles/carteleraproximos.xml";
+    		currfile = "/home/panelapp/.safet/flowfiles/carteleraproximos.xml";
     		currreport = "vSuperior_proxima_semana";    		
     	}
 
@@ -1530,7 +1675,7 @@ public class PrincipalActivity extends ActionBarActivity {
 		
 		String myconsult = PrincipalActivity.URL_API +
 		"operacion:Siguientes_estados%20Cargar_archivo_flujo:"+
-				"/home/paneltest/.safet/flowfiles/carteleratresf.xml%20Clave:" + currentticket;
+				"/home/panelapp/.safet/flowfiles/carteleratresf.xml%20Clave:" + currentticket;
 
 		Log.d("changeStatusTask..myconsult:",myconsult);
 		
@@ -1621,7 +1766,7 @@ public class PrincipalActivity extends ActionBarActivity {
 
     public void callPreListprojects(boolean addticket, String dataticket) {
 		String myconsult = PrincipalActivity.URL_API 
-				+ "operacion:Listar_datos%20Cargar_archivo_flujo:/home/paneltest/.safet/flowfiles/proyectos.xml"+
+				+ "operacion:Listar_datos%20Cargar_archivo_flujo:/home/panelapp/.safet/flowfiles/proyectos.xml"+
     			"%20Variable:vProyectos";
 
     	GetGraphTask mytask = new GetGraphTask("listar_proyectos");
@@ -1708,7 +1853,7 @@ public class PrincipalActivity extends ActionBarActivity {
 
 	            Log.d("Search","Search (4)");
 
-	            currfile = "/home/paneltest/.safet/flowfiles/cartelerabusqueda.xml";
+	            currfile = "/home/panelapp/.safet/flowfiles/cartelerabusqueda.xml";
 	            currreport = "vBusqueda";
 	            String newquery = query.replace(" ","%20");
 				PrincipalActivity.PARAMETER_BY_SEARCH = "%20parameters.ByPattern:" + newquery;
@@ -1792,6 +1937,21 @@ public class PrincipalActivity extends ActionBarActivity {
     	return result;
     	
     }
+    
+    public static String convertDateEpochToOnlyFormat(String epoch) {    	
+    	String result = epoch.trim();
+    	if ( result.equalsIgnoreCase("0")) {
+    		result =   "n/a";
+    		return result;
+    	}
+    	long dv = Long.valueOf(epoch)*1000;// its need to be in milisecond
+    	Date df = new java.util.Date(dv);
+    	result = new SimpleDateFormat(PrincipalActivity.ONLYDATEFORMAT).format(df);
+    	
+    	return result;
+    	
+    }
+
 
 }
 

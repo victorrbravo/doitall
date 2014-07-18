@@ -5,6 +5,21 @@ public class TicketRecord {
 	private String description;
 	private String project;
 	private String tentativedate;
+	
+	public Long getEpochtentativedate() {
+		return epochtentativedate;
+	}
+	public void setEpochtentativedate(Long epochtentativedate) {
+		this.epochtentativedate = epochtentativedate;
+	}
+	public Long getEpochfinishdate() {
+		return epochfinishdate;
+	}
+	public void setEpochfinishdate(Long epochfinishdate) {
+		this.epochfinishdate = epochfinishdate;
+	}
+	private Long epochtentativedate;
+	private Long epochfinishdate;
 	private String finishdate;
 	private String owner;
 	private String status;

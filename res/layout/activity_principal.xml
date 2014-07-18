@@ -36,7 +36,10 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_action_new" />
                
-                  
+          <View
+    	android:layout_width="3dp"
+    	android:layout_height="fill_parent"
+    		android:background="@android:color/transparent"/>        
                   
 <ToggleButton        
         android:id="@+id/toggleProject"
@@ -76,7 +79,7 @@
         android:textOn=""
         android:textOff=""
         android:focusable="false"
-    android:onClick="onClickedType"
+    	android:onClick="onClickedDate"
         android:focusableInTouchMode="false"
         android:layout_centerVertical="true"/>
                   

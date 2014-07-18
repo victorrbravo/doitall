@@ -11,8 +11,9 @@
     <string name="key_notfound">La clave que indicó no se encuentra en los registros</string>
     <string name="downloading">Cargando datos...</string>
     <string name="select">Seleccione</string>
-    <string name="select_report_graph">Seleccione un gráfico</string>
-    <string name="select_report_ticket">Selecciona un lista a mostrar</string>
+    <string name="filter_by_date1">Filtrar desde fecha</string>
+    <string name="select_report_graph">Seleccione un tipo de gráfico</string>
+    <string name="select_report_ticket">Selecciona un listado de tipo de tareas</string>
     <string name="report_type">Gestión de tareas</string>
     <string name="accept">Aceptar</string>
     <string name="cancel">Cancelar</string>
@@ -22,6 +23,7 @@
     <string name="delete_task">Eliminar tarea</string>
     <string name="error_dataticket">Ocurrió un error al procesar la información de la tarea</string>
     <string name="modify_date_task">Cambiar fecha de la tarea</string>
+    <string name="parameter_datefrom">Filtrar las tareas desde fecha</string>
     <string name="ocurr_error">Ocurrió un error:</string>
     <string name="error_dateparse">Ocurrió un error al tratar de leer la fecha</string>
    <string name="modify_data_task">Modificar datos de la tarea</string>
@@ -36,8 +38,8 @@
     <string name="delete_project_text">¿Realmente desea eliminar el proyecto </string>
     <string name="yes_option">Sí</string>
     <string name="no_option">No</string>
-    <string name="ticket_list_title">Tareas</string>
-    <string name="graph_list_title">Gráficos</string>
+    <string name="ticket_list_title">Listado de tareas</string>
+    <string name="graph_list_title">Gráfico de tareas</string>
     <string name="state_list_title">Estados</string>
     <string name="not_applicable">n/a</string>
     <string name="all_tickets">Todas las tareas</string>
@@ -58,20 +60,21 @@
     <string name="need_refresh">Necesita presionar el botón de refrescamiento o gráfico para aplicar el filtro seleccionado</string>   
         <string name="completed_after_week">Semana anterior (Completadas)</string>
         <string name="completed_this_week">Esta semana (Completadas)</string>
+        <string name="before_tomorrow">** Para mañana</string>
     
     
   <string-array name="names_report">
+        <item>Esta semana</item>
         <item>Por hacer</item>
-        <item>En progreso</item>
-        <item>Finalizadas</item>
-        <item>Pospuestas</item>
         <item>Atrasadas</item>        
-        <item>Todas las tareas</item>        
-        <item>Esta semana</item>        
-        <item>Este mes</item>
+        <item>Próxima semana</item>
         <item>Semana anterior (Completadas)</item>
         <item>Esta semana (Completadas)</item>
-        <item>Próxima semana</item>
+         <item>Todas las tareas</item>
+        <item>Este mes</item>       
+        <item>Finalizadas</item>
+        <item>Pospuestas</item>                
+        <item>En progreso</item>
         <item>Próximo mes</item>
         <item>Despúes de la próxima semana</item>
         <item>Despúes del próximo mes</item>
@@ -84,6 +87,7 @@
         <item>Por semana (completadas)</item>
         <item>Por mes (completadas)</item>        
         <item>Por proyecto</item>
+        <item>Por tipo</item>        
     </string-array>
   <string-array name="user_list">
         <item>vbravo</item>
