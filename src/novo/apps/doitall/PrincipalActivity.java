@@ -110,10 +110,10 @@ public class PrincipalActivity extends ActionBarActivity {
 	private ArrayList<String>  newstates;
 
 	
-	public static String URL_SERVER = "http://XXXXXX/intranet/register";
-	public static String URL_SERVER_LOGIN = "http://XXXXXX/intranet/login";
-	public static String FIRST_URL_GRAPH = "http://XXXXXX/media/";
-	public static String FIRST_URL_API = "http://XXXXXX/intranet/api/";
+	public static String URL_SERVER = "http://XXXXXXX/intranet/register";
+	public static String URL_SERVER_LOGIN = "http://XXXXXXX/intranet/login";
+	public static String FIRST_URL_GRAPH = "http://XXXXXXX/media/";
+	public static String FIRST_URL_API = "http://XXXXXXX/intranet/api/";
 	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=panelapp&accion=";
 	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=panelapp&accion=";
 	

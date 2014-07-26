@@ -41,48 +41,47 @@
     	android:layout_height="fill_parent"
     		android:background="@android:color/transparent"/>        
                   
-<ToggleButton        
-        android:id="@+id/toggleProject"
-        android:layout_height="wrap_content"
-		android:layout_width="wrap_content"       
-        android:background="@null"
-	    android:drawableRight="@drawable/checkp"
-        android:textOn=""
-        android:textOff=""
-        android:focusable="false"
-          android:paddingLeft="5dp"
-        android:onClick="onClickedProject"
-        android:focusableInTouchMode="false"
-        android:layout_centerVertical="true"/>
+<ToggleButton
+    android:id="@+id/toggleProject"
+    android:layout_width="32dp"
+    android:layout_height="wrap_content"
+    android:layout_centerVertical="true"
+    android:background="@null"
+    android:drawableRight="@drawable/checkp"
+    android:focusable="false"
+    android:focusableInTouchMode="false"
+    android:onClick="onClickedProject"
+    android:paddingLeft="5dp"
+    android:textOff=""
+    android:textOn="" />
 
-<ToggleButton 
-        android:id="@+id/toggleType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:paddingLeft="5dp"
-	    android:drawableRight="@drawable/checkt"        
-        android:textOn=""
-        android:textOff=""
-        android:focusable="false"
+<ToggleButton
+    android:id="@+id/toggleType"
+    android:layout_width="32dp"
+    android:layout_height="wrap_content"
+    android:layout_centerVertical="true"
+    android:background="@null"
+    android:drawableRight="@drawable/checkt"
+    android:focusable="false"
+    android:focusableInTouchMode="false"
     android:onClick="onClickedType"
-        android:focusableInTouchMode="false"
-        android:layout_centerVertical="true"/>
+    android:paddingLeft="5dp"
+    android:textOff=""
+    android:textOn="" />
                           
-<ToggleButton 
-        android:id="@+id/toggleDateFrom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:paddingLeft="5dp"
-	    android:drawableRight="@drawable/checkd"        
-        android:textOn=""
-        android:textOff=""
-        android:focusable="false"
-    	android:onClick="onClickedDate"
-        android:focusableInTouchMode="false"
-        android:layout_centerVertical="true"/>
-                  
+<ToggleButton
+    android:id="@+id/toggleDateFrom"
+    android:layout_width="32dp"
+    android:layout_height="wrap_content"
+    android:layout_centerVertical="true"
+    android:background="@null"
+    android:drawableRight="@drawable/checkd"
+    android:focusable="false"
+    android:focusableInTouchMode="false"
+    android:onClick="onClickedDate"
+    android:paddingLeft="5dp"
+    android:textOff=""
+    android:textOn="" />
              
             </LinearLayout>
   
