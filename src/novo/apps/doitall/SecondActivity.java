@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class SecondActivity extends Activity {
@@ -35,6 +36,7 @@ public class SecondActivity extends Activity {
 	private ProgressDialog progress;
 	private ImageView imagegraph;
     private String urlimage;
+    private String graphtitle;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,13 +44,15 @@ public class SecondActivity extends Activity {
         setContentView(R.layout.activity_second);
         
         urlimage = getIntent().getStringExtra("str1");
-        
+        graphtitle= getIntent().getStringExtra("str2");
                 
         
         imagegraph = (ImageView) findViewById(R.id.imageGraph);
         Log.d("SecondActivity","urlimage:" + urlimage);
         
 		progress = new ProgressDialog(this);
+		TextView mytitle = (TextView) findViewById(R.id.graphTitle);
+		mytitle.setText(graphtitle);
         
 	  	new DownloadImageTask( (ImageView) imagegraph).execute(urlimage);
 

@@ -14,6 +14,9 @@
     <string name="filter_by_date1">Filtrar desde fecha</string>
     <string name="select_report_graph">Seleccione un tipo de gráfico</string>
     <string name="select_report_ticket">Selecciona un listado de tipo de tareas</string>
+    <string name="title_pdf">Listado de tareas - </string>
+    <string name="path_file_pdf">Se escribió archivo PDF en la ruta: </string>
+    <string name="send_to">Enviar a</string>
     <string name="report_type">Gestión de tareas</string>
     <string name="accept">Aceptar</string>
     <string name="cancel">Cancelar</string>
@@ -54,7 +57,8 @@
     <string name="nocomplete">sin completar</string>    
     <string name="planned">Planificado:</string>    
     <string name="help_action">Cómo usar doitall</string>
-    <string name="disable_projects">Desactivar proyectos</string>
+    <string name="disable_projects">Activar/desactivar proyectos</string>
+    <string name="export_pdf">Exportar PDF</string>
     <string name="delete_data_connect">Borrar datos de conexión</string>
     <string name="ask_delete_data_connect">¿Está seguro de eliminar los datos de recordación de conexión?</string>
     <string name="need_refresh">Necesita presionar el botón de refrescamiento o gráfico para aplicar el filtro seleccionado</string>   
@@ -100,16 +104,20 @@
   
   
       <string-array name="names_type_ticket">
-        <item>Idea</item>
-        <item>Arreglo</item>        
         <item>Revisión</item>
         <item>Redacción</item>
         <item>Trámite</item>
+        <item>Configuración</item>
+        <item>Arreglo</item>
+        <item>Escribir código</item>                        
+        <item>Presentación oral</item>
+        <item>Organización de material</item>        
+        <item>Idea</item>
 		<item>Hogar</item>
 		<item>Trabajo</item>        
         <item>Actividad general</item>        
         <item>Actividad física</item>
-                <item>Escribir código</item>
+        
     </string-array>
 
     <string-array name="names_category_ticket">

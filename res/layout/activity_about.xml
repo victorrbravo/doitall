@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="#372c24"
                 android:textSize="24dp"
-                android:text="Doitall. Gestor Inteligente de tareas V 1.5 18/Julio de 2014"/>
+                android:text="Doitall. Gestor Inteligente de tareas V 1.5.5 30/Julio de 2014"/>
           <TextView android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:textColor="#372c24"

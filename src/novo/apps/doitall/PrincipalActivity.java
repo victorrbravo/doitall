@@ -3,11 +3,14 @@ package novo.apps.doitall;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,6 +30,7 @@ import javax.net.ssl.X509TrustManager;
 //import novo.apps.doitall.AddTicketActivity.GetGraphTask;
 
 
+import novo.apps.doitall.R;
 
 
 import org.apache.http.HttpResponse;
@@ -43,15 +47,30 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.lowagie.text.Document;
+import com.lowagie.text.Font;
+import com.lowagie.text.HeaderFooter;
+import com.lowagie.text.Image;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.FontFactory;
+
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.ArrayMap;
@@ -98,6 +117,7 @@ public class PrincipalActivity extends ActionBarActivity {
 	ArrayList<ProjectRecord> projects;
 	private String currenttitle;
 	private String urlimage;
+	private String graphtitle;
 	private ListView listtickets;
 	private String currentticket;
 	private String currentdate;
@@ -113,7 +133,7 @@ public class PrincipalActivity extends ActionBarActivity {
 	public static String URL_SERVER = "http://XXXXXXX/intranet/register";
 	public static String URL_SERVER_LOGIN = "http://XXXXXXX/intranet/login";
 	public static String FIRST_URL_GRAPH = "http://XXXXXXX/media/";
-	public static String FIRST_URL_API = "http://XXXXXXX/intranet/api/";
+	public static String FIRST_URL_API = "http://XXXXXXX/intranet/apiv2/";
 	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=panelapp&accion=";
 	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=panelapp&accion=";
 	
@@ -257,7 +277,17 @@ public class PrincipalActivity extends ActionBarActivity {
 
 
 		private boolean addticket;
+		private boolean modifyproject;
 		
+		
+		public boolean isModifyproject() {
+			return modifyproject;
+		}
+
+		public void setModifyproject(boolean modifyproject) {
+			this.modifyproject = modifyproject;
+		}
+
 		public boolean isAddticket() {
 			return addticket;
 		}
@@ -271,6 +301,7 @@ public class PrincipalActivity extends ActionBarActivity {
 	        super();
 	        consult = c;
 	        isclosing = 0;
+	        modifyproject = false;
 	    }
 		
 		 protected void onPreExecute() {
@@ -391,6 +422,7 @@ public class PrincipalActivity extends ActionBarActivity {
 			Log.d("urldisplay",urldisplay);
 			resulting = callPlainSAFETAPI(urldisplay);
 			Log.d("mygraph","callPlainSAFETAPI...(2)");
+			//Log.d("mygraph","resulting:" + resulting);
 			//resulting = callSAFETAPI(urldisplay);
 			progress.setProgress(50);
 
@@ -522,6 +554,14 @@ public class PrincipalActivity extends ActionBarActivity {
 						project.setDescription(desc);
 						project.setTitle(title);
 						project.setType(type);
+						String enable = json_data.getString("enable");
+						Log.d("listar_enable",enable);
+						if (enable.contentEquals("No")) {
+							project.setSelected(false);
+						}
+						else {
+							project.setSelected(true);
+						}
 						
 						urlimage = "";
 						projects.add(project);
@@ -535,7 +575,22 @@ public class PrincipalActivity extends ActionBarActivity {
 				}
 			}
 			else if (consult.contentEquals("graficar")) {
-				String mygraph = PrincipalActivity.FIRST_URL_GRAPH + resulting;
+				JSONObject jall = null;
+				String myfilename = "";
+				try {
+					jall = new JSONObject(resulting);
+					myfilename = jall.getString("filename");
+					Log.e("JSON", "myfilename:"+ myfilename);
+					graphtitle = URLDecoder.decode(jall.getString("id"));
+					//graphtitle = jall.getString("id");
+					Log.e("Graph title", graphtitle);
+					
+					
+				}
+				catch(Exception e) {
+					Log.e("JSON", "Ocurrio el error grafico:"+ e.toString());
+				}
+				String mygraph = PrincipalActivity.FIRST_URL_GRAPH + myfilename;
 				Log.d("mygraph",mygraph);
 				resulting = mygraph;
 				urlimage = mygraph;
@@ -590,7 +645,7 @@ public class PrincipalActivity extends ActionBarActivity {
 					startActivity(i);
 	    		}
 	    		else {
-	    			callPreListprojects(false,resulting);
+	    			callPreListprojects(false,resulting,false);
 	    		}
 	    		
 	    	}
@@ -661,6 +716,7 @@ public class PrincipalActivity extends ActionBarActivity {
 
 			        //---use putExtra() to add new key/value pairs---            
 			        i.putExtra("str1", urlimage);
+			        i.putExtra("str2", graphtitle);
 			        
 			        
 			        startActivityForResult(i,1);
@@ -670,7 +726,12 @@ public class PrincipalActivity extends ActionBarActivity {
 	    	else if (consult.contentEquals("listar_proyectos")) {
 				Log.d("**ButtonNew","executing addTicket");
 
-				callAddTicketActivity(isAddticket(),getDataticket());
+				if (isModifyproject()) {
+					callModifyProjectActivity();
+				}
+				else {
+					callAddTicketActivity(isAddticket(),getDataticket());
+				}
 	    	}
 	    	
 	    	else if (consult.contentEquals("para_filtro_listar_proyectos")) {
@@ -705,6 +766,18 @@ public class PrincipalActivity extends ActionBarActivity {
         startActivityForResult(i, 2);
 		
 	}
+	public void callModifyProjectActivity() {
+		
+        Intent i = new 
+                Intent("novo.apps.doitall.ModifyProjectActivity");
+
+        //---use putExtra() to add new key/value pairs---	
+    	i.putExtra("projects", projects);
+
+        startActivityForResult(i, 6);
+		
+	}
+
 	
 	public void makeFilterProjectDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -912,11 +985,17 @@ public class PrincipalActivity extends ActionBarActivity {
 				}
 				else if (typegraph.getSelectedItemPosition() == 5 ) {
 					myconsult = PrincipalActivity.URL_API +
-							"operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratodos.xml%20Autofiltro:%20por_proyecto";
+							"operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratodos.xml%20Autofiltro:%20por_proyecto"
+							+PrincipalActivity.PARAMETER_BY_TYPE
+							+PrincipalActivity.PARAMETER_BY_DATE1;
+
 				}
 				else if (typegraph.getSelectedItemPosition() == 6 ) {
 					myconsult = PrincipalActivity.URL_API +
-							"operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratodos.xml%20Autofiltro:%20por_tipo";
+							"operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratodos.xml%20Autofiltro:%20por_tipo"
+							+PrincipalActivity.PARAMETER_BY_PROJECT
+							+PrincipalActivity.PARAMETER_BY_DATE1;
+							
 				}
 				
 				else {
@@ -1743,7 +1822,7 @@ public class PrincipalActivity extends ActionBarActivity {
 			@Override
 			public void onClick(View view) {
 
-				callPreListprojects(true,"");
+				callPreListprojects(true,"",false);
 			}
 		});
 		
@@ -1764,13 +1843,25 @@ public class PrincipalActivity extends ActionBarActivity {
 		
 	}
 
-    public void callPreListprojects(boolean addticket, String dataticket) {
-		String myconsult = PrincipalActivity.URL_API 
-				+ "operacion:Listar_datos%20Cargar_archivo_flujo:/home/panelapp/.safet/flowfiles/proyectos.xml"+
-    			"%20Variable:vProyectos";
+    public void callPreListprojects(boolean addticket, String dataticket, boolean modifyproject) {
+		String myconsult = "";
+		
+		
+		if (modifyproject ) {
+			myconsult = PrincipalActivity.URL_API 
+					+ "operacion:Listar_datos%20Cargar_archivo_flujo:/home/panelapp/.safet/flowfiles/todosproyectos.xml"+
+					"%20Variable:vProyectos";
+		}
+		else {
+			myconsult = PrincipalActivity.URL_API 
+					+ "operacion:Listar_datos%20Cargar_archivo_flujo:/home/panelapp/.safet/flowfiles/proyectos.xml"+
+					"%20Variable:vProyectos";
+			
+		}
 
     	GetGraphTask mytask = new GetGraphTask("listar_proyectos");
 
+    	mytask.setModifyproject(modifyproject);
     	mytask.setDataticket(dataticket);
     	mytask.setAddticket(addticket);
     	mytask.execute(myconsult);
@@ -1793,6 +1884,7 @@ public class PrincipalActivity extends ActionBarActivity {
             }            
         }
         else if (requestCode == 2) {
+        	
         	if (resultCode == 3) {
         		
         		String urlform = PrincipalActivity.URLFORM_API + data.getStringExtra("urlform");
@@ -1804,6 +1896,10 @@ public class PrincipalActivity extends ActionBarActivity {
             	
         	}
         	
+        }
+        else if (requestCode == 6) {
+        	
+        	Log.d("Cerrando","ModifyProject");
         }
         else if (requestCode == 5) {
         	Log.d("return from About", "return from About");
@@ -1876,6 +1972,115 @@ public class PrincipalActivity extends ActionBarActivity {
 	    
 	    return true;
 	}
+	
+	public void createPDF()
+    {
+        Document doc = new Document();
+         
+        String path = "";
+         try {
+        	 
+        	 
+                path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/DoItAll";
+      
+            	//File file = new File(getBaseContext().getFilesDir(),filename);
+                File dir = new File(path);
+                    if(!dir.exists())
+                        dir.mkdirs();
+ 
+                
+                 
+                     
+                File file = new File(dir, "sample.pdf");
+                FileOutputStream fOut = new FileOutputStream(file);
+      
+                PdfWriter.getInstance(doc, fOut);
+                  
+                //open the document
+                doc.open();
+             
+                ByteArrayOutputStream streamlogo = new ByteArrayOutputStream();
+                Bitmap bitmaplogo = BitmapFactory.decodeResource(getBaseContext().getResources(), R.drawable.ic_launcher);
+                bitmaplogo.compress(Bitmap.CompressFormat.JPEG, 100 , streamlogo);
+                Image myImglogo = Image.getInstance(streamlogo.toByteArray());
+                myImglogo.setAlignment(Image.LEFT);
+                
+                //add image to document
+                doc.add(myImglogo);
+                
+                
+                String newtitle = getString(R.string.title_pdf)+currenttitle + PrincipalActivity.DESCRIPTION_PROJECT_PARAMS
+        		+ PrincipalActivity.DESCRIPTION_TYPE_PARAMS.replace("%20"," ")
+        		+ PrincipalActivity.DESCRIPTION_DATE1_PARAMS.replace("%20"," ");              
+                Paragraph p1 = new Paragraph(newtitle);
+                
+                Font paraFont = FontFactory.getFont(FontFactory.HELVETICA, 28,
+                        Font.BOLD);
+                p1.setAlignment(Paragraph.ALIGN_CENTER);
+                p1.setFont(paraFont);
+                 
+                 //add paragraph to document   
+                 doc.add(p1);
+                 
+                
+                 int counter = 1;
+                 String newstate = "(Por hacer)";
+                 for(TicketRecord ticket: tickets) {
+                	 if ( ticket.getStatus().contentEquals("Finished")) {
+                		 newstate = "(Completado)";
+                     }
+                     else if ( ticket.getStatus().contentEquals("Postponed")) {
+                    	 newstate = "(Pospuesto)";       	
+                     }
+                     else {
+                    	 newstate = "(Por hacer)";
+                     	                     	
+                     }                	 
+                    // bitmap = BitmapFactory.decodeResource(getBaseContext().getResources(), R.drawable.ic_launcher);
+                	 
+                	 String newentry = String.valueOf(counter) + ". " +newstate + " " +  ticket.getSummary() +":" + ticket.getDescription()
+                			 +" ("+ ticket.getProject()  + "/"+ ticket.getType()+") "+ "/ Tarea planificada para:"+ticket.getTentativedate()+"/ Fue finalizada:" + ticket.getFinishdate()+".";                	 
+                	 Paragraph p2 = new Paragraph(newentry);
+                     Font paraFont2= new Font(Font.HELVETICA,16.0f,Color.BLACK);
+                     p2.setAlignment(Paragraph.ALIGN_LEFT);
+                     p2.setFont(paraFont2);                      
+                     doc.add(p2);	 
+                     counter = counter +1;
+                 }
+                 
+                  
+                 
+                 //set footer
+                 //Phrase footerText = new Phrase("This is an example of a footer");
+                 //HeaderFooter pdfFooter = new HeaderFooter(footerText, false);
+                 //doc.setFooter(pdfFooter);
+                 
+ 
+                 
+         } catch (DocumentException de) {
+                 Log.e("PDFCreator", "DocumentException:" + de);
+         } catch (IOException e) {
+                 Log.e("PDFCreator", "ioException:" + e);
+         }
+         finally
+         {
+                 doc.close();
+         }
+         
+         String uripath = path+"/sample.pdf"; 
+         		
+         //Toast.makeText(getApplicationContext(), getString(R.string.path_file_pdf)+"\""+
+         //path+"/sample.pdf\"", Toast.LENGTH_SHORT).show();
+        
+         File file = new File(uripath);
+         Uri uri = Uri.fromFile(file);
+         Intent shareIntent = new Intent();
+         shareIntent.setAction(Intent.ACTION_SEND);
+         shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+         shareIntent.setType("application/pdf");
+         startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.send_to)));
+         
+    }      
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -1893,6 +2098,18 @@ public class PrincipalActivity extends ActionBarActivity {
 		else if (id == R.id.delete_data_connect) {
 			
 			makeDeleteDataConnectDialog();
+			
+		}
+		else if (id == R.id.disable_projects) {
+			
+			callPreListprojects(false,"",true);
+			
+		}
+		else if (id == R.id.export_pdf) {
+			
+			Log.d("exportlist","exportlist");
+			createPDF();
+			Log.d("exportlist","after exportlist");
 			
 		}
 		else if (id == R.id.help_action_link) {
