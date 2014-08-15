@@ -86,7 +86,7 @@ public class LoginActivity extends Activity {
             int resultCode, Intent data)
     {
         //---check if the request code is 1---
-		Log.d("requestCode:",String.valueOf(requestCode));
+		Log.d("**requestCode:",String.valueOf(requestCode));
 		Log.d("resultCode:",String.valueOf(resultCode));
         if (resultCode == 1) {
         	Toast toast = Toast.makeText(getApplicationContext(), 
@@ -99,6 +99,11 @@ public class LoginActivity extends Activity {
 	    	callPrincipal();
 	    	
         }
+        else if (resultCode == 2) {
+        	Log.d("resultCode:","finalizing");
+        	finish();
+        }
+        
     }
 
 
@@ -110,7 +115,7 @@ public class LoginActivity extends Activity {
     	i.putExtra("selectuser", selectuser);
     	i.putExtra("selectauth", selectauth);
     	i.putExtra("selectpass", selectpass);
-        startActivity(i);
+        startActivityForResult(i, 2 );
 	}
         
     public void onClick(View view) {            	    

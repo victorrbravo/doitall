@@ -21,6 +21,8 @@
     <string name="accept">Aceptar</string>
     <string name="cancel">Cancelar</string>
     <string name="close">Cerrar</string>
+    <string name="close_app">Cerrar aplicación</string>
+    <string name="question_close">¿Desea salir de la aplicación DoItAll?</string>
     <string name="change_status">Cambia estado de tarea</string>
     <string name="show_task">Ver tarea</string>
     <string name="delete_task">Eliminar tarea</string>
@@ -38,7 +40,8 @@
     <string name="filter_any_project">Por proyecto</string>
     <string name="filter_any_type">Por tipo</string>
     <string name="confirm_delete">¿Realmente desea eliminar esta tarea?</string>
-    <string name="delete_project_text">¿Realmente desea eliminar el proyecto </string>
+    <string name="delete_project_text">¿Realmente desea eliminar el proyecto?</string>
+    <string name="nameversion">Doitall. Gestor Inteligente de tareas V 1.6 agosto 2014</string>
     <string name="yes_option">Sí</string>
     <string name="no_option">No</string>
     <string name="ticket_list_title">Listado de tareas</string>
@@ -48,6 +51,9 @@
     <string name="all_tickets">Todas las tareas</string>
     <string name="next_week">Próxima semana</string>
     <string name="this_week">Esta semana</string>
+    <string name="assign_action">Asignar tarea a...</string>
+    <string name="desassign">Eliminar asignación</string>
+    <string name="assign_to_others">Asignados a otros</string>
     <string name="after_week">Despúes de la próxima semana</string>
     <string name="next_month">Próximo mes</string>
     <string name="this_month">Este mes</string>
@@ -70,8 +76,9 @@
   <string-array name="names_report">
         <item>Esta semana</item>
         <item>Por hacer</item>
+        <item>Asignados a otros</item>
         <item>Atrasadas</item>        
-        <item>Próxima semana</item>
+        <item>Próxima semana</item>        
         <item>Semana anterior (Completadas)</item>
         <item>Esta semana (Completadas)</item>
          <item>Todas las tareas</item>

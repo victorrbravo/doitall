@@ -121,6 +121,9 @@ public class AdvancedCustomArrayAdapter extends BaseAdapter {
         else if ( tickets.get(position).getStatus().contentEquals("Postponed")) {
         	viewContainer.imageView.setImageResource(R.drawable.tasknext32);        	
         }
+        else if ( tickets.get(position).getStatus().contentEquals("AssignTo")) {
+        	viewContainer.imageView.setImageResource(R.drawable.assignto);
+        }
         else {
         	viewContainer.imageView.setImageResource(R.drawable.yellowsoftware);
         	
