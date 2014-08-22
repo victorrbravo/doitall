@@ -129,10 +129,10 @@ public class PrincipalActivity extends ActionBarActivity {
 	AlertDialog task_dialog;
 	private ArrayList<String> newstates;
 
-	public static String URL_SERVER = "http://server.novoapps.info/intranet/register";
-	public static String URL_SERVER_LOGIN = "http://server.novoapps.info/intranet/login";
-	public static String FIRST_URL_GRAPH = "http://server.novoapps.info/media/";
-	public static String FIRST_URL_API = "http://server.novoapps.info/intranet/apiv2/";
+	public static String URL_SERVER = "http://XXXXXXXXXXXXXX/intranet/register";
+	public static String URL_SERVER_LOGIN = "http://XXXXXXXXXXXXXX/intranet/login";
+	public static String FIRST_URL_GRAPH = "http://XXXXXXXXXXXXXX/media/";
+	public static String FIRST_URL_API = "http://XXXXXXXXXXXXXX/intranet/apiv2/";
 	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=panelapp&accion=";
 	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=panelapp&accion=";
 
