@@ -129,10 +129,10 @@ public class PrincipalActivity extends ActionBarActivity {
 	AlertDialog task_dialog;
 	private ArrayList<String> newstates;
 
-	public static String URL_SERVER = "http://XXXXXXX/intranet/register";
-	public static String URL_SERVER_LOGIN = "http://XXXXXXX/intranet/login";
-	public static String FIRST_URL_GRAPH = "http://XXXXXXX/media/";
-	public static String FIRST_URL_API = "http://XXXXXXX/intranet/apiv2/";
+	public static String URL_SERVER = "http://XXXXXX/intranet/register";
+	public static String URL_SERVER_LOGIN = "http://XXXXXX/intranet/login";
+	public static String FIRST_URL_GRAPH = "http://XXXXXX/media/";
+	public static String FIRST_URL_API = "http://XXXXXX/intranet/apiv2/";
 	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=panelapp&accion=";
 	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=panelapp&accion=";
 
@@ -219,7 +219,7 @@ public class PrincipalActivity extends ActionBarActivity {
 		projects = new ArrayList<ProjectRecord>();
 		users = new ArrayList<String>();
 		Log.d("Advance", "1");
-		adapter = new AdvancedCustomArrayAdapter(this);
+		adapter = new AdvancedCustomArrayAdapter(this,currentuser);
 		Log.d("Advance", "2");
 		listtickets = (ListView) findViewById(R.id.listTasks);
 		listtickets.setAdapter(adapter);
@@ -528,6 +528,8 @@ public class PrincipalActivity extends ActionBarActivity {
 						ticket.setSummary(summary);
 						ticket.setDescription(desc);
 						ticket.setProject(json_data.getString("proyecto"));
+						ticket.setAssignto(json_data.getString("assignto"));
+						ticket.setAssignfrom(json_data.getString("assignfrom"));
 						ticket.setProjectid(Integer.valueOf(json_data.getString("projectid")));
 						ticket.setTentativedate(PrincipalActivity
 								.convertDateEpochToFormat(json_data
@@ -685,6 +687,23 @@ public class PrincipalActivity extends ActionBarActivity {
 				
 				Toast toast = Toast.makeText(getApplicationContext(),
 						"Asignación agregada", Toast.LENGTH_SHORT);
+				toast.show();
+
+				String myconsultdel = PrincipalActivity.URL_API
+						+ "operacion:Listar_datos%20"
+						+ "Cargar_archivo_flujo:%20" + currfile
+						+ "%20Variable:" + currreport
+						+ PrincipalActivity.PARAMETER_BY_PROJECT
+						+ PrincipalActivity.PARAMETER_BY_TYPE
+						+ PrincipalActivity.PARAMETER_BY_DATE1;
+				;
+
+				new GetGraphTask("listar_ticket").execute(myconsultdel);
+
+			} else if (consult.endsWith("aceptar_asignacion") ) {
+				
+				Toast toast = Toast.makeText(getApplicationContext(),
+						"Asignación aceptada", Toast.LENGTH_SHORT);
 				toast.show();
 
 				String myconsultdel = PrincipalActivity.URL_API
@@ -1100,11 +1119,22 @@ public class PrincipalActivity extends ActionBarActivity {
 				Spinner typegraph = (Spinner) dialog
 						.findViewById(R.id.graphtype);
 				if (typegraph.getSelectedItemPosition() == 0) {
+					
+					if (PrincipalActivity.PARAMETER_BY_PROJECT.indexOf("ByProject") > 0 ) {
 					myconsult = PrincipalActivity.URL_API
-							+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratres.xml"
+							+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/uocarteleratres.xml"
 							+ PrincipalActivity.PARAMETER_BY_PROJECT
 							+ PrincipalActivity.PARAMETER_BY_TYPE
 							+ PrincipalActivity.PARAMETER_BY_DATE1;
+					}
+					else {
+						myconsult = PrincipalActivity.URL_API
+								+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/ocarteleratres.xml"
+								+ PrincipalActivity.PARAMETER_BY_PROJECT
+								+ PrincipalActivity.PARAMETER_BY_TYPE
+								+ PrincipalActivity.PARAMETER_BY_DATE1;
+						
+					}
 				} else if (typegraph.getSelectedItemPosition() == 1) {
 					myconsult = PrincipalActivity.URL_API
 							+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleraproximos.xml"
@@ -1129,17 +1159,31 @@ public class PrincipalActivity extends ActionBarActivity {
 							+ PrincipalActivity.PARAMETER_BY_PROJECT
 							+ PrincipalActivity.PARAMETER_BY_TYPE
 							+ PrincipalActivity.PARAMETER_BY_DATE1;
+//				} else if (typegraph.getSelectedItemPosition() == 5) {
+//					myconsult = PrincipalActivity.URL_API
+//							+ "operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/ucarteleratodos.xml%20Autofiltro:%20por_usuario"
+//							+ PrincipalActivity.PARAMETER_BY_TYPE
+//							+ PrincipalActivity.PARAMETER_BY_DATE1;
+//
 				} else if (typegraph.getSelectedItemPosition() == 5) {
 					myconsult = PrincipalActivity.URL_API
 							+ "operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratodos.xml%20Autofiltro:%20por_proyecto"
 							+ PrincipalActivity.PARAMETER_BY_TYPE
 							+ PrincipalActivity.PARAMETER_BY_DATE1;
 
+
 				} else if (typegraph.getSelectedItemPosition() == 6) {
 					myconsult = PrincipalActivity.URL_API
 							+ "operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratodos.xml%20Autofiltro:%20por_tipo"
 							+ PrincipalActivity.PARAMETER_BY_PROJECT
 							+ PrincipalActivity.PARAMETER_BY_DATE1;
+
+				} else if (typegraph.getSelectedItemPosition() == 7) {
+				myconsult = PrincipalActivity.URL_API
+						+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleraasignado.xml"
+						+ PrincipalActivity.PARAMETER_BY_TYPE
+						+ PrincipalActivity.PARAMETER_BY_PROJECT
+						+ PrincipalActivity.PARAMETER_BY_DATE1;
 
 				}
 
@@ -1606,27 +1650,64 @@ public class PrincipalActivity extends ActionBarActivity {
 	public AlertDialog makeTaskOptionsDialog(final Context context) {
 		
 		
-		final boolean isdelassign;
+		final int  isdelassign;
 		
 		final String[] option;
 		
 		Log.d("record status", recordticket.getStatus());
+		Log.d("record assignto", recordticket.getAssignto());
 		
 		
-		if (recordticket != null && recordticket.getStatus().contentEquals("AssignTo") ) {
+		if (recordticket == null ) {
+			
+			Log.d("recordticket","noinfo");
+			return null;
+		}
+			
+		Log.d("LongClick (1)",recordticket.getStatus());
+		if (recordticket.getStatus().contentEquals("Finished")){
+			Log.d("LongClick (2)",recordticket.getStatus());
+			option = new String[] {
+					getString(R.string.show_task), 
+					getString(R.string.delete_task),
+					 };
+			isdelassign = 0;
+		}		
+		else if ( recordticket.getStatus().contentEquals("AssignTo") ) {
+			
 			Log.d("record status", "...(2)...");
+			
+			if ( recordticket.getAssignto().contentEquals(currentuser)) {
+				option = new String[] {
+						getString(R.string.show_task), 
+						getString(R.string.assign_accept),
+						getString(R.string.desassign),
+						 };
+				isdelassign = 2;
+				
+			}
+			else {
+				option = new String[] {
+						getString(R.string.change_status),
+						getString(R.string.show_task), 
+						getString(R.string.delete_task),
+						getString(R.string.modify_date_task),
+						getString(R.string.modify_data_task),
+						getString(R.string.desassign),
+						 };
+				isdelassign = 1;
+			}
+			
+		}
+		else if ( recordticket.getAssignto().contentEquals(currentuser) && 
+				!recordticket.getAssignfrom().contentEquals(currentuser) ) {
 			option = new String[] {
 					getString(R.string.change_status),
 					getString(R.string.show_task), 
-					getString(R.string.delete_task),
-					getString(R.string.modify_date_task),
-					getString(R.string.modify_data_task),
 					getString(R.string.desassign),
 					 };
-			isdelassign = true;
-			
+			isdelassign = 3;
 		}
-		
 		else {
 			option = new String[] {
 					getString(R.string.change_status),
@@ -1636,7 +1717,7 @@ public class PrincipalActivity extends ActionBarActivity {
 					getString(R.string.modify_data_task),
 					getString(R.string.assign_action),
 					 };
-			isdelassign = false;
+			isdelassign = 0;
 		}
 		
 		
@@ -1650,30 +1731,82 @@ public class PrincipalActivity extends ActionBarActivity {
 			public void onClick(DialogInterface dialog, int which) {
 				Log.d("makeTaskOptionsDialog", "currentticket:" + currentticket);
 
-				switch (which) {
-				case 0: // Cambiar estado
-					Log.d("makeTaskOptionsDialog", "changeStatusTask");
-					changeStatusTask();
-					break;
-				case 1: // Ver
+				
+				if (recordticket.getStatus().contentEquals("Finished")) {
+					switch (which) {
+					case 0: // Cambiar estado
+						Log.d("makeTaskOptionsDialog", "changeStatusTask");
+						loadViewTicketActivity(true);
+						break;
+					case 1: // Elimina
+						makeDeleteOptionsDialog();
+						break;
+					default:
+						Log.d("Error switch","Error switch");
+						break;
+					}
+						
+					
+				}
+				else if (isdelassign == 3) {
+					switch (which) {
+					case 0: // Cambiar estado
+						Log.d("makeTaskOptionsDialog", "changeStatusTask");
+						changeStatusTask();
+						break;
+					case 1: // Ver	
+						loadViewTicketActivity(true);
+						break;
+					case 2: // Modifica datos de la tarea
+						callAllocTasks(isdelassign);
+						break;
 
-					loadViewTicketActivity(true);
-					break;
-				case 2: // Elimina
-					makeDeleteOptionsDialog();
-					break;
-				case 3: // Modifica fecha de la tarea
-					makeModifyOptionsDialog();
-					break;
-				case 4: // Modifica datos de la tarea
-					loadViewTicketActivity(false);
-					break;
-				case 5: // Modifica datos de la tarea
-					callAllocTasks(isdelassign);
-					break;
-
-				default:
-					break;
+					default:
+						break;
+					}					
+				}
+				else if (isdelassign == 2) {
+					switch (which) {
+					case 0: // Ver
+	
+						loadViewTicketActivity(true);
+						break;
+					case 1: // asignacion 
+					case 2: // desasignacion
+						callAllocTasks(isdelassign);
+						break;	
+					default:
+						break;
+					}
+					
+					
+				}
+				else {
+					switch (which) {
+					case 0: // Cambiar estado
+						Log.d("makeTaskOptionsDialog", "changeStatusTask");
+						changeStatusTask();
+						break;
+					case 1: // Ver
+	
+						loadViewTicketActivity(true);
+						break;
+					case 2: // Elimina
+						makeDeleteOptionsDialog();
+						break;
+					case 3: // Modifica fecha de la tarea
+						makeModifyOptionsDialog();
+						break;
+					case 4: // Modifica datos de la tarea
+						loadViewTicketActivity(false);
+						break;
+					case 5: // Modifica datos de la tarea
+						callAllocTasks(isdelassign);
+						break;
+	
+					default:
+						break;
+					}
 				}
 			}
 
@@ -1687,7 +1820,7 @@ public class PrincipalActivity extends ActionBarActivity {
 
 		String myconsult = PrincipalActivity.URL_API
 				+ "operacion:Listar_datos%20"
-				+ "Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratodos.xml%20Variable:vTodas_las_tareas"
+				+ "Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleravertarea.xml%20Variable:vTodas_las_tareas"
 				+ "%20parameters.nro_ticket:" + currentticket;
 
 		Log.d("loadViewTicketActivity", "myconsult:" + myconsult);
@@ -1708,14 +1841,22 @@ public class PrincipalActivity extends ActionBarActivity {
 			Log.d("Spinner", "3:" + report);
 			currreport = "vProgress";
 		} else if (report.contentEquals( getString(R.string.assign_to_others))) {
-			currreport = "vAsignados";
+			currfile = "/home/panelapp/.safet/flowfiles/carteleraasignado.xml";			
+			currreport = "vAsignadosOtros";			
 			
+		} else if (report.contentEquals( getString(R.string.assign_to_me))) {
+			currfile = "/home/panelapp/.safet/flowfiles/carteleraasignado.xml";
+			currreport = "vAsignadosMi";
+
 		} else if (report.contentEquals("Pospuestas")) {
 			currreport = "vPostponed";
 		} else if (report
 				.contentEquals(getString(R.string.completed_this_week))) {
+			
 			currreport = "vEsta_semana";
 			currfile = "/home/panelapp/.safet/flowfiles/cartelerafinalizadosporsemana.xml";
+			Log.d("Completadas esta semana",currreport);
+			Log.d("Completadas esta semana",currfile);
 		} else if (report
 				.contentEquals(getString(R.string.completed_after_week))) {
 			currreport = "vSemana_anterior";
@@ -1725,7 +1866,13 @@ public class PrincipalActivity extends ActionBarActivity {
 		else if (report.contentEquals(getString(R.string.all_tickets))) {
 
 			currreport = "Todos";
-			currfile = "/home/panelapp/.safet/flowfiles/cartelerabusqueda.xml";
+			if (PrincipalActivity.PARAMETER_BY_PROJECT.indexOf("ByProject") > 0 ) {
+				currfile = "/home/panelapp/.safet/flowfiles/ucartelerabusqueda.xml";
+			} else {
+				currfile = "/home/panelapp/.safet/flowfiles/cartelerabusqueda.xml";
+			}
+				
+				
 		}
 
 		else if (report.contentEquals(getString(R.string.delayed))) {
@@ -1931,6 +2078,14 @@ public class PrincipalActivity extends ActionBarActivity {
 				recordticket =  (TicketRecord) listtickets
 						.getItemAtPosition(position);
 				
+				if (!recordticket.getOwner().contentEquals(currentuser) && 
+						!recordticket.getAssignto().contentEquals(currentuser)) {
+					
+					Toast.makeText(getBaseContext(), getString(R.string.ticket_other_user),
+							Toast.LENGTH_SHORT).show();
+ 
+					return false;
+				}
 				String idticket = recordticket.getId();
 				currentticket = idticket;
 				currentprojectid = String.valueOf(recordticket.getProjectid());
@@ -1940,7 +2095,8 @@ public class PrincipalActivity extends ActionBarActivity {
 				Log.d("Selecting", "Tentativedate:|" + currentdate + "|");
 
 				task_dialog = makeTaskOptionsDialog(view.getContext());
-				task_dialog.show();
+				if (task_dialog != null )
+					task_dialog.show();
 
 				return true;
 			}
@@ -2258,21 +2414,38 @@ public class PrincipalActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	public void callAllocTasks(boolean isdelassign) {
+	public void callAllocTasks(int isdelassign) {
 		String idticket = currentticket;
 
-		if (isdelassign) {
+		if (isdelassign == 1 || isdelassign == 3) {
 			String myconsult = PrincipalActivity.URLFORM_API
 					+ "operacion:eliminar_asignacion%20"
-					+ "id:"+idticket;
+					+ "id:"+idticket+"%20"
+					+ "propietario:"+recordticket.getAssignfrom();
 	
-			Log.d("Delassign","myconsult:" + myconsult);
+			Log.d("eliminar_asignacion","myconsult:" + myconsult);
 			
 			
 			new GetGraphTask("eliminar_asignacion").execute(myconsult);
 			
 		}
-		else {
+		else if ( isdelassign == 2 ) {
+			String userto = "";
+			String owner = currentuser;
+			String myconsult = PrincipalActivity.URLFORM_API
+					+ "operacion:aceptar_asignacion%20"
+					+ "%20id:"+idticket
+					+ "%20propietario:"+owner;
+	
+			Log.d("aceptar_asignacion","myconsult:" + myconsult);
+			
+			
+			new GetGraphTask("aceptar_asignacion").execute(myconsult);
+			
+			
+			Log.d("callAllocTasks", "aceptar_asignacion");
+		}
+		else if ( isdelassign == 0 ) {
 			String myconsult = PrincipalActivity.URL_API
 					+ "operacion:listar_usuarios%20"
 					+ "Rol:all";

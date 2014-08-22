@@ -50,6 +50,7 @@ public class ViewTicketActivity extends Activity {
     	TextView finishdate = (TextView) findViewById(R.id.text_finishdate);
     	TextView owner = (TextView) findViewById(R.id.text_owner);
     	TextView status = (TextView) findViewById(R.id.text_status);
+    	TextView assignto = (TextView) findViewById(R.id.assign_to);
     	
 		try {	
 			JSONObject jall = new JSONObject(resulting);
@@ -78,6 +79,7 @@ public class ViewTicketActivity extends Activity {
 				spanString = new SpannableString("Propietario: " + json_data.getString("propietario"));
 				spanString.setSpan(new StyleSpan(Typeface.BOLD), 0, 12, 0);																
 				owner.setText(spanString);
+				
 				spanString = new SpannableString("Fecha planificada:" 
 						+ PrincipalActivity.convertDateEpochToFormat(json_data.getString("tentativedate")));
 				spanString.setSpan(new StyleSpan(Typeface.BOLD), 0, 17, 0);																
@@ -86,7 +88,12 @@ public class ViewTicketActivity extends Activity {
 				spanString = new SpannableString("Fecha de completación:" + 
 						PrincipalActivity.convertDateEpochToFormat(json_data.getString("finishdate")));
 				spanString.setSpan(new StyleSpan(Typeface.BOLD), 0, 21, 0);																				
-				finishdate.setText(spanString);				
+				finishdate.setText(spanString);
+				
+				spanString = new SpannableString("Asignado a: " + json_data.getString("assignto"));
+				spanString.setSpan(new StyleSpan(Typeface.BOLD), 0, 12, 0);																
+				assignto.setText(spanString);
+
 
 			}
 

@@ -19,6 +19,7 @@
     <string name="send_to">Enviar a</string>
     <string name="report_type">Gestión de tareas</string>
     <string name="accept">Aceptar</string>
+    <string name="assign_accept">Aceptar asignación</string>
     <string name="cancel">Cancelar</string>
     <string name="close">Cerrar</string>
     <string name="close_app">Cerrar aplicación</string>
@@ -54,6 +55,7 @@
     <string name="assign_action">Asignar tarea a...</string>
     <string name="desassign">Eliminar asignación</string>
     <string name="assign_to_others">Asignados a otros</string>
+    <string name="assign_to_me">Asignados a mí</string>
     <string name="after_week">Despúes de la próxima semana</string>
     <string name="next_month">Próximo mes</string>
     <string name="this_month">Este mes</string>
@@ -71,17 +73,19 @@
         <string name="completed_after_week">Semana anterior (Completadas)</string>
         <string name="completed_this_week">Esta semana (Completadas)</string>
         <string name="before_tomorrow">** Para mañana</string>
+        <string name="ticket_other_user">Esta tarea es de otro usuario de DoItAll, no es posible modificarla</string>
     
     
   <string-array name="names_report">
         <item>Esta semana</item>
         <item>Por hacer</item>
-        <item>Asignados a otros</item>
         <item>Atrasadas</item>        
-        <item>Próxima semana</item>        
+        <item>Próxima semana</item>
+        <item>Asignados a otros</item>
+		<item>Asignados a mí</item>                
         <item>Semana anterior (Completadas)</item>
         <item>Esta semana (Completadas)</item>
-         <item>Todas las tareas</item>
+         <item>Todas las tareas</item>         
         <item>Este mes</item>       
         <item>Finalizadas</item>
         <item>Pospuestas</item>                
@@ -89,6 +93,7 @@
         <item>Próximo mes</item>
         <item>Despúes de la próxima semana</item>
         <item>Despúes del próximo mes</item>
+        
     </string-array>
   
   <string-array name="graph_report">
@@ -99,6 +104,7 @@
         <item>Por mes (completadas)</item>        
         <item>Por proyecto</item>
         <item>Por tipo</item>        
+        <item>Asignación de tareas</item>
     </string-array>
   <string-array name="user_list">
         <item>vbravo</item>
@@ -111,12 +117,15 @@
   
   
       <string-array name="names_type_ticket">
-        <item>Revisión</item>
-        <item>Redacción</item>
-        <item>Trámite</item>
+        <item>Redacción</item>        
         <item>Configuración</item>
+        <item>Trámite</item>
         <item>Arreglo</item>
-        <item>Escribir código</item>                        
+        <item>Compra</item>        
+        <item>Escribir código</item>
+        <item>Revisión</item>
+        <item>Asistencia reunión</item>
+        <item>Presentación diapositivas</item>                        
         <item>Presentación oral</item>
         <item>Organización de material</item>        
         <item>Idea</item>

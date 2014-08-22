@@ -5,7 +5,22 @@ public class TicketRecord {
 	private String description;
 	private String project;
 	private String tentativedate;
+	private String assignto;
+	private String assignfrom;
 	
+	
+	public String getAssignfrom() {
+		return assignfrom;
+	}
+	public void setAssignfrom(String assignfrom) {
+		this.assignfrom = assignfrom;
+	}
+	public String getAssignto() {
+		return assignto;
+	}
+	public void setAssignto(String assignto) {
+		this.assignto = assignto;
+	}
 	public Long getEpochtentativedate() {
 		return epochtentativedate;
 	}
@@ -40,7 +55,14 @@ public class TicketRecord {
 	private int projectid;
 	private String id;
 	TicketRecord() {
-		
+		summary = "";
+		description = "";
+		project = "";
+		tentativedate = "";
+		assignto = "";
+		owner = "";
+		assignfrom = "";
+
 	}
 	public String getSummary() {
 		return summary;

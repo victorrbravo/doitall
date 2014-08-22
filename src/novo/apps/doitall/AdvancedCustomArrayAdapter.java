@@ -25,11 +25,15 @@ import android.graphics.Typeface;
 public class AdvancedCustomArrayAdapter extends BaseAdapter {
     private final Activity context;
     private  ArrayList<TicketRecord> tickets;
+    private final String currentuser;
     
     Comparator<TicketRecord> ticketComparator; 
 
-    public AdvancedCustomArrayAdapter(Activity context) {        
-       this.context = context;   
+    public AdvancedCustomArrayAdapter(Activity context, String user) {
+    	
+       this.context = context;
+       this.currentuser = user;
+       Log.d("AdvancedCustomArrayAdapter",this.currentuser);
        ticketComparator  = new Comparator<TicketRecord>() {
            public int compare(TicketRecord obj1,TicketRecord obj2) {
            	Long first = obj1.getEpochtentativedate();
@@ -115,26 +119,98 @@ public class AdvancedCustomArrayAdapter extends BaseAdapter {
             viewContainer = (ViewContainer) rowView.getTag();
         }
 
+		String fulltext = tickets.get(position).getSummary();
+		viewContainer.txtTitle.setText(fulltext);
+
+		Log.d("fulltext",fulltext);
+    	String owner = tickets.get(position).getOwner();
+    	String whoassign = tickets.get(position).getAssignto();
+
         if ( tickets.get(position).getStatus().contentEquals("Finished")) {
+        if (!owner.contentEquals(this.currentuser) ) {
+        	String assignfrom = tickets.get(position).getAssignfrom();
+        	if (assignfrom.isEmpty() || assignfrom.contentEquals("n/a")) {
+        		String actionassign = "(" + owner + ")";
+        		SpannableString spanString = new SpannableString(fulltext + actionassign);
+        		spanString.setSpan(new RelativeSizeSpan(0.65f), fulltext.length(), fulltext.length()+actionassign.length(), 0);
+        		viewContainer.txtTitle.setText(spanString);
+        		
+        	}
+        	else {
+        		String actionassign = "(" + assignfrom + "->" + whoassign + ")";
+        		SpannableString spanString = new SpannableString(fulltext + actionassign);
+        		spanString.setSpan(new RelativeSizeSpan(0.65f), fulltext.length(), fulltext.length()+actionassign.length(), 0);
+        		viewContainer.txtTitle.setText(spanString);
+        	}
+			        	
+        }
+        
         	viewContainer.imageView.setImageResource(R.drawable.closefolder);
+        
+        
+        	
         }
         else if ( tickets.get(position).getStatus().contentEquals("Postponed")) {
         	viewContainer.imageView.setImageResource(R.drawable.tasknext32);        	
         }
-        else if ( tickets.get(position).getStatus().contentEquals("AssignTo")) {
-        	viewContainer.imageView.setImageResource(R.drawable.assignto);
+        else if ( tickets.get(position).getStatus().contentEquals("AssignTo") ||
+        		( !owner.contentEquals(this.currentuser) )  ) {
+        	String assignfrom = tickets.get(position).getAssignfrom();
+        	if (assignfrom.isEmpty() || assignfrom.contentEquals("n/a")) {
+        		String actionassign = "(" + owner + ")";
+        		SpannableString spanString = new SpannableString(fulltext + actionassign);
+        		spanString.setSpan(new RelativeSizeSpan(0.65f), fulltext.length(), fulltext.length()+actionassign.length(), 0);
+        		viewContainer.txtTitle.setText(spanString);
+        		
+        	}
+        	else {
+        		String actionassign = "(" + assignfrom + "->" + whoassign + ")";
+        		SpannableString spanString = new SpannableString(fulltext + actionassign);
+        		spanString.setSpan(new RelativeSizeSpan(0.65f), fulltext.length(), fulltext.length()+actionassign.length(), 0);
+        		viewContainer.txtTitle.setText(spanString);
+        	}
+    					
+
+    		Log.d("assignaccept","ASSIGN");
+    		if (tickets.get(position).getStatus().contentEquals("AssignTo")) {
+    			Log.d("assignaccept","assignto");
+    			viewContainer.imageView.setImageResource(R.drawable.assignto);
+    		}
+    		else {
+    			Log.d("assignaccept","assignaccept");
+    			viewContainer.imageView.setImageResource(R.drawable.assignaccept);
+    		}
+
+    		
         }
         else {
-        	viewContainer.imageView.setImageResource(R.drawable.yellowsoftware);
+    		if (tickets.get(position).getAssignto().contentEquals(currentuser) ) {
+    			String assignfrom = tickets.get(position).getAssignfrom();
+            	if (assignfrom.isEmpty() || assignfrom.contentEquals("n/a")) {
+            		String actionassign = "(" + owner + ")";
+            		SpannableString spanString = new SpannableString(fulltext + actionassign);
+            		spanString.setSpan(new RelativeSizeSpan(0.65f), fulltext.length(), fulltext.length()+actionassign.length(), 0);
+            		viewContainer.txtTitle.setText(spanString);
+            		
+            	}
+            	else {
+            		String actionassign = "(" + assignfrom + "->" + whoassign + ")";
+            		SpannableString spanString = new SpannableString(fulltext + actionassign);
+            		spanString.setSpan(new RelativeSizeSpan(0.65f), fulltext.length(), fulltext.length()+actionassign.length(), 0);
+            		viewContainer.txtTitle.setText(spanString);
+            	}
+    			viewContainer.imageView.setImageResource(R.drawable.assignaccept);
+    			//viewContainer.txtTitle.setText(viewContainer.txtTitle.getText().toString()+ "<-here");
+    			
+    		}
+    		else {
+    			viewContainer.imageView.setImageResource(R.drawable.yellowsoftware);
+    		}
         	
         	
         }
         //---customize the content of each row based on position---
 
-		String fulltext = tickets.get(position).getSummary();
-		viewContainer.txtTitle.setText(fulltext);
-
-		Log.d("fulltext",fulltext);
 
         if ( tickets.get(position).getStatus().contentEquals("ToDo")) {
 			
