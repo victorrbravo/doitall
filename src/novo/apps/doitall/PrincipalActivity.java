@@ -129,10 +129,10 @@ public class PrincipalActivity extends ActionBarActivity {
 	AlertDialog task_dialog;
 	private ArrayList<String> newstates;
 
-	public static String URL_SERVER = "http://XXXXXX/intranet/register";
-	public static String URL_SERVER_LOGIN = "http://XXXXXX/intranet/login";
-	public static String FIRST_URL_GRAPH = "http://XXXXXX/media/";
-	public static String FIRST_URL_API = "http://XXXXXX/intranet/apiv2/";
+	public static String URL_SERVER = "http://server.novoapps.info/intranet/register";
+	public static String URL_SERVER_LOGIN = "http://server.novoapps.info/intranet/login";
+	public static String FIRST_URL_GRAPH = "http://server.novoapps.info/media/";
+	public static String FIRST_URL_API = "http://server.novoapps.info/intranet/apiv2/";
 	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=panelapp&accion=";
 	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=panelapp&accion=";
 
@@ -1685,6 +1685,7 @@ public class PrincipalActivity extends ActionBarActivity {
 						 };
 				isdelassign = 2;
 				
+				Log.d("record status", "...(3)...");
 			}
 			else {
 				option = new String[] {
@@ -1772,8 +1773,10 @@ public class PrincipalActivity extends ActionBarActivity {
 						loadViewTicketActivity(true);
 						break;
 					case 1: // asignacion 
-					case 2: // desasignacion
 						callAllocTasks(isdelassign);
+						break;
+					case 2: // desasignacion
+						callAllocTasks(3);
 						break;	
 					default:
 						break;
