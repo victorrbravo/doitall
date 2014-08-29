@@ -44,6 +44,13 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+//import novo.apps.doitall.PlaceholderFragment;
+//import com.example.testmodernmenu.DrawerLayout;
+//import com.example.testmodernmenu.FragmentManager;
+//import com.example.testmodernmenu.NavigationDrawerFragment;
+//import com.example.testmodernmenu.MainActivity.PlaceholderFragment;
+//import com.example.testmodernmenu.MainActivity;
+//import com.example.testmodernmenu.MainActivity.PlaceholderFragment;
 import com.lowagie.text.Document;
 import com.lowagie.text.Font;
 import com.lowagie.text.HeaderFooter;
@@ -55,6 +62,7 @@ import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.text.FontFactory;
 
 import android.R.bool;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -70,6 +78,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.ListFragment;
 import android.support.v4.util.ArrayMap;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.MenuItemCompat.OnActionExpandListener;
@@ -93,8 +104,10 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -109,6 +122,9 @@ public class PrincipalActivity extends ActionBarActivity {
 
 	private ProgressDialog progress;
 	private ActionBar actionbar;
+    private android.support.v4.app.FragmentManager fragmentManager;
+    private SimpleListFragment fragment;
+    
 	AdvancedCustomArrayAdapter adapter;
 	ArrayList<TicketRecord> tickets;
 	ArrayList<ProjectRecord> projects;
@@ -127,7 +143,9 @@ public class PrincipalActivity extends ActionBarActivity {
 	private String currfile;
 	private String currreport;
 	AlertDialog task_dialog;
+	private CharSequence mTitle;
 	private ArrayList<String> newstates;
+	
 
 	public static String URL_SERVER = "http://XXXXXXXXXXXXXX/intranet/register";
 	public static String URL_SERVER_LOGIN = "http://XXXXXXXXXXXXXX/intranet/login";
@@ -163,13 +181,16 @@ public class PrincipalActivity extends ActionBarActivity {
 		DESCRIPTION_TYPE_PARAMS = "";
 		DESCRIPTION_DATE1_PARAMS = "";
 
+		mTitle = getTitle();
+		
 		isclosing = 0;
 		Log.d("PrincipalActivity", "OnCreate");
 		usersmap = new HashMap<String, String>();
 
 		actionbar = getSupportActionBar();
 		actionbar.setHomeButtonEnabled(true);
-
+		actionbar.setDisplayHomeAsUpEnabled(true);
+		
 		currentuser = getIntent().getStringExtra("selectuser");
 		String ticket = getIntent().getStringExtra("selectauth");
 		String pass = getIntent().getStringExtra("selectpass");
@@ -208,13 +229,10 @@ public class PrincipalActivity extends ActionBarActivity {
 		urlimage = "";
 		lastlisttickets = "";
 
-		Log.d("PrincipalActivity", "1");
+		Log.d("PrincipalActivity", "**1");
 		setContentView(R.layout.activity_principal);
-		Log.d("PrincipalActivity", "2");
-		if (savedInstanceState == null) {
-			getSupportFragmentManager().beginTransaction()
-					.add(R.id.container, new PlaceholderFragment()).commit();
-		}
+		Log.d("PrincipalActivity", "**2");
+		
 		tickets = new ArrayList<TicketRecord>();
 		projects = new ArrayList<ProjectRecord>();
 		users = new ArrayList<String>();
@@ -230,8 +248,36 @@ public class PrincipalActivity extends ActionBarActivity {
 
 		addListenerOnButton();
 		loadSafetReport("Por_hacer");
+		
+		
+		Log.d("Create End...","Create Fragment");
 
+
+		fragmentManager = getSupportFragmentManager();
+	    android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+	    fragment = new SimpleListFragment();
+	    
+	    
+	    
+		
 	}
+
+	
+	public void onNavigationDrawerItemSelected(int position) {
+		// update the main content by replacing fragments
+	
+		Log.d("drawer","drawer");
+		if (fragmentManager.findFragmentById(android.R.id.content) == null) {
+	    	fragmentManager.beginTransaction().add(android.R.id.content, new SimpleListFragment()).commit();
+	    }
+		else {
+			fragmentManager
+			.beginTransaction()
+			.replace(R.id.container,
+					fragment).commit();
+		}
+	}
+
 
 	@Override
 	public void onBackPressed() {
@@ -915,10 +961,26 @@ public class PrincipalActivity extends ActionBarActivity {
 										.replace("%20", " ")
 								+ PrincipalActivity.DESCRIPTION_DATE1_PARAMS
 										.replace("%20", " "));
-						Toast toast = Toast.makeText(getApplicationContext(),
-								getString(R.string.need_refresh),
-								Toast.LENGTH_SHORT);
-						toast.show();
+
+						currreport = "Todos";
+						currfile = "/home/panelapp/.safet/flowfiles/ucartelerabusqueda.xml";
+
+						
+						String myconsultdel = PrincipalActivity.URL_API
+								+ "operacion:Listar_datos%20"
+								+ "Cargar_archivo_flujo:%20" + currfile
+								+ "%20Variable:" + currreport
+								+ PrincipalActivity.PARAMETER_BY_PROJECT
+								+ PrincipalActivity.PARAMETER_BY_TYPE
+								+ PrincipalActivity.PARAMETER_BY_DATE1;
+						;
+						new GetGraphTask("listar_ticket").execute(myconsultdel);
+
+						
+//						Toast toast = Toast.makeText(getApplicationContext(),
+//								getString(R.string.need_refresh),
+//								Toast.LENGTH_SHORT);
+//						toast.show();
 
 					}
 
@@ -1101,13 +1163,13 @@ public class PrincipalActivity extends ActionBarActivity {
 
 		final Dialog dialog = new Dialog(context);
 		dialog.setContentView(R.layout.choose_graph_report);
-		dialog.setTitle(getString(R.string.report_type));
+		dialog.setTitle(getString(R.string.graph_type));
 
 		// set the custom dialog components - text, image and button
 		TextView text = (TextView) dialog.findViewById(R.id.text);
 		text.setText(getString(R.string.select_report_graph));
 		ImageView image = (ImageView) dialog.findViewById(R.id.image);
-		image.setImageResource(R.drawable.ic_launcher);
+		image.setImageResource(R.drawable.ic_action_graph);
 
 		Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
 		// if button is clicked, close the custom dialog
@@ -1286,7 +1348,7 @@ public class PrincipalActivity extends ActionBarActivity {
 		TextView text = (TextView) dialog.findViewById(R.id.text);
 		text.setText(getString(R.string.select_report_ticket));
 		ImageView image = (ImageView) dialog.findViewById(R.id.image);
-		image.setImageResource(R.drawable.ic_launcher);
+		image.setImageResource(R.drawable.ic_action_refresh);
 
 		Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
 		// if button is clicked, close the custom dialog
@@ -1323,13 +1385,13 @@ public class PrincipalActivity extends ActionBarActivity {
 
 	private ArrayList<String> changeNames(ArrayList<String> states) {
 		Map inmap = new HashMap<String, String>();
-		inmap.put("Finished", "Finalizada");
+		inmap.put("Finished", "Completada");
 		inmap.put("Progress", "En Progreso");
 		inmap.put("Postponed", "Pospuesta");
 		inmap.put("ToDo", "Por hacer");
 
 		Map outmap = new HashMap<String, String>();
-		outmap.put("Finalizada", "Finished");
+		outmap.put("Completada", "Finished");
 		outmap.put("En Progreso", "Progress");
 		outmap.put("Pospuesta", "Postponed");
 		outmap.put("Por hacer", "ToDo");
@@ -1665,15 +1727,7 @@ public class PrincipalActivity extends ActionBarActivity {
 		}
 			
 		Log.d("LongClick (1)",recordticket.getStatus());
-		if (recordticket.getStatus().contentEquals("Finished")){
-			Log.d("LongClick (2)",recordticket.getStatus());
-			option = new String[] {
-					getString(R.string.show_task), 
-					getString(R.string.delete_task),
-					 };
-			isdelassign = 0;
-		}		
-		else if ( recordticket.getStatus().contentEquals("AssignTo") ) {
+		if ( recordticket.getStatus().contentEquals("AssignTo") ) {
 			
 			Log.d("record status", "...(2)...");
 			
@@ -1700,12 +1754,30 @@ public class PrincipalActivity extends ActionBarActivity {
 			}
 			
 		}
+		else if (recordticket.getStatus().contentEquals("Finished")){
+			Log.d("LongClick (2)",recordticket.getStatus());
+			option = new String[] {
+					getString(R.string.show_task), 
+					getString(R.string.delete_task),
+					 };
+			isdelassign = 0;
+		}		
+		
+		else if ( recordticket.getAssignfrom().contentEquals(currentuser) && 
+				!recordticket.getAssignto().contentEquals(currentuser) ) {
+			option = new String[] {
+					getString(R.string.show_task), 
+					getString(R.string.desassign),				
+					getString(R.string.modify_date_task),
+					 };
+			isdelassign = 4;
+		}		
 		else if ( recordticket.getAssignto().contentEquals(currentuser) && 
 				!recordticket.getAssignfrom().contentEquals(currentuser) ) {
 			option = new String[] {
 					getString(R.string.change_status),
 					getString(R.string.show_task), 
-					getString(R.string.desassign),
+					getString(R.string.desassign),				
 					 };
 			isdelassign = 3;
 		}
@@ -1749,6 +1821,22 @@ public class PrincipalActivity extends ActionBarActivity {
 						
 					
 				}
+				else if (isdelassign == 4) {
+					switch (which) {
+					case 0: // Ver	
+						loadViewTicketActivity(true);
+						break;
+					case 1: // Modifica datos de la tarea
+						callAllocTasks(isdelassign);
+						break;
+					case 2:
+						makeModifyOptionsDialog();
+						break;				
+					default:
+						break;
+					}					
+				}
+				
 				else if (isdelassign == 3) {
 					switch (which) {
 					case 0: // Cambiar estado
@@ -1761,6 +1849,7 @@ public class PrincipalActivity extends ActionBarActivity {
 					case 2: // Modifica datos de la tarea
 						callAllocTasks(isdelassign);
 						break;
+				
 
 					default:
 						break;
@@ -2081,8 +2170,10 @@ public class PrincipalActivity extends ActionBarActivity {
 				recordticket =  (TicketRecord) listtickets
 						.getItemAtPosition(position);
 				
-				if (!recordticket.getOwner().contentEquals(currentuser) && 
-						!recordticket.getAssignto().contentEquals(currentuser)) {
+				if ( (!recordticket.getOwner().contentEquals(currentuser) && 
+						!recordticket.getAssignfrom().contentEquals(currentuser))
+						&& !recordticket.getStatus().contentEquals("AssignTo")
+						) {
 					
 					Toast.makeText(getBaseContext(), getString(R.string.ticket_other_user),
 							Toast.LENGTH_SHORT).show();
@@ -2123,18 +2214,18 @@ public class PrincipalActivity extends ActionBarActivity {
 
 		});
 
-		newticketbutton = (ImageButton) findViewById(R.id.buttonnewticket);
-
-		Log.d("newticketbutton", "newticketbutton");
-
-		newticketbutton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View view) {
-
-				callPreListprojects(true, "", false);
-			}
-		});
-
+//		newticketbutton = (ImageButton) findViewById(R.id.buttonnewticket);
+//
+//		Log.d("newticketbutton", "newticketbutton");
+//
+//		newticketbutton.setOnClickListener(new OnClickListener() {
+//			@Override
+//			public void onClick(View view) {
+//
+//				callPreListprojects(true, "", false);
+//			}
+//		});
+//
 		graphbutton = (ImageButton) findViewById(R.id.buttongraph);
 
 		graphbutton.setOnClickListener(new OnClickListener() {
@@ -2206,6 +2297,14 @@ public class PrincipalActivity extends ActionBarActivity {
 		}
 	}
 
+	public void restoreActionBar() {
+		ActionBar actionBar = getSupportActionBar();
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+		actionBar.setDisplayShowTitleEnabled(true);
+		actionBar.setTitle(mTitle);
+	}
+
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -2215,6 +2314,9 @@ public class PrincipalActivity extends ActionBarActivity {
 		// When using the support library, the setOnActionExpandListener()
 		// method is
 		// static and accepts the MenuItem object as an argument
+		
+		
+		
 		MenuItem searchItem = menu.findItem(R.id.action_search);
 
 		final SearchView searchView = (SearchView) MenuItemCompat
@@ -2340,7 +2442,7 @@ public class PrincipalActivity extends ActionBarActivity {
 						+ ticket.getDescription() + " (" + ticket.getProject()
 						+ "/" + ticket.getType() + ") "
 						+ "/ Tarea planificada para:"
-						+ ticket.getTentativedate() + "/ Fue finalizada:"
+						+ ticket.getTentativedate() + "/ Fue completada:"
 						+ ticket.getFinishdate() + ".";
 				Paragraph p2 = new Paragraph(newentry);
 				Font paraFont2 = new Font(Font.HELVETICA, 16.0f, Color.BLACK);
@@ -2385,6 +2487,79 @@ public class PrincipalActivity extends ActionBarActivity {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
+		 switch (item.getItemId()) {
+		    case android.R.id.home:
+		    	
+		        
+//		    	if (fragmentManager.findFragmentById(android.R.id.content) == null) {
+//		    		Log.d("fragment","(1)");
+//		    		 FragmentTransaction ft = fragmentManager.beginTransaction();
+//
+//		    		 FrameLayout layout = (FrameLayout) findViewById(R.id.container);
+//		    		 
+//		    	     ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+//		    	     ft.replace(R.id.container, new SimpleListFragment(), "List_Fragment");
+//
+//
+//		    	     if (fragment.isHidden()) {
+//
+//		    	    	 Log.d("fragment","showing");
+//		    	    	 ft.show(fragment);
+//		    	    	  layout.setVisibility(View.GONE);
+//		    	    	 //							fragmentManager
+//		    	    	 //							.beginTransaction()
+//		    	    	 //							.replace(R.id.container,
+//		    	    	 //									fragment).commit();
+//		    	     }
+//		    	     else {
+//		    	    	 Log.d("fragment","hiding");
+//		    	    	 ft.hide(fragment);
+//		    	    	 layout.setVisibility(View.VISIBLE);
+//		    	     }
+//		    	     
+//		    	     
+//		    		 ft.commit();
+//		    		 //fragmentManager.beginTransaction().add(android.R.id.content, new SimpleListFragment()).commit();
+//			    }
+//				else {
+//					Log.d("fragment","(2)");
+//					FragmentTransaction ft = fragmentManager.beginTransaction();
+//					if (fragment.isHidden()) {
+//					
+//						Log.d("fragment","showing");
+//						ft.show(fragment);
+////						fragmentManager
+////						.beginTransaction()
+////						.replace(R.id.container,
+////								fragment).commit();
+//					}
+//					else {
+//						Log.d("fragment","hiding");
+//						ft.hide(fragment);
+//					}
+//					ft.commit();
+//					
+//				}		    	
+		      // ProjectsActivity is my 'home' activity
+		    	
+		    	
+		    	currreport = "vPor_hacer";
+		    	currfile = "/home/panelapp/.safet/flowfiles/carteleratres.xml";
+		    	
+		    Log.d("home","home home");
+			String myconsultdel = PrincipalActivity.URL_API
+					+ "operacion:Listar_datos%20"
+					+ "Cargar_archivo_flujo:%20" + currfile
+					+ "%20Variable:" + currreport
+					+ PrincipalActivity.PARAMETER_BY_PROJECT
+					+ PrincipalActivity.PARAMETER_BY_TYPE
+					+ PrincipalActivity.PARAMETER_BY_DATE1;
+			;
+				new GetGraphTask("listar_ticket").execute(myconsultdel);
+
+		      return true;
+		    }
+		 
 		int id = item.getItemId();
 		if (id == R.id.action_about) {
 			Log.d("About", "About");
@@ -2404,7 +2579,10 @@ public class PrincipalActivity extends ActionBarActivity {
 			Log.d("exportlist", "exportlist");
 			createPDF();
 			Log.d("exportlist", "after exportlist");
-
+		} else if (id == R.id.buttonnewticket) {
+			
+			callPreListprojects(true, "", false);
+		
 		} else if (id == R.id.help_action_link) {
 			Intent intent = new Intent();
 			intent.setAction(Intent.ACTION_VIEW);
@@ -2461,23 +2639,55 @@ public class PrincipalActivity extends ActionBarActivity {
 
 		
 	}
+
+	
+	
+	
+	public static class SimpleListFragment extends android.support.v4.app.ListFragment {  
+	  
+	  String[] numbers_text = new String[] { "one", "two", "three", "four",  
+	    "five", "six", "seven", "eight", "nine", "ten", "eleven",  
+	    "twelve", "thirteen", "fourteen", "fifteen" };  
+	  String[] numbers_digits = new String[] { "1", "2", "3", "4", "5", "6", "7",  
+	    "8", "9", "10", "11", "12", "13", "14", "15" };  
+	  
+	  @Override  
+	  public void onListItemClick(ListView l, View v, int position, long id) {  
+	   //new Toast(getActivity(), numbers_digits[(int) id]);
+		  Log.d("items","items");
+	  }  
+	  
+	  
+	  @Override  
+	  public View onCreateView(LayoutInflater inflater, ViewGroup container,  
+	    Bundle savedInstanceState) {  
+	   ArrayAdapter<String> adapter = new ArrayAdapter<String>(  
+	     inflater.getContext(), android.R.layout.simple_list_item_1,  
+	     numbers_text);  
+	   setListAdapter(adapter);  
+	   return super.onCreateView(inflater, container, savedInstanceState);  
+	  }  	
+	
+	 }
+	
+	
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
 
-	public static class PlaceholderFragment extends Fragment {
-
-		public PlaceholderFragment() {
-		}
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_principal,
-					container, false);
-			return rootView;
-		}
-	}
+//	public static class PlaceholderFragment extends Fragment {
+//
+//		public PlaceholderFragment() {
+//		}
+//
+//		@Override
+//		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+//				Bundle savedInstanceState) {
+//			View rootView = inflater.inflate(R.layout.fragment_principal,
+//					container, false);
+//			return rootView;
+//		}
+//	}
 
 	public static String convertDateEpochToFormat(String epoch) {
 		String result = epoch.trim();

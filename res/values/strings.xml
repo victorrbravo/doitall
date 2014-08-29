@@ -17,7 +17,8 @@
     <string name="title_pdf">Listado de tareas - </string>
     <string name="path_file_pdf">Se escribió archivo PDF en la ruta: </string>
     <string name="send_to">Enviar a</string>
-    <string name="report_type">Gestión de tareas</string>
+    <string name="report_type">Listas de tareas</string>
+    <string name="graph_type">Gráficos</string>
     <string name="accept">Aceptar</string>
     <string name="assign_accept">Aceptar asignación</string>
     <string name="cancel">Cancelar</string>
@@ -42,7 +43,7 @@
     <string name="filter_any_type">Por tipo</string>
     <string name="confirm_delete">¿Realmente desea eliminar esta tarea?</string>
     <string name="delete_project_text">¿Realmente desea eliminar el proyecto?</string>
-    <string name="nameversion">Doitall. Gestor Inteligente de tareas V 1.6 agosto 2014</string>
+    <string name="nameversion">Doitall. Gestor Inteligente de tareas V 1.6.2 agosto 2014</string>
     <string name="yes_option">Sí</string>
     <string name="no_option">No</string>
     <string name="ticket_list_title">Listado de tareas</string>
@@ -61,7 +62,7 @@
     <string name="this_month">Este mes</string>
     <string name="after_month">Despúes del próximo mes</string>
     <string name="delayed">Atrasadas</string>
-    <string name="finished">Finalizadas</string>
+    <string name="finished">Completadas</string>
     <string name="nocomplete">sin completar</string>    
     <string name="planned">Planificado:</string>    
     <string name="help_action">Cómo usar doitall</string>
@@ -70,24 +71,31 @@
     <string name="delete_data_connect">Borrar datos de conexión</string>
     <string name="ask_delete_data_connect">¿Está seguro de eliminar los datos de recordación de conexión?</string>
     <string name="need_refresh">Necesita presionar el botón de refrescamiento o gráfico para aplicar el filtro seleccionado</string>   
-        <string name="completed_after_week">Semana anterior (Completadas)</string>
-        <string name="completed_this_week">Esta semana (Completadas)</string>
+        <string name="completed_after_week">Completadas ant/semana</string>
+        <string name="completed_this_week">Completadas e/semana</string>
         <string name="before_tomorrow">** Para mañana</string>
+        <string name="add_ticket_title">Agregar tarea</string>
         <string name="ticket_other_user">Esta tarea es de otro usuario de DoItAll, no es posible modificarla</string>
     
-    
+      <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_example">Example action</string>
+        
   <string-array name="names_report">
         <item>Esta semana</item>
         <item>Por hacer</item>
         <item>Atrasadas</item>        
         <item>Próxima semana</item>
+		<item>Asignados a mí</item>        
         <item>Asignados a otros</item>
-		<item>Asignados a mí</item>                
-        <item>Semana anterior (Completadas)</item>
-        <item>Esta semana (Completadas)</item>
+		<item>Completadas e/semana</item>                
+        <item>Completadas ant/semana</item>
          <item>Todas las tareas</item>         
         <item>Este mes</item>       
-        <item>Finalizadas</item>
+        <item>Completadas</item>
         <item>Pospuestas</item>                
         <item>En progreso</item>
         <item>Próximo mes</item>
@@ -100,8 +108,8 @@
         <item>General</item>
         <item>Por semana</item>
         <item>Por mes</item>
-        <item>Por semana (completadas)</item>
-        <item>Por mes (completadas)</item>        
+        <item>Completadas p/semana</item>
+        <item>Completadas p/mes</item>        
         <item>Por proyecto</item>
         <item>Por tipo</item>        
         <item>Asignación de tareas</item>

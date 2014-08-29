@@ -10,7 +10,7 @@
           app:showAsAction="ifRoom|collapseActionView"
           app:actionViewClass="android.support.v7.widget.SearchView" />
     
-    
+     
     <item
         android:id="@+id/delete_data_connect"
         android:orderInCategory="100"
@@ -28,14 +28,21 @@
         android:orderInCategory="100"
         android:title="@string/disable_projects"
         app:showAsAction="never"/>  
-    
+
+      <item
+        android:id="@+id/buttonnewticket"
+        android:orderInCategory="100"
+        android:title="ayuda"
+        android:icon="@drawable/ic_action_new"
+        app:showAsAction="always"/>
+  
   
     <item
         android:id="@+id/help_action_link"
         android:orderInCategory="100"
-        android:title="ayuda"
+        android:title="@string/help"
         android:icon="@drawable/ic_action_help"
-        app:showAsAction="always"/>
+        app:showAsAction="never"/>
     
     
     <item

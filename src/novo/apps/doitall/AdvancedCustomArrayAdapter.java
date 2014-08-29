@@ -243,12 +243,11 @@ public class AdvancedCustomArrayAdapter extends BaseAdapter {
         	viewContainer.tagView.invalidate();
 			viewContainer.tagView.setImageBitmap(null);
         }
-        
-		
+        		
         viewContainer.txtDescription.setText(tickets.get(position).getDescription());
-        viewContainer.txtProject.setText(tickets.get(position).getTentativedate()+" - " + 
+        viewContainer.txtTentativeDate.setText(tickets.get(position).getTentativedate()+" - " + 
         tickets.get(position).getFinishdate());
-        viewContainer.txtTentativeDate.setText(tickets.get(position).getProject());
+        viewContainer.txtProject.setText(tickets.get(position).getProject());
 
        // viewContainer.txtDescription.setText(presidents[position] + 
        //     " ...Some descriptions here...");

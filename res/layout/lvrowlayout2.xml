@@ -46,19 +46,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="12sp" />
-                <TextView
-            android:id="@+id/projectname"
-            android:background="@android:color/darker_gray"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Proyecto"
-            android:textSize="10sp" />
-        <TextView
+       
+          <TextView
             android:id="@+id/tentativedatename"
             android:text="12/May/2014"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textStyle="bold"
             android:textSize="10sp" />        
+          
+                <TextView
+                    android:id="@+id/projectname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Proyecto"
+                    android:textSize="10sp"
+                     />
+
         
     </LinearLayout>
 
