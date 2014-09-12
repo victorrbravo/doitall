@@ -81,6 +81,13 @@
     </ListView>
 </LinearLayout>
 
-     
+     <novo.apps.doitall.CanvasView        
+         android:id="@+id/viewSticky"
+         android:layout_width="275dp"
+         android:layout_height="275dp"
+         android:layout_gravity="center"
+          >
+         
+     </novo.apps.doitall.CanvasView>
 
 </FrameLayout>

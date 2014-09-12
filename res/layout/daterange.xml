@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/daterange"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@null"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:text="@string/datefrom"
+         style="@style/CodeFont"
+        
+
+         />
+
+    <DatePicker
+        android:id="@+id/dateFrom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/textView2"
+         android:text="@string/dateto"
+            style="@style/CodeFont"
+         
+        />
+
+    <DatePicker
+        android:id="@+id/dateTo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <CheckBox
+        android:id="@+id/checkDateto"
+        style="@style/CodeFont"
+        android:text="@string/checkdateto" />
+
+</LinearLayout>

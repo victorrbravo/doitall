@@ -622,9 +622,12 @@ public class AddTicketActivity extends Activity {
         	urlform = urlform + currentticket+ "%20resumen:";
         }
         
+        mysummary = mysummary.replace(":","__SAFETCOLON__");
         urlform = urlform + mysummary;
         
         String mydesc = desc.getText().toString().trim();
+        
+        mydesc = mydesc.replace(":","__SAFETCOLON__");
         if (!mydesc.isEmpty()) {
         		urlform = urlform + "%20descripcion:" + mydesc;
     	}
@@ -648,7 +651,7 @@ public class AddTicketActivity extends Activity {
         urlform = urlform.replace(" ", "%20");
         
         
-        Log.d("addTicket urlform", urlform);
+        Log.d("addTicket SAFETCOLON", urlform);
         
         
         

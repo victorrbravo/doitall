@@ -1,5 +1,6 @@
 package novo.apps.doitall;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.util.Log;
@@ -36,5 +37,31 @@ public class Utils {
         Log.d("Utils now", "Now currdate:" + String.valueOf(currdate));
         return currdate; 
 		
+	}
+	
+	static public ArrayList<String> splitString(String in, int margin) {
+		ArrayList<String> result = new ArrayList<String>();
+		
+		int mleft = 0;
+		int mright = margin;
+		int length = in.length();
+
+		if (mright >= length ) {
+			mright = length;
+		}
+		boolean isfinish = false;		
+		while( !isfinish ) {			
+			if ( mright >= length ) {
+				mright = length;
+				isfinish = true;
+			}
+			String mytemp = in.substring(mleft,mright);
+			Log.d("splitString","add:" + mytemp);
+			result.add(mytemp);			
+			mleft = mleft + margin;
+			mright = mright + margin; 
+		}
+		
+		return result;
 	}
 }
