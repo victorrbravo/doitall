@@ -21,6 +21,8 @@ import org.json.JSONObject;
 
 import novo.apps.doitall.RegisterActivity.HttpUtilsTask;
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -36,6 +38,7 @@ public class LoginActivity extends Activity {
 	private String selectuser;
 	private String selectpass;
 	private String selectauth;
+	final public static int mId = 111;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,8 +48,21 @@ public class LoginActivity extends Activity {
         selectauth = "";
         selectpass = "";
         
+        
         GenTicket mytask = new GenTicket(getApplicationContext());
         
+        Boolean from_notify = getIntent().getBooleanExtra("from_notify", false);
+        
+        if(from_notify) {
+        	
+        	Log.d("LOGIN_ACTIVITY","calling from_notify");
+        	NotificationManager mNotificationManager =
+        		    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        	mNotificationManager.cancel(mId);
+        	
+        	
+        }
         selectauth = mytask.readTicket();
         
         selectuser = mytask.getCurrentUser();

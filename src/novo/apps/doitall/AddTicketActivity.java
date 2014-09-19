@@ -48,12 +48,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 public class AddTicketActivity extends Activity {
@@ -67,6 +69,9 @@ public class AddTicketActivity extends Activity {
     private String currentticket;
     private Spinner myselect;
     private DatePicker tentativepicker;
+    private TimePicker timepicker;
+    private CheckBox checktime;
+    private CheckBox checknotify;
     private ProgressDialog progress;
     ArrayList<String> states;
 	ArrayAdapter<String> myadapter;
@@ -82,6 +87,14 @@ public class AddTicketActivity extends Activity {
         projects = (ArrayList<ProjectRecord>) getIntent().getSerializableExtra("projects");
 
         tentativepicker = (DatePicker) findViewById(R.id.tentativedate);
+        
+        timepicker = (TimePicker) findViewById(R.id.tentativetime);
+        
+        timepicker.setEnabled(false);
+        
+        checktime = (CheckBox) findViewById(R.id.checktime);
+        checknotify = (CheckBox) findViewById(R.id.check_notify_task);
+        
         
         
         addticket = getIntent().getBooleanExtra("addticket",true);
@@ -467,7 +480,21 @@ public class AddTicketActivity extends Activity {
     	ImageButton addbutton = (ImageButton) findViewById(R.id.buttonaddproject);
 		ImageButton delbutton = (ImageButton) findViewById(R.id.buttondeleteproject);
 		
-			
+		
+		checktime.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                if(checktime.isChecked()){
+                    
+                	timepicker.setEnabled(true);
+                }else{                    
+                	timepicker.setEnabled(false);
+                }
+            }
+        });
+	
 		
 		addbutton.setOnClickListener(new OnClickListener() {
 						
@@ -605,10 +632,20 @@ public class AddTicketActivity extends Activity {
         
         Calendar calendar = Calendar.getInstance();
         
-        calendar.set(year,tentativepicker.getMonth(),tentativepicker.getDayOfMonth(),23,59,59);
+        if (checktime.isChecked()) {
+        	                
+        	calendar.set(year,tentativepicker.getMonth(),tentativepicker.getDayOfMonth(),timepicker.getCurrentHour(),
+        			timepicker.getCurrentMinute(),0);
+        }
+        else {
+        
+        	calendar.set(year,tentativepicker.getMonth(),tentativepicker.getDayOfMonth(),23,59,59);
+        }
         
         
-        Log.d("(2)Date:",calendar.toString());
+        
+        
+        Log.d("CALENDAR ADDTICKET Date:","(DATETIME:" +calendar.toString());
         String seldate = String.valueOf(calendar.getTimeInMillis()/1000) ;
         String mysummary = summary.getText().toString().trim();
         if (mysummary.isEmpty() ) {
@@ -656,7 +693,10 @@ public class AddTicketActivity extends Activity {
         
         
         i.putExtra("urlform", urlform);
-
+        i.putExtra("notifytask", checknotify.isChecked());
+        i.putExtra("currdatetime", calendar);
+        
+        
         //---set the result with OK and the Intent object---
         
            

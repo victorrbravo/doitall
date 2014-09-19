@@ -313,18 +313,18 @@ public class PrincipalActivity extends ActionBarActivity {
 //	    fragment = new SimpleListFragment();
 //	    
 	    
-		RegisterAlarmBroadcast();
+//		RegisterAlarmBroadcast();
 	    
 		
 	}
 
-	@Override
-	protected void onDestroy() {
-		unregisterReceiver(mReceiver);
-		unregisterReceiver(aReceiver);
-		super.onDestroy();
-	}
-	 
+//	@Override
+//	protected void onDestroy() {
+//		unregisterReceiver(mReceiver);
+//		unregisterReceiver(aReceiver);
+//		super.onDestroy();
+//	}
+//	 
 	
 	public class AlarmReceiver extends BroadcastReceiver {
 
@@ -2093,7 +2093,7 @@ public class PrincipalActivity extends ActionBarActivity {
 					getString(R.string.modify_date_task),
 					getString(R.string.modify_data_task),
 					getString(R.string.assign_action),
-					getString(R.string.task_notify),
+					//getString(R.string.task_notify),
 					 };
 			isdelassign = 0;
 		}
@@ -2366,7 +2366,7 @@ public class PrincipalActivity extends ActionBarActivity {
 		mytask.execute(myconsult);
 
 	}
-
+	
 	public void loadSafetReport(String report) {
 		currreport = "vPor_hacer";
 		currfile = FLOWFILES_DIR+"ocarteleratres.xml";
@@ -2752,7 +2752,20 @@ public class PrincipalActivity extends ActionBarActivity {
 						+ data.getStringExtra("urlform");
 				Log.d("OnActivityResult...", "*Principal");
 
+				Boolean isnotify = data.getBooleanExtra("notifytask", false);
+				
 				Log.d("agregar_ticket", urlform);
+				Log.d("notifytask", "notify:" + isnotify.toString());
+				
+				if (isnotify) {
+					Calendar currdatetime = (Calendar) data.getSerializableExtra("currdatetime");
+				
+					Log.d("PrincipalActivity DATETIME", "CALENDAR:" + currdatetime.toString());
+					
+					setAlarm(currdatetime);
+				}
+				
+				
 				GetGraphTask mytask = new GetGraphTask("agregar_ticket");
 				mytask.execute(urlform);
 

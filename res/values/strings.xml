@@ -65,6 +65,8 @@
     <string name="finished">Completadas</string>
     <string name="nocomplete">sin completar</string>    
     <string name="planned">Planificado:</string>    
+    <string name="text_checktime_to">Incluir hora de la tarea</string>
+    <string name="text_notify_task">Notificar tarea</string>
     <string name="help_action">Cómo usar doitall</string>
     <string name="disable_projects">Activar/desactivar proyectos</string>
     <string name="export_pdf">Exportar PDF</string>
@@ -94,7 +96,7 @@
     
   <string-array name="names_report">
         <item>Para esta semana</item>
-        <item>Todos por hacer</item>
+        <item>Por hacer</item>
         <item>Atrasadas</item>        
         <item>Para la próxima semana</item>
 		<item>Asignados a mí</item>        

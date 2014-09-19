@@ -104,6 +104,19 @@
         android:layout_width="wrap_content"
         android:textSize="12sp"
         android:layout_height="wrap_content" />
+    <TimePicker
+        android:id="@+id/tentativetime"
+        android:layout_width="wrap_content"
+        android:textSize="12sp"
+        android:layout_height="wrap_content" />
+    <CheckBox
+        android:id="@+id/checktime"
+        style="@style/CodeFont"
+        android:text="@string/text_checktime_to" />
+    <CheckBox
+        android:id="@+id/check_notify_task"
+        style="@style/CodeFont"
+        android:text="@string/text_notify_task" />
     <View
                 android:layout_width="fill_parent"
                 android:layout_height="2.2dp"

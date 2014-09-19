@@ -36,7 +36,9 @@ public void setTargetCal(Calendar targetCal) {
 
 @Override
  public void onReceive(Context context, Intent intent) {
-   PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+	
+		 Log.d("Receiver","others actions");
+		PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
          PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "YOUR TAG");
          //Acquire the lock
          wl.acquire();
@@ -61,7 +63,8 @@ public void setTargetCal(Calendar targetCal) {
 
          //Release the lock
          wl.release();
- }
+	 }
+ 
 
 private void displayNotificationOne(Context context) {
 	NotificationCompat.Builder mBuilder =
@@ -72,6 +75,8 @@ private void displayNotificationOne(Context context) {
 	// Creates an explicit intent for an Activity in your app
 	Intent resultIntent = new Intent(context, LoginActivity.class);
 
+	resultIntent.putExtra("from_notify", true);
+	
 	// The stack builder object will contain an artificial back stack for the
 	// started Activity.
 	// This ensures that navigating backward from the Activity leads out of
@@ -121,10 +126,12 @@ private void displayNotificationOne(Context context) {
     }
 
     public void setOnetimeTimer(Context context){
+    	Log.d("SETTING ALARM: (1)","broad SETTING:" +String.valueOf(targetCal.getTimeInMillis()));
      AlarmManager am=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, AlarmManagerBroadcastReceiver.class);
         intent.putExtra(ONE_TIME, Boolean.TRUE);
         PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, 0);
         am.set(AlarmManager.RTC_WAKEUP, targetCal.getTimeInMillis(), pi);
+        Log.d("SETTING ALARM: (2)","broad SETTING:" +String.valueOf(targetCal.getTimeInMillis()));
     }
 }

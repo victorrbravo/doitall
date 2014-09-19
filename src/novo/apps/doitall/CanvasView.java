@@ -88,21 +88,6 @@ public class CanvasView extends View implements OnClickListener {
 		 
 		R.drawable.sticky);
 		 
-//		rect01 = new RectF(250, 500, 350, 600);
-//		 
-//		path01 = new Path();
-//		 
-//		path01.moveTo(50, 400);
-//		 
-//		path01.lineTo(225, 650);
-//		 
-//		paintPath = new Paint();
-//		 
-//		paintPath.setColor(0xFF00FF00);
-//		 
-//		paintPath.setStyle(Paint.Style.STROKE);
-//		 
-//		paintPath.setStrokeWidth(3);
 		 
 		}
 		 
