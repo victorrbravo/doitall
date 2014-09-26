@@ -624,7 +624,9 @@ public class AddTicketActivity extends Activity {
         Spinner typeproject = (Spinner) findViewById(R.id.selectproject);
         Spinner typeticket = (Spinner) findViewById(R.id.selecttypeticket);
         
-
+        TicketRecord myticket = new TicketRecord();
+        
+        
         
 
         int year = tentativepicker.getYear();
@@ -648,6 +650,11 @@ public class AddTicketActivity extends Activity {
         Log.d("CALENDAR ADDTICKET Date:","(DATETIME:" +calendar.toString());
         String seldate = String.valueOf(calendar.getTimeInMillis()/1000) ;
         String mysummary = summary.getText().toString().trim();
+        myticket.setSummary(mysummary);
+        myticket.setEpochtentativedate(Long.valueOf(seldate));
+        myticket.setTentativedate(seldate);
+        
+        
         if (mysummary.isEmpty() ) {
 	    	Toast toast = Toast.makeText(getApplicationContext(), 
 	    			"Debe colocar algún texto en el resumen para poder agregar una tarea", Toast.LENGTH_SHORT);
@@ -664,7 +671,9 @@ public class AddTicketActivity extends Activity {
         
         String mydesc = desc.getText().toString().trim();
         
+        
         mydesc = mydesc.replace(":","__SAFETCOLON__");
+        myticket.setDescription(mydesc);
         if (!mydesc.isEmpty()) {
         		urlform = urlform + "%20descripcion:" + mydesc;
     	}
@@ -676,10 +685,24 @@ public class AddTicketActivity extends Activity {
 	    	return;
         	
         }
-        urlform = urlform + "%20proyecto:" + String.valueOf(projects.get(pos).getProjectid());
+        String myproject = String.valueOf(projects.get(pos).getProjectid());
+        myticket.setProject(myproject);
+        myticket.setProjectid(pos);
+        urlform = urlform + "%20proyecto:" + myproject;
         pos = typeticket.getSelectedItemPosition();
-        urlform = urlform + "%20tipo:" + typeticket.getSelectedItem().toString();
+        String mytype = typeticket.getSelectedItem().toString();
+        myticket.setType(mytype);
+        urlform = urlform + "%20tipo:" + mytype;
         urlform = urlform + "%20Fecha_tentativa:" + seldate;
+        if (checknotify.isChecked()) {
+        	String mynotify = "7";
+        	urlform = urlform + "%20notifyid:" + mynotify;
+        }
+        else {
+        	String mynotify = "0";
+        	urlform = urlform + "%20notifyid:" + mynotify;
+        	
+        }
         
         
         
@@ -695,6 +718,7 @@ public class AddTicketActivity extends Activity {
         i.putExtra("urlform", urlform);
         i.putExtra("notifytask", checknotify.isChecked());
         i.putExtra("currdatetime", calendar);
+        i.putExtra("currticket", myticket);
         
         
         //---set the result with OK and the Intent object---

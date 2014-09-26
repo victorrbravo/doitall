@@ -57,6 +57,7 @@ public class AdvancedCustomArrayAdapter extends BaseAdapter {
     static class ViewContainer {
         public ImageView imageView;
         public ImageView tagView;
+        public ImageView tagAlarm;
         public TextView txtTitle;
         public TextView txtDescription;
         public TextView txtProject;
@@ -100,6 +101,7 @@ public class AdvancedCustomArrayAdapter extends BaseAdapter {
                 rowView.findViewById(R.id.txtDescription); 
             viewContainer.imageView = (ImageView) rowView.findViewById(R.id.icon);
             viewContainer.tagView = (ImageView) rowView.findViewById(R.id.tagmessage);
+            viewContainer.tagAlarm = (ImageView) rowView.findViewById(R.id.tagalarm);
             viewContainer.txtTentativeDate = (TextView) 
                     rowView.findViewById(R.id.tentativedatename); 
             
@@ -230,16 +232,32 @@ public class AdvancedCustomArrayAdapter extends BaseAdapter {
 				}
 				else {
 					Log.d("tomorrow","Yes manana");
-					viewContainer.tagView.setImageResource(R.drawable.manana);	
+					viewContainer.tagView.setImageResource(R.drawable.manana);
 				}
 			}
 			else {
 				viewContainer.tagView.invalidate();
 				viewContainer.tagView.setImageBitmap(null);
+
 			
+			}
+			Log.d("","");
+			Log.d("SUMMARY",tickets.get(position).getSummary());
+			Log.d("NOTIFYID",String.valueOf(tickets.get(position).getNotifyid()));
+			Log.d("","");
+			if ( tickets.get(position).getNotifyid() > 0 ) {
+				viewContainer.tagAlarm.setImageResource(R.drawable.alarm);				
+			}
+			else {
+				viewContainer.tagAlarm.invalidate();
+				viewContainer.tagAlarm.setImageBitmap(null);
+				
 			}
         }
         else {
+			viewContainer.tagAlarm.invalidate();
+			viewContainer.tagAlarm.setImageBitmap(null);
+
         	viewContainer.tagView.invalidate();
 			viewContainer.tagView.setImageBitmap(null);
         }
@@ -296,6 +314,7 @@ public class AdvancedCustomArrayAdapter extends BaseAdapter {
 
 
 }
+
 
 
 

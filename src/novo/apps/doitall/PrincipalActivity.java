@@ -3,10 +3,13 @@ package novo.apps.doitall;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -18,6 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Stack;
 
 import javax.net.ssl.HostnameVerifier;
@@ -108,6 +112,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -162,14 +167,17 @@ public class PrincipalActivity extends ActionBarActivity {
 	private ArrayList<String> newstates;
 	private CanvasView noteView;
 	private NotificationManager myNotificationManager;	
+
 	private AlarmManagerBroadcastReceiver alarm;
+	
+	private ArrayList<TicketRecord> ticketsforNotify;
 	
 	
 
-	public static String URL_SERVER = "http://XXXXXX/intranet/register";
-	public static String URL_SERVER_LOGIN = "http://XXXXXX/intranet/login";
-	public static String FIRST_URL_GRAPH = "http://XXXXXX/media/";
-	public static String FIRST_URL_API = "http://XXXXXX/intranet/apiv2/";
+	public static String URL_SERVER = "http://XXXXXXX/intranet/register";
+	public static String URL_SERVER_LOGIN = "http://XXXXXXX/intranet/login";
+	public static String FIRST_URL_GRAPH = "http://XXXXXXX/media/";
+	public static String FIRST_URL_API = "http://XXXXXXX/intranet/apiv2/";
 	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=panelapp&accion=";
 	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=panelapp&accion=";
 	public static String FLOWFILES_DIR = "/home/panelapp/.safet/flowfiles/"; 
@@ -187,6 +195,7 @@ public class PrincipalActivity extends ActionBarActivity {
 	public static String URL_API;
 	public static String URLFORM_API;
 	public static final String CURRENTDATEFORMAT = "dd/MMM/yyyy hh:mma";
+	public static final  String FILE_NOTIFICATIONS = "notifications.txt";
 	public static final String ONLYDATEFORMAT = "dd/MMM/yyyy";
 	Map<String, String> usersmap;
 
@@ -251,20 +260,9 @@ public class PrincipalActivity extends ActionBarActivity {
 		
 		currentauth = ticket;
 		
-		
 
-		// if (pass.isEmpty() ) {
-		// if (!usersmap.containsKey(currentuser)) {
-		// currentauth = ticket;
-		// }
-		// else {
-		// currentauth = usersmap.get(currentuser);
-		// }
-		// }
-		// else {
-		//
-		//
-		// }
+		ticketsforNotify = new ArrayList<TicketRecord>();
+		
 
 		Log.d("PrincipalActivity", "currentuser (pass):" + currentuser);
 		Log.d("PrincipalActivity", "currentauth(pass):" + currentauth);
@@ -721,6 +719,7 @@ public class PrincipalActivity extends ActionBarActivity {
 						ticket.setSummary(summary);
 						ticket.setDescription(desc);
 						ticket.setProject(json_data.getString("proyecto"));
+						ticket.setNotifyid(Integer.parseInt(json_data.getString("notifyid")));
 						ticket.setAssignto(json_data.getString("assignto"));
 						ticket.setAssignfrom(json_data.getString("assignfrom"));
 						ticket.setProjectid(Integer.valueOf(json_data.getString("projectid")));
@@ -1747,7 +1746,9 @@ public class PrincipalActivity extends ActionBarActivity {
 						mytask.deleteTicket();
 						Log.d("makeDeleteDataConnectDialog", "Yes");
 						dialog.dismiss();
-
+						
+						boolean result = deleteNotifications(getApplicationContext());
+						Log.d("DELETINGCONNECT:",String.valueOf(result));
 					}
 
 				});
@@ -2302,26 +2303,13 @@ public class PrincipalActivity extends ActionBarActivity {
             Context context = this.getApplicationContext();
             if(alarm != null){
             	alarm.setTargetCal(targetCal);
-            	alarm.setOnetimeTimer(context);
+            	alarm.setOnetimeTimer(context, generateNumber(0, 500));
             	Toast.makeText(context, "setting alarm", Toast.LENGTH_SHORT).show();
             }else{
             	Toast.makeText(context, "Alarm is null", Toast.LENGTH_SHORT).show();
             }
 	    	 
 	    	Log.d("setAlarm","...(1)...");
-//	        Intent intent = new Intent(getBaseContext(), AlarmReceiver.class);
-//	        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-//	                getBaseContext(), RQS_1, intent, 0);
-//	        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-	    	
-	    	 //Intent        intent  = new Intent(this, PrincipalActivity.class);  
-	    	// pendingIntent = PendingIntent.getBroadcast(this, ALARM_REQUEST_CODE, intent,  PendingIntent.FLAG_CANCEL_CURRENT);
-	        
-//	        alarmManager.set(AlarmManager.RTC_WAKEUP, targetCal.getTimeInMillis(),
-//	                pendingIntent);
-//	        
-//
-//	        Log.d("setAlarm","...(2)...");
 	    }  
 
 	    
@@ -2765,9 +2753,30 @@ public class PrincipalActivity extends ActionBarActivity {
 				Log.d("notifytask", "notify:" + isnotify.toString());
 				
 				if (isnotify) {
+					
+					 
 					Calendar currdatetime = (Calendar) data.getSerializableExtra("currdatetime");
 				
 					Log.d("PrincipalActivity DATETIME", "CALENDAR:" + currdatetime.toString());
+					TicketRecord myticket = (TicketRecord) data.getSerializableExtra("currticket");
+					
+					
+					int currnumber = generateNumber(10,100000);
+					
+					Log.d("My Ticket","summary:" + String.valueOf(currnumber));
+					
+					myticket.setId(String.valueOf(currnumber));
+				
+					ArrayList<TicketRecord> tempnotify =readTicketForNotify(getApplicationContext());  
+					if ( tempnotify != null ) {
+						ticketsforNotify = tempnotify;
+												
+					}
+					
+					ticketsforNotify.add(myticket);
+					
+					saveTicketForNotify(getApplicationContext(),ticketsforNotify);
+					
 					
 					setAlarm(currdatetime);
 				}
@@ -2787,6 +2796,86 @@ public class PrincipalActivity extends ActionBarActivity {
 		}
 	}
 
+	public static int generateNumber(int min, int max) {
+				
+		Random r = new Random();
+		int i1 = r.nextInt(max - min + 1) + min;
+		
+		return i1;
+	}
+	
+	
+	public static void saveTicketForNotify(Context context, ArrayList<TicketRecord> mytickets) {
+
+		
+		ObjectOutputStream outputStream;
+
+    	File file = new File(context.getFilesDir(),FILE_NOTIFICATIONS);
+    	Log.d("saveTicket","path:" + file.getAbsolutePath());
+    	
+   	
+    	try {
+    		
+    		  outputStream = new ObjectOutputStream(context.openFileOutput(FILE_NOTIFICATIONS, Context.MODE_PRIVATE));
+    		  outputStream.writeObject(mytickets);    		 
+    		  outputStream.close();
+    		} catch (Exception e) {
+    			Toast toast = Toast.makeText(context, 
+    	    			"Ocurrio el siguiente error al escribir la notificaciòn:" + e.getMessage(), Toast.LENGTH_LONG);
+    	    	toast.show();
+    		}
+
+	}
+
+static public boolean deleteNotifications(Context context) {
+
+		
+		boolean result = false;
+		ObjectInputStream inputStream;
+
+		ArrayList<TicketRecord> mytickets = null;
+    	File file = new File(context.getFilesDir(),FILE_NOTIFICATIONS);
+    	Log.d("saveTicket","path:" + file.getAbsolutePath());
+    	
+   	
+    	try {
+    		result = file.delete();
+    		
+    		} catch (Exception e) {
+    			Log.d("readTicketForNotify","no tickets");
+    			return result;
+    		}
+    	
+    	return result;
+
+	}
+
+static public ArrayList<TicketRecord> readTicketForNotify(Context context) {
+
+		
+		ObjectInputStream inputStream;
+
+		ArrayList<TicketRecord> mytickets = null;
+    	File file = new File(context.getFilesDir(),FILE_NOTIFICATIONS);
+    	Log.d("saveTicket","path:" + file.getAbsolutePath());
+    	
+   	
+    	try {
+    		
+    		inputStream = new ObjectInputStream(context.openFileInput(FILE_NOTIFICATIONS));
+    		mytickets = (ArrayList<TicketRecord>) inputStream.readObject();    		 
+    		inputStream.close();
+    		} catch (Exception e) {
+    			Log.d("readTicketForNotify","no tickets");
+    			return null;
+    		}
+    	
+    	return mytickets;
+
+	}
+
+	
+	
 	public void restoreActionBar() {
 		ActionBar actionBar = getSupportActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);

@@ -3,6 +3,7 @@ package novo.apps.doitall;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -37,7 +38,7 @@ public void setTargetCal(Calendar targetCal) {
 @Override
  public void onReceive(Context context, Intent intent) {
 	
-		 Log.d("Receiver","others actions");
+		 Log.d("RECEIVER","others actions");
 		PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
          PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "YOUR TAG");
          //Acquire the lock
@@ -67,35 +68,81 @@ public void setTargetCal(Calendar targetCal) {
  
 
 private void displayNotificationOne(Context context) {
-	NotificationCompat.Builder mBuilder =
-	        new NotificationCompat.Builder(context)
-	        .setSmallIcon(R.drawable.ic_launcher)
-	        .setContentTitle("Tarea por hacer")
-	        .setContentText("Consulte DoitAll por tareas pendientes");
-	// Creates an explicit intent for an Activity in your app
-	Intent resultIntent = new Intent(context, LoginActivity.class);
-
-	resultIntent.putExtra("from_notify", true);
 	
-	// The stack builder object will contain an artificial back stack for the
-	// started Activity.
-	// This ensures that navigating backward from the Activity leads out of
-	// your application to the Home screen.
-	TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-	// Adds the back stack for the Intent (but not the Intent itself)
-	stackBuilder.addParentStack(PrincipalActivity.class);
-		//Adds the Intent that starts the Activity to the top of the stack
-	stackBuilder.addNextIntent(resultIntent);
-	PendingIntent resultPendingIntent =
-	        stackBuilder.getPendingIntent(
-	            0,
-	            PendingIntent.FLAG_UPDATE_CURRENT
-	        );
-	mBuilder.setContentIntent(resultPendingIntent);
-	NotificationManager mNotificationManager =
-	    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-	// mId allows you to update the notification later on.
-	mNotificationManager.notify(mId, mBuilder.build());
+	Log.d("displayNotificationOne","por aqui (1)");
+	
+	ArrayList<TicketRecord> mytickets = PrincipalActivity.readTicketForNotify(context);
+	if (mytickets == null) {
+		Log.e("No hay tickets", "no hay tickets");
+		return;
+	}
+	
+	Log.d("mostrando","ticket!!");
+	
+	TicketRecord myticket = null;
+	
+	for (TicketRecord theticket: mytickets) {
+		Calendar calendar = Calendar.getInstance();
+		
+		Long currdatetime = calendar.getTimeInMillis() /1000;
+		
+		Log.d("displayNotificationOne","currdatetime:" + String.valueOf(currdatetime));
+		Log.d("displayNotificationOne","getEpochfinishdate():" + String.valueOf(theticket.getEpochtentativedate()));
+		
+		if ( currdatetime <= theticket.getEpochtentativedate()+10 && 
+				currdatetime >= theticket.getEpochtentativedate()	) {
+			
+			myticket = theticket;
+			break;
+			
+		}
+	}
+	
+		if (myticket == null ) {
+			Log.e("displayNotify", "No");
+			return;
+		}
+	
+		
+	// Colocar la notificación ***
+		NotificationCompat.Builder mBuilder =
+		        new NotificationCompat.Builder(context)
+		        .setSmallIcon(R.drawable.ic_launcher_off)
+		        .setContentTitle("Tarea pendiente")
+		        .setContentText(myticket.getSummary());
+		// Creates an explicit intent for an Activity in your app
+		Intent resultIntent = new Intent(context, LoginActivity.class);
+	
+		resultIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		
+		resultIntent.putExtra("from_notify", true);
+		
+		Log.d("ALARMRECEIVER","*NotifyId:" + myticket.getId() );
+		
+		resultIntent.putExtra("from_notify_mid", Integer.parseInt(myticket.getId()));
+		Log.d("ALARMRECEIVER","PUT...NotifyId:" + myticket.getId() );
+		
+		// The stack builder object will contain an artificial back stack for the
+		// started Activity.
+		// This ensures that navigating backward from the Activity leads out of
+		// your application to the Home screen.
+		TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+		// Adds the back stack for the Intent (but not the Intent itself)
+		stackBuilder.addParentStack(PrincipalActivity.class);
+			//Adds the Intent that starts the Activity to the top of the stack
+		stackBuilder.addNextIntent(resultIntent);
+		PendingIntent resultPendingIntent =
+		        stackBuilder.getPendingIntent(
+		            0,
+		            PendingIntent.FLAG_NO_CREATE
+		        );
+		mBuilder.setContentIntent(resultPendingIntent);
+		NotificationManager mNotificationManager =
+		    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		// mId allows you to update the notification later on.
+		Log.d("displayNotificationOne","id notify:" + myticket.getId());
+		mNotificationManager.notify(Integer.parseInt(myticket.getId()), mBuilder.build());
+	
 	
 }
 
@@ -125,12 +172,13 @@ private void displayNotificationOne(Context context) {
         alarmManager.cancel(sender);
     }
 
-    public void setOnetimeTimer(Context context){
+    public void setOnetimeTimer(Context context, int requestCode){
     	Log.d("SETTING ALARM: (1)","broad SETTING:" +String.valueOf(targetCal.getTimeInMillis()));
      AlarmManager am=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, AlarmManagerBroadcastReceiver.class);
         intent.putExtra(ONE_TIME, Boolean.TRUE);
-        PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, 0);
+        PendingIntent pi = PendingIntent.getBroadcast(context, requestCode, intent, 0);
+        
         am.set(AlarmManager.RTC_WAKEUP, targetCal.getTimeInMillis(), pi);
         Log.d("SETTING ALARM: (2)","broad SETTING:" +String.valueOf(targetCal.getTimeInMillis()));
     }

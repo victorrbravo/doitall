@@ -1,14 +1,27 @@
 package novo.apps.doitall;
 
-public class TicketRecord {
+import java.io.Serializable;
+
+public class TicketRecord implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String summary;
 	private String description;
 	private String project;
 	private String tentativedate;
 	private String assignto;
 	private String assignfrom;
+	private int notifyid;
 	
 	
+	public int getNotifyid() {
+		return notifyid;
+	}
+	public void setNotifyid(int notifyid) {
+		this.notifyid = notifyid;
+	}
 	public String getAssignfrom() {
 		return assignfrom;
 	}
@@ -62,6 +75,7 @@ public class TicketRecord {
 		assignto = "";
 		owner = "";
 		assignfrom = "";
+		notifyid = 0;
 
 	}
 	public String getSummary() {

@@ -21,6 +21,9 @@ import org.json.JSONObject;
 
 import novo.apps.doitall.RegisterActivity.HttpUtilsTask;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningAppProcessInfo;
+import android.app.ActivityManager.RunningTaskInfo;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -55,11 +58,42 @@ public class LoginActivity extends Activity {
         
         if(from_notify) {
         	
-        	Log.d("LOGIN_ACTIVITY","calling from_notify");
+        	int notifymid  = getIntent().getIntExtra("from_notify_mid", 0);
+        	        	
+        	String valueid = String.valueOf(notifymid);
+        	Log.d("LOGIN_ACTIVITY","notifymid:" + valueid);
+        	
+			ArrayList<TicketRecord> mytickets = PrincipalActivity.readTicketForNotify(getApplicationContext());
+			int currpos = 0;
+			if (mytickets != null ) {
+				for(TicketRecord myticket: mytickets) {					
+					if (valueid.contentEquals(myticket.getId())) {
+						break;
+					}
+				
+					currpos = currpos + 1;					
+				}
+				
+			}
+			Log.d("REMOVING","currpos...........");
+			if (currpos < mytickets.size()) {
+				Log.d("REMOVING","currpos:" + String.valueOf(currpos));
+				Log.d("REMOVING","ID:" + mytickets.get(currpos).getId());
+				mytickets.remove(currpos);
+			}
+			Log.d("REMOVING","tickets size:" + String.valueOf(mytickets.size()));
+			PrincipalActivity.saveTicketForNotify(getApplicationContext(), mytickets);
+
         	NotificationManager mNotificationManager =
         		    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        	mNotificationManager.cancel(mId);
+        	Log.d("CANCEL_NOTIFY","notifymid:" + String.valueOf(notifymid));
+        	mNotificationManager.cancel(notifymid);
+        	
+        	if (checkActivityActive()) {
+        		Log.d("Chequeo","On");
+        		return;
+        	}
         	
         	
         }
@@ -81,6 +115,39 @@ public class LoginActivity extends Activity {
 
     }
 
+    public boolean checkActivityActive() {
+    	boolean result = false;
+    	
+    	return result;
+    }
+
+//    public boolean checkActivityActive() {
+//    	boolean result = false;
+//    	ArrayList<String> runningactivities = new ArrayList<String>();
+//
+//    	ActivityManager activityManager = (ActivityManager)getBaseContext().getSystemService (Context.ACTIVITY_SERVICE); 
+//
+//    	List<RunningAppProcessInfo> services = activityManager.getRunningAppProcesses();  
+//
+//    		Log.d("-----------","" );
+//    	
+//    		Log.d("COUNT",String.valueOf(services.size()));
+//    	    for (int i1 = 0; i1 < services.size(); i1++) {
+//    	    	String mynameactivity = services.get(i1).processName;
+//    	    	Log.d("NAMEACTIVITY","Activity:" + mynameactivity);
+//    	        runningactivities.add(0, mynameactivity);  
+//    	    } 
+//    	    
+//    	    Log.d("-----------","" );
+//
+//    	    if(runningactivities.contains("ComponentInfo{novo.apps.doitall/novo.apps.doitall.LoginActivity}")==true){
+//    	    	Log.d("yes","Contain Principal");
+//    	        result = false;
+//
+//    	    }
+//    	
+//    	return result;
+//    }
 
     public void onRegisterClick(View view) {
     	
