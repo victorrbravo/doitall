@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Random;
 
 import android.app.AlarmManager;
 import android.app.NotificationManager;
@@ -24,6 +25,7 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
 
  final public static String ONE_TIME = "onetime";
  final public static int mId = 111;
+ public static int lastrequestcode = 0;
  
  private Calendar targetCal;
  
@@ -126,16 +128,20 @@ private void displayNotificationOne(Context context) {
 		// started Activity.
 		// This ensures that navigating backward from the Activity leads out of
 		// your application to the Home screen.
-		TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-		// Adds the back stack for the Intent (but not the Intent itself)
-		stackBuilder.addParentStack(PrincipalActivity.class);
-			//Adds the Intent that starts the Activity to the top of the stack
-		stackBuilder.addNextIntent(resultIntent);
-		PendingIntent resultPendingIntent =
-		        stackBuilder.getPendingIntent(
-		            0,
-		            PendingIntent.FLAG_NO_CREATE
-		        );
+//		TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+//		// Adds the back stack for the Intent (but not the Intent itself)
+//		stackBuilder.addParentStack(PrincipalActivity.class);
+//			//Adds the Intent that starts the Activity to the top of the stack
+//		stackBuilder.addNextIntent(resultIntent);
+//		PendingIntent resultPendingIntent =
+//		        stackBuilder.getPendingIntent(
+//		            0,
+//		            PendingIntent.FLAG_NO_CREATE
+//		        );
+		
+		Log.d("ALARMRECEIVER", "REQUESTCODE (2):" + String.valueOf(lastrequestcode));
+		Random generator = new Random();
+		PendingIntent resultPendingIntent = PendingIntent.getActivity(context, generator.nextInt(), resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		mBuilder.setContentIntent(resultPendingIntent);
 		NotificationManager mNotificationManager =
 		    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -177,6 +183,8 @@ private void displayNotificationOne(Context context) {
      AlarmManager am=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, AlarmManagerBroadcastReceiver.class);
         intent.putExtra(ONE_TIME, Boolean.TRUE);
+        lastrequestcode = requestCode;
+        Log.d("ALARMRECEIVER", "REQUESTCODE (1):" + String.valueOf(lastrequestcode));
         PendingIntent pi = PendingIntent.getBroadcast(context, requestCode, intent, 0);
         
         am.set(AlarmManager.RTC_WAKEUP, targetCal.getTimeInMillis(), pi);
