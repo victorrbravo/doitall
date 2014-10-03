@@ -110,6 +110,13 @@ public class LoginActivity extends Activity {
         	Log.d("LoginActivity","Deleting ticket");
         	
         	// mytask.deleteTicket();
+        	if (!PrincipalActivity.isNetworkAvailable(getApplicationContext())) {
+        		Toast.makeText(getApplicationContext(), getString(R.string.no_connect_internet), Toast.LENGTH_LONG)
+        		.show(); 
+        		return;
+        		
+        	}
+        	
         	callPrincipal();
         }
 
@@ -151,6 +158,13 @@ public class LoginActivity extends Activity {
 
     public void onRegisterClick(View view) {
     	
+    	if (!PrincipalActivity.isNetworkAvailable(getApplicationContext())) {
+    		Toast.makeText(getApplicationContext(), getString(R.string.no_connect_internet), Toast.LENGTH_LONG)
+    		.show(); 
+    		return;
+    		
+    	}
+
     	
     	Log.d("Register","Register");
     	try {
@@ -202,6 +216,13 @@ public class LoginActivity extends Activity {
 	}
         
     public void onClick(View view) {            	    
+    	
+    	if (!PrincipalActivity.isNetworkAvailable(getApplicationContext())) {
+    		Toast.makeText(getApplicationContext(), getString(R.string.no_connect_internet), Toast.LENGTH_LONG)
+    		.show(); 
+    		return;
+    		
+    	}
     	EditText wselect = (EditText) findViewById(R.id.selectuser);    		
     	selectuser = wselect.getText().toString().trim();
     	

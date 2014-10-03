@@ -79,6 +79,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
     </ListView>
+        
 </LinearLayout>
 
      <novo.apps.doitall.CanvasView        
@@ -86,8 +87,19 @@
          android:layout_width="305dp"
          android:layout_height="305dp"
          android:layout_gravity="center"
-          >
-         
+          >                 
      </novo.apps.doitall.CanvasView>
+      <TextView android:id="@+id/emptymessage"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:textSize="16sp"
+    android:layout_marginRight="12dp"
+    android:layout_marginLeft="12dp"
+    android:textStyle="bold"
+    android:maxLines="3"
+    android:lines="3"    
+    android:text="@string/empty_message" />
+ 
 
 </FrameLayout>

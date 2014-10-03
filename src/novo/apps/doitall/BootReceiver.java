@@ -3,6 +3,7 @@ package novo.apps.doitall;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -23,6 +24,8 @@ public class BootReceiver extends BroadcastReceiver {
 
  final public static String ONE_TIME = "onetime";
  final public static int mId = 111;
+
+ private int lastrequestcode = 0;
  
  private Calendar targetCal;
  
@@ -39,15 +42,35 @@ public void setTargetCal(Calendar targetCal) {
 	
 			Log.d("BootReceiver","BootReceiver...(1)...");
 	
-			Calendar calendar = Calendar.getInstance();
-			calendar.set(2014, Calendar.SEPTEMBER, 17, 17, 27);
 			
+			
+			ArrayList<TicketRecord> mytickets = PrincipalActivity.readTicketForNotify(context);
+			if (mytickets == null) {
+				Log.d("BootReceiver deleteAlarm", "no hay tickets");
+				return;
+			}
+			
+			Log.d("BootReceiver","mostrando ticket!!");
+			
+			TicketRecord myticket = null;
+			
+			int pos = 0;
+			
+			for (TicketRecord theticket: mytickets) {
+				Calendar calendar = Calendar.getInstance();
+								
+				Long thedatetime  =  theticket.getEpochtentativedate() * 1000;				
+				
+				calendar.setTimeInMillis(thedatetime);
+				setTargetCal(calendar);
+				setOnetimeTimer(context,PrincipalActivity.generateNumber(0, 500));
+				pos = pos + 1;
+				Log.d("BootReceiver","**BootReceiver...(2)...");
+				Log.d("BootReceiver","**calendar:" + calendar.toString());
+
+			}		
 		
-			setTargetCal(calendar);
-			setOnetimeTimer(context);
 			
-			Log.d("BootReceiver","BootReceiver...(2)...");
-			Log.d("BootReceiver","calendar:" + calendar.toString());
 	 }
  
 
@@ -110,14 +133,16 @@ private void displayNotificationOne(Context context) {
         alarmManager.cancel(sender);
     }
 
-    public void setOnetimeTimer(Context context){
-    	Log.d("SETTING ALARM: (1)","SETTING:" +String.valueOf(targetCal.getTimeInMillis()));
-    	
+    public void setOnetimeTimer(Context context, int requestCode){
+    	Log.d("SETTING ALARM: (1)","broad SETTING:" +String.valueOf(targetCal.getTimeInMillis()));
      AlarmManager am=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, AlarmManagerBroadcastReceiver.class);
         intent.putExtra(ONE_TIME, Boolean.TRUE);
-        PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, 0);
+        lastrequestcode = requestCode;
+        Log.d("ALARMRECEIVER", "REQUESTCODE (1):" + String.valueOf(lastrequestcode));
+        PendingIntent pi = PendingIntent.getBroadcast(context, requestCode, intent, 0);
+        
         am.set(AlarmManager.RTC_WAKEUP, targetCal.getTimeInMillis(), pi);
-        Log.d("SETTING ALARM: (2)","SETTING:" +String.valueOf(targetCal.getTimeInMillis()));
+        Log.d("SETTING ALARM: (2)","broad SETTING:" +String.valueOf(targetCal.getTimeInMillis()));
     }
 }

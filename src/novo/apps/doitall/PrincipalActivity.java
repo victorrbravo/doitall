@@ -85,6 +85,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -103,6 +105,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
+import android.telephony.TelephonyManager;
 import android.text.SpannableString;
 import android.text.style.StyleSpan;
 import android.util.Log;
@@ -174,10 +177,10 @@ public class PrincipalActivity extends ActionBarActivity {
 	
 	
 
-	public static String URL_SERVER = "http://XXXXXXXXXXX/intranet/register";
-	public static String URL_SERVER_LOGIN = "http://XXXXXXXXXXX/intranet/login";
-	public static String FIRST_URL_GRAPH = "http://XXXXXXXXXXX/media/";
-	public static String FIRST_URL_API = "http://XXXXXXXXXXX/intranet/apiv2/";
+	public static String URL_SERVER = "http://XXXXXXX/intranet/register";
+	public static String URL_SERVER_LOGIN = "http://XXXXXXX/intranet/login";
+	public static String FIRST_URL_GRAPH = "http://XXXXXXX/media/";
+	public static String FIRST_URL_API = "http://XXXXXXX/intranet/apiv2/";
 	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=panelapp&accion=";
 	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=panelapp&accion=";
 	public static String FLOWFILES_DIR = "/home/panelapp/.safet/flowfiles/"; 
@@ -296,6 +299,8 @@ public class PrincipalActivity extends ActionBarActivity {
 		Log.d("Advance", "2");
 		listtickets = (ListView) findViewById(R.id.listTasks);
 		listtickets.setAdapter(adapter);
+		listtickets.setEmptyView(findViewById(R.id.emptymessage));
+		
 		Log.d("Advance", "3");
 		progress = new ProgressDialog(this);
 		progress.setIcon(R.drawable.logo);
@@ -306,7 +311,6 @@ public class PrincipalActivity extends ActionBarActivity {
 		
 				Log.d("noteView","....(1)..");
 
-		
 		noteView = (CanvasView) findViewById(R.id.viewSticky);
 		
 		noteView.setVisibility(View.GONE);
@@ -331,6 +335,9 @@ public class PrincipalActivity extends ActionBarActivity {
 //	}
 //	 
 	
+	
+	
+	
 	public class AlarmReceiver extends BroadcastReceiver {
 
 
@@ -348,7 +355,15 @@ public class PrincipalActivity extends ActionBarActivity {
     
   	}
 
-
+	public static boolean isNetworkAvailable(Context context) {
+	    ConnectivityManager connectivityManager = (ConnectivityManager)context
+	    		.getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo activeNetworkInfo = connectivityManager
+	            .getActiveNetworkInfo();
+	    return activeNetworkInfo != null;
+	}
+	
+	
 	 public void displayNotificationOne() {
 
 	        // Invoking the default notification service
@@ -522,6 +537,7 @@ public class PrincipalActivity extends ActionBarActivity {
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpResponse response;
 			String responseString = null;
+			String result = "";
 			try {
 
 				response = httpclient.execute(new HttpGet(urldisplay));
@@ -537,21 +553,16 @@ public class PrincipalActivity extends ActionBarActivity {
 					throw new IOException(statusLine.getReasonPhrase());
 				}
 			} catch (ClientProtocolException e) {
-				Toast toast = Toast.makeText(getApplicationContext(),
-						"Error en la conexión:" + e.getMessage(),
-						Toast.LENGTH_SHORT);
-				toast.show();
+				result = "SafetError:ClientProtocol:" + e.getMessage();				
+				return result;
 
 			} catch (IOException e) {
-				Toast toast = Toast.makeText(getApplicationContext(),
-						"Error de lectura de datos:" + e.getMessage(),
-						Toast.LENGTH_SHORT);
-				toast.show();
+				result = "SafetError:IOException:" + e.getMessage();				
+				return result;
 
 			} catch (Exception e) {
-				Toast toast = Toast.makeText(getApplicationContext(), "Error:"
-						+ e.getMessage(), Toast.LENGTH_SHORT);
-				toast.show();
+				result = "SafetError:Exception:" + e.getMessage();				
+				return result;
 
 			}
 			return responseString;
@@ -560,12 +571,14 @@ public class PrincipalActivity extends ActionBarActivity {
 		private String callSAFETAPI(String urldisplay) {
 			String result = "";
 			URL url;
+			
+			
 			try {
 				// url = new
 				// URL("https://gestion.cenditel.gob.ve/intranet/api/f3bf4ca25e666d70d6f847b87f448fefba5f2fda/?tipoaccion=console&aplicacion=victorrbravo&accion=operacion:Generar_grafico_coloreado%20Cargar_archivo_flujo:/home/victorrbravo/.safet/flowfiles/flujogeneralsesiones.xml");
 				url = new URL(urldisplay);
 				// url = new URL("http://www.google.com");
-
+				Log.d("SAFETAPI",url.toString());
 				progress.setProgress(10);
 				TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
 					public java.security.cert.X509Certificate[] getAcceptedIssuers() {
@@ -611,7 +624,11 @@ public class PrincipalActivity extends ActionBarActivity {
 				Log.d("callSAFETAPI", "result:|" + webPage + "|");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				Log.e("LLamada a SAFET", e.toString());
+				String connerr = "SafetError:" + e.toString();
+				Log.d("LLamada SAFET ", connerr);
+				
+				return connerr; 
+				
 
 			}
 
@@ -621,7 +638,8 @@ public class PrincipalActivity extends ActionBarActivity {
 		protected String doInBackground(String... urls) {
 			String urldisplay = urls[0];
 
-			Log.d("mygraph", "callPlainSAFETAPI...(1)");
+
+			Log.d("mygraph", "*callPlainSAFETAPI...(1)");
 			urldisplay = urldisplay.replace("á", "%E1");
 			urldisplay = urldisplay.replace("é", "%E9");
 			urldisplay = urldisplay.replace("í", "%ED");
@@ -630,7 +648,17 @@ public class PrincipalActivity extends ActionBarActivity {
 			urldisplay = urldisplay.replace("ñ", "%F1");
 			urldisplay = urldisplay.replace("Ñ", "%D1");
 			Log.d("urldisplay", urldisplay);
+			try {
+				
 			resulting = callPlainSAFETAPI(urldisplay);
+			if (resulting.startsWith("SafetError:")) {
+				String mysafeterror = "SafetError: ";
+				String mymessage = resulting.substring(resulting.indexOf(":",mysafeterror.length()));
+				Toast.makeText(getApplicationContext(), mymessage, Toast.LENGTH_LONG)
+	    		.show(); 
+	    		return "";
+				
+			}
 			Log.d("mygraph", "callPlainSAFETAPI...(2)");
 			// Log.d("mygraph","resulting:" + resulting);
 			// resulting = callSAFETAPI(urldisplay);
@@ -824,12 +852,23 @@ public class PrincipalActivity extends ActionBarActivity {
 			// Intent openBrowser = new Intent(Intent.ACTION_VIEW,
 			// Uri.parse(mygraph));
 			// startActivity(openBrowser);
+			} catch(Exception e) {
+				Log.d("...Bk",e.getMessage());
+				//Toast.makeText(getApplicationContext(), getString(R.string.no_connect_internet), Toast.LENGTH_LONG)
+	    		//.show(); 				
+				return "";
+				
+			}
 			return resulting;
 		}
 
 		 protected TicketRecord processResulting(String resulting) {
 
+			 
 				TicketRecord ticket  = new TicketRecord();
+				if (resulting.isEmpty()) {
+					return ticket;
+				}
 				try {	
 					JSONObject jall = new JSONObject(resulting);
 
@@ -867,6 +906,16 @@ public class PrincipalActivity extends ActionBarActivity {
 		protected void onPostExecute(String result) {
 			Log.d("Resultado", "Hecho");
 
+			if (result.isEmpty()) {
+				
+				progress.setProgress(100);
+				progress.dismiss();
+
+	    		Toast.makeText(getApplicationContext(), getString(R.string.no_connect_internet), Toast.LENGTH_LONG)
+	    		.show(); 				
+				return;
+			}
+			
 			progress.setProgress(100);
 			progress.dismiss();
 
@@ -1021,6 +1070,7 @@ public class PrincipalActivity extends ActionBarActivity {
 						+ PrincipalActivity.PARAMETER_BY_TYPE
 						+ PrincipalActivity.PARAMETER_BY_DATE1
 						+ PrincipalActivity.PARAMETER_BY_DATE2;
+
 
 
 				new GetGraphTask("listar_ticket").execute(myconsultdel);
@@ -1996,6 +2046,7 @@ public class PrincipalActivity extends ActionBarActivity {
 								+ currentticket;
 						Log.d("Borrar_ticket...consult:", "|" + myconsult + "|");
 
+						deleteAlarmTask(getApplicationContext(),recordticket.getEpochtentativedate());
 						new GetGraphTask("borrar_ticket").execute(myconsult);
 
 						Log.d("makeDeleteOptionsDialog", "Yes");
@@ -2020,6 +2071,43 @@ public class PrincipalActivity extends ActionBarActivity {
 		alert.show();
 	}
 
+	public boolean deleteAlarmTask(Context context, Long currdatetime) {
+		boolean result = false;
+		ArrayList<TicketRecord> mytickets = PrincipalActivity.readTicketForNotify(context);
+		if (mytickets == null) {
+			Log.e("PRINCIPAL deleteAlarm", "no hay tickets");
+			return false;
+		}
+		
+		Log.d("mostrando","ticket!!");
+		
+		TicketRecord myticket = null;
+		
+		int pos = 0;
+		
+		for (TicketRecord theticket: mytickets) {
+			
+			Log.d("PRINCIPAL deleteAlarm","currdatetime:" + String.valueOf(currdatetime));
+			Log.d("PRINCIPAL deleteAlarm","getEpochfinishdate():" + String.valueOf(theticket.getEpochtentativedate()));
+			
+			if ( currdatetime <= theticket.getEpochtentativedate()+10 && 
+					currdatetime >= theticket.getEpochtentativedate()	) {
+				
+				break;
+				
+			}
+			pos = pos + 1;
+		}		
+		if (pos < mytickets.size()) {
+			mytickets.remove(pos);			
+			
+			PrincipalActivity.saveTicketForNotify(context, mytickets);
+			Log.d("PRINCIPAL deleteAlarm","DELETED: " + String.valueOf(pos));
+			result = true;
+		}
+		
+		return result;
+	}
 	public AlertDialog makeTaskOptionsDialog(final Context context) {
 		
 		
@@ -2730,6 +2818,9 @@ public class PrincipalActivity extends ActionBarActivity {
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// ---check if the request code is 1---
+		try {
+			
+		
 		Log.d("requestCode:", String.valueOf(requestCode));
 		Log.d("requestCode:", String.valueOf(resultCode));
 		if (resultCode == 1) {
@@ -2780,6 +2871,14 @@ public class PrincipalActivity extends ActionBarActivity {
 					
 					setAlarm(currdatetime);
 				}
+				else {
+					Long currepoch = data.getLongExtra("currepoch",0);
+					
+					Log.d("DelAlarm",String.valueOf(currepoch));
+					
+					deleteAlarmTask(getApplicationContext(),currepoch);
+					
+				}
 				
 				
 				GetGraphTask mytask = new GetGraphTask("agregar_ticket");
@@ -2793,6 +2892,11 @@ public class PrincipalActivity extends ActionBarActivity {
 		} else if (requestCode == 5) {
 			Log.d("return from About", "return from About");
 
+		}
+		} catch(Exception e) {
+			Log.d("**Bk",e.getMessage());
+			Toast.makeText(getApplicationContext(), getString(R.string.no_connect_internet), Toast.LENGTH_LONG)
+    		.show(); 
 		}
 	}
 

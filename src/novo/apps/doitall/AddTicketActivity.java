@@ -704,9 +704,7 @@ public class AddTicketActivity extends Activity {
         	
         }
         
-        
-        
-        
+                   
         
         urlform = urlform.replace(" ", "%20");
         
@@ -718,6 +716,7 @@ public class AddTicketActivity extends Activity {
         i.putExtra("urlform", urlform);
         i.putExtra("notifytask", checknotify.isChecked());
         i.putExtra("currdatetime", calendar);
+        i.putExtra("currepoch", Long.valueOf(seldate));
         i.putExtra("currticket", myticket);
         
         
