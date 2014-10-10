@@ -23,6 +23,7 @@
     <string name="assign_accept">Aceptar asignación</string>
     <string name="cancel">Cancelar</string>
     <string name="close">Cerrar</string>
+    <string name="view_pie_graph">Gráfico circular</string>
     <string name="close_app">Cerrar aplicación</string>
     <string name="question_close">¿Desea salir de la aplicación DoItAll?</string>
     <string name="change_status">Cambia estado de tarea</string>

@@ -154,6 +154,7 @@ public class PrincipalActivity extends ActionBarActivity {
 	ArrayList<String> users;
 	private String currenttitle;
 	private String urlimage;
+	private String alljson;
 	private String graphtitle;
 	private ListView listtickets;
 	private String currentticket;
@@ -177,10 +178,10 @@ public class PrincipalActivity extends ActionBarActivity {
 	
 	
 
-	public static String URL_SERVER = "http://XXXXXXX/intranet/register";
-	public static String URL_SERVER_LOGIN = "http://XXXXXXX/intranet/login";
-	public static String FIRST_URL_GRAPH = "http://XXXXXXX/media/";
-	public static String FIRST_URL_API = "http://XXXXXXX/intranet/apiv2/";
+	public static String URL_SERVER = "http://XXXXXX/intranet/register";
+	public static String URL_SERVER_LOGIN = "http://XXXXXX/intranet/login";
+	public static String FIRST_URL_GRAPH = "http://XXXXXX/media/";
+	public static String FIRST_URL_API = "http://XXXXXX/intranet/apiv2/";
 	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=panelapp&accion=";
 	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=panelapp&accion=";
 	public static String FLOWFILES_DIR = "/home/panelapp/.safet/flowfiles/"; 
@@ -829,6 +830,8 @@ public class PrincipalActivity extends ActionBarActivity {
 			} else if (consult.contentEquals("graficar")) {
 				JSONObject jall = null;
 				String myfilename = "";
+				alljson = resulting;
+				
 				try {
 					jall = new JSONObject(resulting);
 					myfilename = jall.getString("filename");
@@ -840,6 +843,7 @@ public class PrincipalActivity extends ActionBarActivity {
 				} catch (Exception e) {
 					Log.e("JSON", "Ocurrio el error grafico:" + e.toString());
 				}
+				
 				String mygraph = PrincipalActivity.FIRST_URL_GRAPH + myfilename;
 				Log.d("mygraph", mygraph);
 				resulting = mygraph;
@@ -1103,9 +1107,14 @@ public class PrincipalActivity extends ActionBarActivity {
 				Log.d("urlimage", urlimage);
 
 				Log.d("graph", "GraphButton");
-				Intent i = new Intent("novo.apps.doitall.SecondActivity");
+				Intent i = null;
+				i = new Intent("novo.apps.doitall.SecondActivity");
+					
+				
 
 				// ---use putExtra() to add new key/value pairs---
+				Log.d("alljson",alljson);
+				i.putExtra("alljson", alljson);
 				i.putExtra("str1", urlimage);
 				i.putExtra("str2", graphtitle);
 
