@@ -23,9 +23,9 @@
             android:id="@+id/mySimpleXYPlot"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            androidPlot.title="Growth"
-            androidPlot.domainLabel="Month"
-            androidPlot.rangeLabel="Revenue (millions)"
+            androidPlot.title="Gráfico de Barras"
+            androidPlot.domainLabel="Categorías"
+            androidPlot.rangeLabel="Nro de Tareas"
             androidPlot.titleWidget.labelPaint.textSize="@dimen/title_font_size"
             androidPlot.domainLabelWidget.labelPaint.textSize="@dimen/domain_label_font_size"
             androidPlot.rangeLabelWidget.labelPaint.textSize="@dimen/range_label_font_size"
@@ -53,62 +53,19 @@
             android:layout_width="fill_parent"
             android:layout_gravity="center"
             android:orientation="horizontal">
-        <Spinner
-                android:id="@+id/spRenderStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        <Spinner
-                android:id="@+id/spSeriesSize"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-            android:layout_height="wrap_content"
-            android:layout_width="fill_parent"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-        <Spinner
-                android:id="@+id/spWidthStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        <RelativeLayout
-                android:id="@+id/sectionGraph"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-            <SeekBar
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:max="300"
-                    android:progress="10"
-                    android:id="@+id/sbFixed"/>
-            <SeekBar
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:max="50"
-                    android:progress="1"
-                    android:id="@+id/sbVariable"/>
-        </RelativeLayout>
+            <Button
+        	android:id="@+id/button1"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:onClick="onClickClose"
+        	android:paddingLeft="21dp"
+        		android:text="@string/close" />
+        
     </LinearLayout>
     <LinearLayout
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_gravity="center"
             android:orientation="horizontal">
-        <CheckBox android:id="@+id/s1CheckBox"
-                  android:text="Series 1"
-                  android:checked="true"
-                  android:layout_height="wrap_content"
-                  android:layout_width="fill_parent"/>
-        <CheckBox android:id="@+id/s2CheckBox"
-                  android:text="Series 2"
-                  android:checked="true"
-                  android:layout_height="wrap_content"
-                  android:layout_width="fill_parent"/>
     </LinearLayout>
 </LinearLayout>

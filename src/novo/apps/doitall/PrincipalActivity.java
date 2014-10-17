@@ -178,10 +178,10 @@ public class PrincipalActivity extends ActionBarActivity {
 	
 	
 
-	public static String URL_SERVER = "http://XXXXXX/intranet/register";
-	public static String URL_SERVER_LOGIN = "http://XXXXXX/intranet/login";
-	public static String FIRST_URL_GRAPH = "http://XXXXXX/media/";
-	public static String FIRST_URL_API = "http://XXXXXX/intranet/apiv2/";
+	public static String URL_SERVER = "http://XXXXXXXXX/intranet/register";
+	public static String URL_SERVER_LOGIN = "http://XXXXXXXXX/intranet/login";
+	public static String FIRST_URL_GRAPH = "http://XXXXXXXXX/media/";
+	public static String FIRST_URL_API = "http://XXXXXXXXX/intranet/apiv2/";
 	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=panelapp&accion=";
 	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=panelapp&accion=";
 	public static String FLOWFILES_DIR = "/home/panelapp/.safet/flowfiles/"; 

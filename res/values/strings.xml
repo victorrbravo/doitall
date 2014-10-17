@@ -44,7 +44,7 @@
     <string name="filter_any_type">Por tipo</string>
     <string name="confirm_delete">¿Realmente desea eliminar esta tarea?</string>
     <string name="delete_project_text">¿Realmente desea eliminar el proyecto?</string>
-    <string name="nameversion">Doitall. Gestor Inteligente de tareas V 1.7.2 oct 2014</string>
+    <string name="nameversion">Doitall. Gestor Inteligente de tareas V 1.8 oct 2014</string>
     <string name="yes_option">Sí</string>
     <string name="no_option">No</string>
     <string name="empty_message">No hay tareas. Agregue una nueva tarea utilizando el botón +</string>
