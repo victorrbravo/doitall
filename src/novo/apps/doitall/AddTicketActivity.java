@@ -667,12 +667,14 @@ public class AddTicketActivity extends Activity {
         }
         
         mysummary = mysummary.replace(":","__SAFETCOLON__");
+        mysummary = mysummary.replace("&","__SAFETAMP__");
         urlform = urlform + mysummary;
         
         String mydesc = desc.getText().toString().trim();
         
         
         mydesc = mydesc.replace(":","__SAFETCOLON__");
+        mydesc = mydesc.replace("&","__SAFETAMP__");
         myticket.setDescription(mydesc);
         if (!mydesc.isEmpty()) {
         		urlform = urlform + "%20descripcion:" + mydesc;

@@ -145,9 +145,9 @@ public class PrincipalActivity extends ActionBarActivity {
 
 	private ProgressDialog progress;
 	private ActionBar actionbar;
-    private android.support.v4.app.FragmentManager fragmentManager;
-    private SimpleListFragment fragment;
-    
+	private android.support.v4.app.FragmentManager fragmentManager;
+	private SimpleListFragment fragment;
+
 	AdvancedCustomArrayAdapter adapter;
 	ArrayList<TicketRecord> tickets;
 	ArrayList<ProjectRecord> projects;
@@ -170,21 +170,19 @@ public class PrincipalActivity extends ActionBarActivity {
 	private CharSequence mTitle;
 	private ArrayList<String> newstates;
 	private CanvasView noteView;
-	private NotificationManager myNotificationManager;	
+	private NotificationManager myNotificationManager;
 
 	private AlarmManagerBroadcastReceiver alarm;
-	
-	private ArrayList<TicketRecord> ticketsforNotify;
-	
-	
 
-	public static String URL_SERVER = "http://XXXXXXXXX/intranet/register";
-	public static String URL_SERVER_LOGIN = "http://XXXXXXXXX/intranet/login";
-	public static String FIRST_URL_GRAPH = "http://XXXXXXXXX/media/";
-	public static String FIRST_URL_API = "http://XXXXXXXXX/intranet/apiv2/";
+	private ArrayList<TicketRecord> ticketsforNotify;
+
+	public static String URL_SERVER = "http://novoapps.info/intranet/register";
+	public static String URL_SERVER_LOGIN = "http://novoapps.info/intranet/login";
+	public static String FIRST_URL_GRAPH = "http://novoapps.info/media/";
+	public static String FIRST_URL_API = "http://novoapps.info/intranet/apiv2/";
 	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=panelapp&accion=";
 	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=panelapp&accion=";
-	public static String FLOWFILES_DIR = "/home/panelapp/.safet/flowfiles/"; 
+	public static String FLOWFILES_DIR = "/home/panelapp/.safet/flowfiles/";
 
 	public static String PARAMETER_BY_PROJECT;
 	public static String PARAMETER_BY_TYPE;
@@ -199,31 +197,29 @@ public class PrincipalActivity extends ActionBarActivity {
 	public static String URL_API;
 	public static String URLFORM_API;
 	public static final String CURRENTDATEFORMAT = "dd/MMM/yyyy hh:mma";
-	public static final  String FILE_NOTIFICATIONS = "notifications.txt";
+	public static final String FILE_NOTIFICATIONS = "notifications.txt";
 	public static final String ONLYDATEFORMAT = "dd/MMM/yyyy";
 	Map<String, String> usersmap;
 
-
 	// Data for notification
-	
 
 	private static int notificationIdOne = 111;
 	private int notificationIdTwo = 112;
 	private int numMessagesOne = 0;
 	private int numMessagesTwo = 0;
-	
-	TimePicker myTimePicker;
-    TimePickerDialog timePickerDialog;
 
-    final static int RQS_1 = 1;
-    // used for register alarm manager
-    PendingIntent pendingIntent;
-    //used to store running alarmmanager instance
-    AlarmManager alarmManager;
-    //Callback function for Alarmmanager event
-    BootReceiver mReceiver;
-    AlarmReceiver aReceiver;
-    
+	TimePicker myTimePicker;
+	TimePickerDialog timePickerDialog;
+
+	final static int RQS_1 = 1;
+	// used for register alarm manager
+	PendingIntent pendingIntent;
+	// used to store running alarmmanager instance
+	AlarmManager alarmManager;
+	// Callback function for Alarmmanager event
+	BootReceiver mReceiver;
+	AlarmReceiver aReceiver;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -238,35 +234,32 @@ public class PrincipalActivity extends ActionBarActivity {
 		DESCRIPTION_DATE1_PARAMS = "";
 
 		mTitle = getTitle();
-		
+
 		alarm = new AlarmManagerBroadcastReceiver();
-		
+
 		isclosing = 0;
 		Log.d("PrincipalActivity", "OnCreate");
-		
-		if (getIntent().getStringExtra("function") != null ) {
+
+		if (getIntent().getStringExtra("function") != null) {
 			Log.d("PrincipalActivity", "OnCreate...YES!");
 			displayNotificationOne();
 			return;
-			
+
 		}
-		
+
 		usersmap = new HashMap<String, String>();
 
 		actionbar = getSupportActionBar();
 		actionbar.setHomeButtonEnabled(true);
 		actionbar.setDisplayHomeAsUpEnabled(true);
-		
+
 		currentuser = getIntent().getStringExtra("selectuser");
 		String ticket = getIntent().getStringExtra("selectauth");
 		String pass = getIntent().getStringExtra("selectpass");
-		
-		
+
 		currentauth = ticket;
-		
 
 		ticketsforNotify = new ArrayList<TicketRecord>();
-		
 
 		Log.d("PrincipalActivity", "currentuser (pass):" + currentuser);
 		Log.d("PrincipalActivity", "currentauth(pass):" + currentauth);
@@ -282,7 +275,7 @@ public class PrincipalActivity extends ActionBarActivity {
 
 		currentticket = "";
 		recordticket = null;
-		
+
 		currentprojectid = "";
 		currentdate = "";
 		urlimage = "";
@@ -291,17 +284,17 @@ public class PrincipalActivity extends ActionBarActivity {
 		Log.d("PrincipalActivity", "**1");
 		setContentView(R.layout.activity_principal);
 		Log.d("PrincipalActivity", "**2");
-		
+
 		tickets = new ArrayList<TicketRecord>();
 		projects = new ArrayList<ProjectRecord>();
 		users = new ArrayList<String>();
 		Log.d("Advance", "1");
-		adapter = new AdvancedCustomArrayAdapter(this,currentuser);
+		adapter = new AdvancedCustomArrayAdapter(this, currentuser);
 		Log.d("Advance", "2");
 		listtickets = (ListView) findViewById(R.id.listTasks);
 		listtickets.setAdapter(adapter);
 		listtickets.setEmptyView(findViewById(R.id.emptymessage));
-		
+
 		Log.d("Advance", "3");
 		progress = new ProgressDialog(this);
 		progress.setIcon(R.drawable.logo);
@@ -309,123 +302,116 @@ public class PrincipalActivity extends ActionBarActivity {
 
 		addListenerOnButton();
 		loadSafetReport("Por_hacer");
-		
-				Log.d("noteView","....(1)..");
+
+		Log.d("noteView", "....(1)..");
 
 		noteView = (CanvasView) findViewById(R.id.viewSticky);
-		
+
 		noteView.setVisibility(View.GONE);
 		noteView.setCurrentuser(currentuser);
-		
-		Log.d("noteView","....(2)..");
-//		fragmentManager = getSupportFragmentManager();
-//	    android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//	    fragment = new SimpleListFragment();
-//	    
-	    
-//		RegisterAlarmBroadcast();
-	    
-		
+
+		Log.d("noteView", "....(2)..");
+		// fragmentManager = getSupportFragmentManager();
+		// android.support.v4.app.FragmentTransaction fragmentTransaction =
+		// fragmentManager.beginTransaction();
+		// fragment = new SimpleListFragment();
+		//
+
+		// RegisterAlarmBroadcast();
+
 	}
 
-//	@Override
-//	protected void onDestroy() {
-//		unregisterReceiver(mReceiver);
-//		unregisterReceiver(aReceiver);
-//		super.onDestroy();
-//	}
-//	 
-	
-	
-	
-	
+	// @Override
+	// protected void onDestroy() {
+	// unregisterReceiver(mReceiver);
+	// unregisterReceiver(aReceiver);
+	// super.onDestroy();
+	// }
+	//
+
 	public class AlarmReceiver extends BroadcastReceiver {
 
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Log.i("Doitall",
+					"Yes Yes ahhh!!...BroadcastReceiver::OnReceive() >>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+			// Toast.makeText(context,
+			// "Congrats!. Your Alarm time has been reached",
+			// Toast.LENGTH_LONG).show();
+			Toast.makeText(context, "AlarmReceiver**", Toast.LENGTH_LONG)
+					.show();
 
-    	@Override  
-        public void onReceive(Context context, Intent intent)
-        {
-            Log.i("Doitall","Yes Yes ahhh!!...BroadcastReceiver::OnReceive() >>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-            //Toast.makeText(context, "Congrats!. Your Alarm time has been reached", Toast.LENGTH_LONG).show();
-       	 	Toast.makeText(context, "AlarmReceiver**", Toast.LENGTH_LONG).show();
-       	 	
-            displayNotificationOne();
-        }
-    	
+			displayNotificationOne();
+		}
 
-    
-  	}
+	}
 
 	public static boolean isNetworkAvailable(Context context) {
-	    ConnectivityManager connectivityManager = (ConnectivityManager)context
-	    		.getSystemService(Context.CONNECTIVITY_SERVICE);
-	    NetworkInfo activeNetworkInfo = connectivityManager
-	            .getActiveNetworkInfo();
-	    return activeNetworkInfo != null;
+		ConnectivityManager connectivityManager = (ConnectivityManager) context
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetworkInfo = connectivityManager
+				.getActiveNetworkInfo();
+		return activeNetworkInfo != null;
 	}
-	
-	
-	 public void displayNotificationOne() {
 
-	        // Invoking the default notification service
-	        NotificationCompat.Builder  mBuilder = new NotificationCompat.Builder(this);
-	   
-	        mBuilder.setContentTitle("Tienes una tarea");
-	        if (recordticket != null ) {
-	        	mBuilder.setContentText(recordticket.getSummary());
-	        }
-	        else {
-	        	mBuilder.setContentText("Hay un mensaje");
-	        }
-	        mBuilder.setTicker("Nuevo mensaje!");
-	        mBuilder.setSmallIcon(R.drawable.ic_launcher);
+	public void displayNotificationOne() {
 
-	        // Increase notification number every time a new notification arrives 
-	        mBuilder.setNumber(1);
-	        
-	        // Creates an explicit intent for an Activity in your app
-	        	 	        
-	        Intent resultIntent = new Intent(this, NotificationOne.class);
-	        
-	        resultIntent.putExtra("notificationId", 111);
+		// Invoking the default notification service
+		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
+				this);
 
-	        //This ensures that navigating backward from the Activity leads out of the app to Home page
-	        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+		mBuilder.setContentTitle("Tienes una tarea");
+		if (recordticket != null) {
+			mBuilder.setContentText(recordticket.getSummary());
+		} else {
+			mBuilder.setContentText("Hay un mensaje");
+		}
+		mBuilder.setTicker("Nuevo mensaje!");
+		mBuilder.setSmallIcon(R.drawable.ic_launcher);
 
-	        // Adds the back stack for the Intent
-	        stackBuilder.addParentStack(PrincipalActivity.class);
+		// Increase notification number every time a new notification arrives
+		mBuilder.setNumber(1);
 
-	        // Adds the Intent that starts the Activity to the top of the stack
-	        stackBuilder.addNextIntent(resultIntent);
-	        PendingIntent resultPendingIntent =
-	           stackBuilder.getPendingIntent(
-	              0,
-	              PendingIntent.FLAG_ONE_SHOT //can only be used once
-	           );
-	        // start the activity when the user clicks the notification text
-	        mBuilder.setContentIntent(resultPendingIntent);
+		// Creates an explicit intent for an Activity in your app
 
-	        myNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		Intent resultIntent = new Intent(this, NotificationOne.class);
 
-	        // pass the Notification object to the system 
-	        myNotificationManager.notify(111, mBuilder.build());
-	     }
+		resultIntent.putExtra("notificationId", 111);
+
+		// This ensures that navigating backward from the Activity leads out of
+		// the app to Home page
+		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+
+		// Adds the back stack for the Intent
+		stackBuilder.addParentStack(PrincipalActivity.class);
+
+		// Adds the Intent that starts the Activity to the top of the stack
+		stackBuilder.addNextIntent(resultIntent);
+		PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,
+				PendingIntent.FLAG_ONE_SHOT // can only be used once
+				);
+		// start the activity when the user clicks the notification text
+		mBuilder.setContentIntent(resultPendingIntent);
+
+		myNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+		// pass the Notification object to the system
+		myNotificationManager.notify(111, mBuilder.build());
+	}
 
 	public void onNavigationDrawerItemSelected(int position) {
 		// update the main content by replacing fragments
-	
-		Log.d("drawer","drawer");
+
+		Log.d("drawer", "drawer");
 		if (fragmentManager.findFragmentById(android.R.id.content) == null) {
-	    	fragmentManager.beginTransaction().add(android.R.id.content, new SimpleListFragment()).commit();
-	    }
-		else {
-			fragmentManager
-			.beginTransaction()
-			.replace(R.id.container,
-					fragment).commit();
+			fragmentManager.beginTransaction()
+					.add(android.R.id.content, new SimpleListFragment())
+					.commit();
+		} else {
+			fragmentManager.beginTransaction()
+					.replace(R.id.container, fragment).commit();
 		}
 	}
-
 
 	@Override
 	public void onBackPressed() {
@@ -487,8 +473,8 @@ public class PrincipalActivity extends ActionBarActivity {
 		}
 
 		private boolean addticket;
-		private boolean showsticky; 
-		
+		private boolean showsticky;
+
 		public boolean isShowsticky() {
 			return showsticky;
 		}
@@ -523,7 +509,7 @@ public class PrincipalActivity extends ActionBarActivity {
 			modifyproject = false;
 			showsticky = false;
 			addticket = false;
-			
+
 		}
 
 		protected void onPreExecute() {
@@ -554,15 +540,15 @@ public class PrincipalActivity extends ActionBarActivity {
 					throw new IOException(statusLine.getReasonPhrase());
 				}
 			} catch (ClientProtocolException e) {
-				result = "SafetError:ClientProtocol:" + e.getMessage();				
+				result = "SafetError:ClientProtocol:" + e.getMessage();
 				return result;
 
 			} catch (IOException e) {
-				result = "SafetError:IOException:" + e.getMessage();				
+				result = "SafetError:IOException:" + e.getMessage();
 				return result;
 
 			} catch (Exception e) {
-				result = "SafetError:Exception:" + e.getMessage();				
+				result = "SafetError:Exception:" + e.getMessage();
 				return result;
 
 			}
@@ -572,14 +558,13 @@ public class PrincipalActivity extends ActionBarActivity {
 		private String callSAFETAPI(String urldisplay) {
 			String result = "";
 			URL url;
-			
-			
+
 			try {
 				// url = new
 				// URL("https://gestion.cenditel.gob.ve/intranet/api/f3bf4ca25e666d70d6f847b87f448fefba5f2fda/?tipoaccion=console&aplicacion=victorrbravo&accion=operacion:Generar_grafico_coloreado%20Cargar_archivo_flujo:/home/victorrbravo/.safet/flowfiles/flujogeneralsesiones.xml");
 				url = new URL(urldisplay);
 				// url = new URL("http://www.google.com");
-				Log.d("SAFETAPI",url.toString());
+				Log.d("SAFETAPI", url.toString());
 				progress.setProgress(10);
 				TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
 					public java.security.cert.X509Certificate[] getAcceptedIssuers() {
@@ -627,9 +612,8 @@ public class PrincipalActivity extends ActionBarActivity {
 				// TODO Auto-generated catch block
 				String connerr = "SafetError:" + e.toString();
 				Log.d("LLamada SAFET ", connerr);
-				
-				return connerr; 
-				
+
+				return connerr;
 
 			}
 
@@ -638,7 +622,6 @@ public class PrincipalActivity extends ActionBarActivity {
 
 		protected String doInBackground(String... urls) {
 			String urldisplay = urls[0];
-
 
 			Log.d("mygraph", "*callPlainSAFETAPI...(1)");
 			urldisplay = urldisplay.replace("á", "%E1");
@@ -650,276 +633,290 @@ public class PrincipalActivity extends ActionBarActivity {
 			urldisplay = urldisplay.replace("Ñ", "%D1");
 			Log.d("urldisplay", urldisplay);
 			try {
-				
-			resulting = callPlainSAFETAPI(urldisplay);
-			if (resulting.startsWith("SafetError:")) {
-				String mysafeterror = "SafetError: ";
-				String mymessage = resulting.substring(resulting.indexOf(":",mysafeterror.length()));
-				Toast.makeText(getApplicationContext(), mymessage, Toast.LENGTH_LONG)
-	    		.show(); 
-	    		return "";
-				
-			}
-			Log.d("mygraph", "callPlainSAFETAPI...(2)");
-			// Log.d("mygraph","resulting:" + resulting);
-			// resulting = callSAFETAPI(urldisplay);
-			progress.setProgress(50);
 
-			if (consult.contentEquals("cambiar_estado")) {
-				Log.d("LastListTickets", lastlisttickets);
-
-				// resulting = callPlainSAFETAPI(lastlisttickets);
-				// consult = "cambiar_estado_relistar_ticket";
-			} else if (consult.contentEquals("agregar_ticket")) {
-				Log.d("**agregar ticket LastListTickets", lastlisttickets);
-
-				// resulting = callPlainSAFETAPI(lastlisttickets);
-				// consult = "agregar_ticket_relistar_ticket";
-
-			} else if (consult.contentEquals("borrar_ticket")) {
-				// Log.d("borrar_ticket",lastlisttickets);
-
-				// resulting = callPlainSAFETAPI(lastlisttickets);
-				// consult = "borrar_ticket_relistar_ticket";
-			} else if (consult.contentEquals("modificar_ticket")) {
-				Log.d("modificar_ticket", lastlisttickets);
-
-				// resulting = callPlainSAFETAPI(lastlisttickets);
-				// consult = "modificar_ticket_relistar_ticket";
-			}
-
-			Log.d("SAFETCALLAPI from execute()", resulting);
-			if (consult.endsWith("ver_ticket")) {
-				Log.d("ver_ticket", "resulting");
-
-			} else if (consult.endsWith("siguientes_estados")) {
-				newstates = loadStatus(resulting);
-				Log.d("changeStatusTask",
-						"newstates.count:" + String.valueOf(newstates.size()));
-				// showStatusDialog(newstates);
-			} else if (consult.endsWith("listar_usuarios")) {
-			
-				users.clear();
-				Log.d("listar_usuarios",resulting);
-				try {
-					JSONArray jArray = new JSONArray(resulting);
-	
-					
-					for (int i = 0; i < jArray.length(); i++) {
-						String myuser = jArray.getString(i);
-	
-						users.add(myuser);
-						
-					}
-				} catch (Exception e) {
-					Log.e("JSON users", "Ocurrio el error:" + e.toString());
-					// e.printStackTrace();
+				resulting = callPlainSAFETAPI(urldisplay);
+				if (resulting.startsWith("SafetError:")) {
+					String mysafeterror = "SafetError: ";
+					String mymessage = resulting.substring(resulting.indexOf(
+							":", mysafeterror.length()));
+					Toast.makeText(getApplicationContext(), mymessage,
+							Toast.LENGTH_LONG).show();
+					return "";
 
 				}
-				
-				Log.d("users", "count:"+ String.valueOf(users.size()));
-				
+				Log.d("mygraph", "callPlainSAFETAPI...(2)");
+				// Log.d("mygraph","resulting:" + resulting);
+				// resulting = callSAFETAPI(urldisplay);
+				progress.setProgress(50);
 
-			} else if (consult.endsWith("listar_ticket")) {
+				if (consult.contentEquals("cambiar_estado")) {
+					Log.d("LastListTickets", lastlisttickets);
 
-				tickets.clear();
-				Log.d("PrincipalActivity", "after SAFETCALLAPI");
+					// resulting = callPlainSAFETAPI(lastlisttickets);
+					// consult = "cambiar_estado_relistar_ticket";
+				} else if (consult.contentEquals("agregar_ticket")) {
+					Log.d("**agregar ticket LastListTickets", lastlisttickets);
 
-				lastlisttickets = urldisplay;
+					// resulting = callPlainSAFETAPI(lastlisttickets);
+					// consult = "agregar_ticket_relistar_ticket";
 
-				try {
-					JSONObject jall = new JSONObject(resulting);
+				} else if (consult.contentEquals("borrar_ticket")) {
+					// Log.d("borrar_ticket",lastlisttickets);
 
-					JSONArray jArray = jall.getJSONArray("safetlist");
-					for (int i = 0; i < jArray.length(); i++) {
+					// resulting = callPlainSAFETAPI(lastlisttickets);
+					// consult = "borrar_ticket_relistar_ticket";
+				} else if (consult.contentEquals("modificar_ticket")) {
+					Log.d("modificar_ticket", lastlisttickets);
 
-						JSONObject json_data = jArray.getJSONObject(i);
-						TicketRecord ticket = new TicketRecord();
-						// String summary =
-						// URLDecoder.decode(json_data.getString("resumen"),
-						// "UTF-8");
-						String summary = json_data.getString("resumen");
+					// resulting = callPlainSAFETAPI(lastlisttickets);
+					// consult = "modificar_ticket_relistar_ticket";
+				}
 
-						Log.i("jsonarray", "resumen:" + summary);
-						String desc = json_data.getString("descripcion");
-						Log.i("jsonarray", "descripcion:" + desc);
-						String id = json_data.getString("id");
-						ticket.setId(id);
-						ticket.setSummary(summary);
-						ticket.setDescription(desc);
-						ticket.setProject(json_data.getString("proyecto"));
-						ticket.setNotifyid(Integer.parseInt(json_data.getString("notifyid")));
-						ticket.setAssignto(json_data.getString("assignto"));
-						ticket.setAssignfrom(json_data.getString("assignfrom"));
-						ticket.setProjectid(Integer.valueOf(json_data.getString("projectid")));
-						ticket.setTentativedate(PrincipalActivity
-								.convertDateEpochToFormat(json_data
-										.getString("tentativedate")));
-						ticket.setEpochtentativedate(Long.parseLong(json_data
-								.getString("tentativedate")));
-						String newfinish = json_data.getString("finishdate");
-						if (newfinish.contentEquals("0")) {
-							ticket.setFinishdate(getString(R.string.nocomplete));
-							ticket.setEpochfinishdate(0l);
-						} else {
-							ticket.setFinishdate(PrincipalActivity
-									.convertDateEpochToFormat(newfinish));
-							ticket.setEpochfinishdate(Long.parseLong(newfinish));
+				Log.d("SAFETCALLAPI from execute()", resulting);
+				if (consult.endsWith("ver_ticket")) {
+					Log.d("ver_ticket", "resulting");
+
+				} else if (consult.endsWith("siguientes_estados")) {
+					newstates = loadStatus(resulting);
+					Log.d("changeStatusTask",
+							"newstates.count:"
+									+ String.valueOf(newstates.size()));
+					// showStatusDialog(newstates);
+				} else if (consult.endsWith("listar_usuarios")) {
+
+					users.clear();
+					Log.d("listar_usuarios", resulting);
+					try {
+						JSONArray jArray = new JSONArray(resulting);
+
+						for (int i = 0; i < jArray.length(); i++) {
+							String myuser = jArray.getString(i);
+
+							users.add(myuser);
 
 						}
-						ticket.setOwner(json_data.getString("owner"));
-						ticket.setType(json_data.getString("type"));
-						ticket.setStatus(json_data.getString("status"));
-
-						tickets.add(ticket);
-						urlimage = "";
+					} catch (Exception e) {
+						Log.e("JSON users", "Ocurrio el error:" + e.toString());
+						// e.printStackTrace();
 
 					}
-					currenttitle = jall.getString("safetvariable");
 
-					Log.d("checkpoint", "1");
-					adapter.setTickets(tickets);
-					Log.d("checkpoint", "2");
+					Log.d("users", "count:" + String.valueOf(users.size()));
 
-				} catch (Exception e) {
-					Log.e("JSON", "Ocurrio el error:" + e.toString());
-					// e.printStackTrace();
+				} else if (consult.endsWith("listar_ticket")) {
 
-				}
-			} else if (consult.endsWith("listar_proyectos")) {
+					tickets.clear();
+					Log.d("PrincipalActivity", "after SAFETCALLAPI");
 
-				projects.clear();
+					lastlisttickets = urldisplay;
 
-				try {
-					JSONObject jall = new JSONObject(resulting);
+					try {
+						JSONObject jall = new JSONObject(resulting);
 
-					JSONArray jArray = jall.getJSONArray("safetlist");
-					for (int i = 0; i < jArray.length(); i++) {
+						JSONArray jArray = jall.getJSONArray("safetlist");
+						for (int i = 0; i < jArray.length(); i++) {
 
-						JSONObject json_data = jArray.getJSONObject(i);
-						ProjectRecord project = new ProjectRecord();
-						// String summary =
-						// URLDecoder.decode(json_data.getString("resumen"),
-						// "UTF-8");
-						String projectid = json_data.getString("projectid");
-						String title = json_data.getString("title");
-						String desc = json_data.getString("description");
-						String type = json_data.getString("type");
+							JSONObject json_data = jArray.getJSONObject(i);
+							TicketRecord ticket = new TicketRecord();
+							// String summary =
+							// URLDecoder.decode(json_data.getString("resumen"),
+							// "UTF-8");
+							String summary = json_data.getString("resumen");
 
-						project.setProjectid(projectid);
-						project.setDescription(desc);
-						project.setTitle(title);
-						project.setType(type);
-						String enable = json_data.getString("enable");
-						Log.d("listar_enable", enable);
-						if (enable.contentEquals("No")) {
-							project.setSelected(false);
-						} else {
-							project.setSelected(true);
+							Log.i("jsonarray", "resumen:" + summary);
+							String desc = json_data.getString("descripcion");
+							Log.i("jsonarray", "descripcion:" + desc);
+							String id = json_data.getString("id");
+							ticket.setId(id);
+							ticket.setSummary(summary);
+							ticket.setDescription(desc);
+							ticket.setProject(json_data.getString("proyecto"));
+							ticket.setNotifyid(Integer.parseInt(json_data
+									.getString("notifyid")));
+							ticket.setAssignto(json_data.getString("assignto"));
+							ticket.setAssignfrom(json_data
+									.getString("assignfrom"));
+							ticket.setProjectid(Integer.valueOf(json_data
+									.getString("projectid")));
+							ticket.setTentativedate(PrincipalActivity
+									.convertDateEpochToFormat(json_data
+											.getString("tentativedate")));
+							ticket.setEpochtentativedate(Long
+									.parseLong(json_data
+											.getString("tentativedate")));
+							String newfinish = json_data
+									.getString("finishdate");
+							if (newfinish.contentEquals("0")) {
+								ticket.setFinishdate(getString(R.string.nocomplete));
+								ticket.setEpochfinishdate(0l);
+							} else {
+								ticket.setFinishdate(PrincipalActivity
+										.convertDateEpochToFormat(newfinish));
+								ticket.setEpochfinishdate(Long
+										.parseLong(newfinish));
+
+							}
+							ticket.setOwner(json_data.getString("owner"));
+							ticket.setType(json_data.getString("type"));
+							ticket.setStatus(json_data.getString("status"));
+
+							tickets.add(ticket);
+							urlimage = "";
+
+						}
+						currenttitle = jall.getString("safetvariable");
+
+						Log.d("checkpoint", "1");
+						adapter.setTickets(tickets);
+						Log.d("checkpoint", "2");
+
+					} catch (Exception e) {
+						Log.e("JSON", "Ocurrio el error:" + e.toString());
+						// e.printStackTrace();
+
+					}
+				} else if (consult.endsWith("listar_proyectos")) {
+
+					projects.clear();
+
+					try {
+						JSONObject jall = new JSONObject(resulting);
+
+						JSONArray jArray = jall.getJSONArray("safetlist");
+						for (int i = 0; i < jArray.length(); i++) {
+
+							JSONObject json_data = jArray.getJSONObject(i);
+							ProjectRecord project = new ProjectRecord();
+							// String summary =
+							// URLDecoder.decode(json_data.getString("resumen"),
+							// "UTF-8");
+							String projectid = json_data.getString("projectid");
+							String title = json_data.getString("title");
+							String desc = json_data.getString("description");
+							String type = json_data.getString("type");
+
+							project.setProjectid(projectid);
+							project.setDescription(desc);
+							project.setTitle(title);
+							project.setType(type);
+							String enable = json_data.getString("enable");
+							Log.d("listar_enable", enable);
+							if (enable.contentEquals("No")) {
+								project.setSelected(false);
+							} else {
+								project.setSelected(true);
+							}
+
+							urlimage = "";
+							projects.add(project);
 						}
 
-						urlimage = "";
-						projects.add(project);
+					} catch (Exception e) {
+						Log.e("JSON", "Ocurrio el error:" + e.toString());
+						// e.printStackTrace();
+
+					}
+				} else if (consult.contentEquals("graficar")) {
+					JSONObject jall = null;
+					String myfilename = "";
+					alljson = resulting;
+
+					try {
+						jall = new JSONObject(resulting);
+						Log.e("JSON", "GRAPHJSON:" + resulting);
+						myfilename = jall.getString("filename");
+						Log.e("JSON", "myfilename:" + myfilename);
+						graphtitle = URLDecoder.decode(jall.getString("id"));
+						// graphtitle = jall.getString("id");
+						Log.e("Graph title", graphtitle);
+
+					} catch (Exception e) {
+						Log.e("JSON",
+								"Ocurrio el error grafico:" + e.toString());
 					}
 
-				} catch (Exception e) {
-					Log.e("JSON", "Ocurrio el error:" + e.toString());
-					// e.printStackTrace();
-
+					String mygraph = PrincipalActivity.FIRST_URL_GRAPH
+							+ myfilename;
+					Log.d("mygraph", mygraph);
+					resulting = mygraph;
+					urlimage = mygraph;
+					Log.d("example", mygraph);
 				}
-			} else if (consult.contentEquals("graficar")) {
-				JSONObject jall = null;
-				String myfilename = "";
-				alljson = resulting;
-				
-				try {
-					jall = new JSONObject(resulting);
-					myfilename = jall.getString("filename");
-					Log.e("JSON", "myfilename:" + myfilename);
-					graphtitle = URLDecoder.decode(jall.getString("id"));
-					// graphtitle = jall.getString("id");
-					Log.e("Graph title", graphtitle);
 
-				} catch (Exception e) {
-					Log.e("JSON", "Ocurrio el error grafico:" + e.toString());
-				}
-				
-				String mygraph = PrincipalActivity.FIRST_URL_GRAPH + myfilename;
-				Log.d("mygraph", mygraph);
-				resulting = mygraph;
-				urlimage = mygraph;
-				Log.d("example", mygraph);
-			}
+				// new DownloadImageTask( (ImageView)
+				// imagegraph).execute(mygraph);
 
-			// new DownloadImageTask( (ImageView) imagegraph).execute(mygraph);
-
-			// Intent openBrowser = new Intent(Intent.ACTION_VIEW,
-			// Uri.parse(mygraph));
-			// startActivity(openBrowser);
-			} catch(Exception e) {
-				Log.d("...Bk",e.getMessage());
-				//Toast.makeText(getApplicationContext(), getString(R.string.no_connect_internet), Toast.LENGTH_LONG)
-	    		//.show(); 				
+				// Intent openBrowser = new Intent(Intent.ACTION_VIEW,
+				// Uri.parse(mygraph));
+				// startActivity(openBrowser);
+			} catch (Exception e) {
+				Log.d("...Bk", e.getMessage());
+				// Toast.makeText(getApplicationContext(),
+				// getString(R.string.no_connect_internet), Toast.LENGTH_LONG)
+				// .show();
 				return "";
-				
+
 			}
 			return resulting;
 		}
 
-		 protected TicketRecord processResulting(String resulting) {
+		protected TicketRecord processResulting(String resulting) {
 
-			 
-				TicketRecord ticket  = new TicketRecord();
-				if (resulting.isEmpty()) {
-					return ticket;
-				}
-				try {	
-					JSONObject jall = new JSONObject(resulting);
-
-					JSONArray jArray = jall.getJSONArray("safetlist");
-					for(int i=0;i<jArray.length();i++){
-
-						JSONObject json_data = jArray.getJSONObject(i);
-
-						//String summary = URLDecoder.decode(json_data.getString("resumen"), "UTF-8");
-						
-						ticket.setSummary(json_data.getString("resumen"));
-						ticket.setDescription(json_data.getString("descripcion"));						
-						ticket.setType(json_data.getString("tipo"));
-						ticket.setProject(json_data.getString("proyecto"));
-						ticket.setStatus(json_data.getString("status"));
-						ticket.setOwner(json_data.getString("propietario"));	
-						ticket.setTentativedate(PrincipalActivity.convertDateEpochToFormat(json_data.getString("tentativedate")));
-						ticket.setFinishdate(PrincipalActivity.convertDateEpochToFormat(json_data.getString("finishdate")));
-						ticket.setAssignto(json_data.getString("assignto"));					
-
-					}
-
-				} catch(Exception e) {
-					Log.e("JSON View Ticket", "Ocurrio el error:"+ e.toString());
-					//e.printStackTrace();
-
-				}
-
-		    	    	
+			TicketRecord ticket = new TicketRecord();
+			if (resulting.isEmpty()) {
 				return ticket;
-		    }
-		    
-		
-		
+			}
+			try {
+				JSONObject jall = new JSONObject(resulting);
+
+				JSONArray jArray = jall.getJSONArray("safetlist");
+				for (int i = 0; i < jArray.length(); i++) {
+
+					JSONObject json_data = jArray.getJSONObject(i);
+
+					// String summary =
+					// URLDecoder.decode(json_data.getString("resumen"),
+					// "UTF-8");
+
+					ticket.setSummary(json_data.getString("resumen"));
+					ticket.setDescription(json_data.getString("descripcion"));
+					ticket.setType(json_data.getString("tipo"));
+					ticket.setProject(json_data.getString("proyecto"));
+					ticket.setStatus(json_data.getString("status"));
+					ticket.setOwner(json_data.getString("propietario"));
+					ticket.setTentativedate(PrincipalActivity
+							.convertDateEpochToFormat(json_data
+									.getString("tentativedate")));
+					ticket.setFinishdate(PrincipalActivity
+							.convertDateEpochToFormat(json_data
+									.getString("finishdate")));
+					ticket.setAssignto(json_data.getString("assignto"));
+
+				}
+
+			} catch (Exception e) {
+				Log.e("JSON View Ticket", "Ocurrio el error:" + e.toString());
+				// e.printStackTrace();
+
+			}
+
+			return ticket;
+		}
+
 		protected void onPostExecute(String result) {
 			Log.d("Resultado", "Hecho");
 
 			if (result.isEmpty()) {
-				
+
 				progress.setProgress(100);
 				progress.dismiss();
 
-	    		Toast.makeText(getApplicationContext(), getString(R.string.no_connect_internet), Toast.LENGTH_LONG)
-	    		.show(); 				
+				Toast.makeText(getApplicationContext(),
+						getString(R.string.no_connect_internet),
+						Toast.LENGTH_LONG).show();
 				return;
 			}
-			
+
 			progress.setProgress(100);
 			progress.dismiss();
 
@@ -947,24 +944,22 @@ public class PrincipalActivity extends ActionBarActivity {
 						getString(R.string.state_list_title));
 				Log.d("showstatus", "showstatus");
 
-				
 			} else if (consult.startsWith("ver_ticket")) {
 				if (isShowsticky()) {
-					Log.d("resulting",resulting);
-					
+					Log.d("resulting", resulting);
+
 					TicketRecord myticket = processResulting(resulting);
-					Log.d("ver sticky","(1)");
-					noteView.setMessage(myticket);					
+					Log.d("ver sticky", "(1)");
+					noteView.setMessage(myticket);
 					noteView.setVisibility(View.VISIBLE);
 					noteView.renderText();
-					Log.d("view click","view click gone");
+					Log.d("view click", "view click gone");
 
-				}
-				else {
+				} else {
 					if (isAddticket()) {
 						Intent i = new Intent(
 								"novo.apps.doitall.ViewTicketActivity");
-	
+
 						i.putExtra("resulting", resulting);
 						startActivity(i);
 					} else {
@@ -973,15 +968,15 @@ public class PrincipalActivity extends ActionBarActivity {
 				}
 
 			} else if (consult.startsWith("listar_usuarios")) {
-							
-				//Toast.makeText(getApplicationContext(),
-				//		"asignación creada", Toast.LENGTH_SHORT).show();
-				Log.d("assign","prev list users");
-				
+
+				// Toast.makeText(getApplicationContext(),
+				// "asignación creada", Toast.LENGTH_SHORT).show();
+				Log.d("assign", "prev list users");
+
 				showAssignToChooseDialog(getApplicationContext());
 
-			} else if (consult.endsWith("agregar_asignacion") ) {
-				
+			} else if (consult.endsWith("agregar_asignacion")) {
+
 				Toast toast = Toast.makeText(getApplicationContext(),
 						"Asignación agregada", Toast.LENGTH_SHORT);
 				toast.show();
@@ -998,8 +993,8 @@ public class PrincipalActivity extends ActionBarActivity {
 
 				new GetGraphTask("listar_ticket").execute(myconsultdel);
 
-			} else if (consult.endsWith("aceptar_asignacion") ) {
-				
+			} else if (consult.endsWith("aceptar_asignacion")) {
+
 				Toast toast = Toast.makeText(getApplicationContext(),
 						"Asignación aceptada", Toast.LENGTH_SHORT);
 				toast.show();
@@ -1017,8 +1012,8 @@ public class PrincipalActivity extends ActionBarActivity {
 
 				new GetGraphTask("listar_ticket").execute(myconsultdel);
 
-			} else if (consult.endsWith("eliminar_asignacion") ) {
-				
+			} else if (consult.endsWith("eliminar_asignacion")) {
+
 				Toast toast = Toast.makeText(getApplicationContext(),
 						"Asignación eliminada", Toast.LENGTH_SHORT);
 				toast.show();
@@ -1035,8 +1030,7 @@ public class PrincipalActivity extends ActionBarActivity {
 				;
 
 				new GetGraphTask("listar_ticket").execute(myconsultdel);
-				
-				
+
 			} else if (consult.startsWith("agregar_ticket")) {
 				Log.d("ticket agregado", consult);
 				Toast toast = Toast.makeText(getApplicationContext(),
@@ -1075,8 +1069,6 @@ public class PrincipalActivity extends ActionBarActivity {
 						+ PrincipalActivity.PARAMETER_BY_DATE1
 						+ PrincipalActivity.PARAMETER_BY_DATE2;
 
-
-
 				new GetGraphTask("listar_ticket").execute(myconsultdel);
 
 			} else if (consult.startsWith("modificar_ticket")) {
@@ -1097,7 +1089,6 @@ public class PrincipalActivity extends ActionBarActivity {
 						+ PrincipalActivity.PARAMETER_BY_DATE1
 						+ PrincipalActivity.PARAMETER_BY_DATE2;
 
-
 				new GetGraphTask("listar_ticket").execute(myconsultdel);
 
 			}
@@ -1109,11 +1100,9 @@ public class PrincipalActivity extends ActionBarActivity {
 				Log.d("graph", "GraphButton");
 				Intent i = null;
 				i = new Intent("novo.apps.doitall.SecondActivity");
-					
-				
 
 				// ---use putExtra() to add new key/value pairs---
-				Log.d("alljson",alljson);
+				Log.d("alljson", alljson);
 				i.putExtra("alljson", alljson);
 				i.putExtra("str1", urlimage);
 				i.putExtra("str2", graphtitle);
@@ -1178,14 +1167,12 @@ public class PrincipalActivity extends ActionBarActivity {
 
 		builder.setTitle(getString(R.string.filter_project_dialog));
 
-
-
 		ArrayList<String> mylist = new ArrayList();
 		for (int i = 0; i < projects.size(); i++) {
 			mylist.add(projects.get(i).getTitle());
 		}
 		final Spinner input = new Spinner(this);
-		
+
 		ArrayAdapter<String> myadapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, mylist);
 
@@ -1231,9 +1218,8 @@ public class PrincipalActivity extends ActionBarActivity {
 										.replace("%20", " "));
 
 						currreport = "Todos";
-						currfile = FLOWFILES_DIR+"ucartelerabusqueda.xml";
+						currfile = FLOWFILES_DIR + "ucartelerabusqueda.xml";
 
-						
 						String myconsultdel = PrincipalActivity.URL_API
 								+ "operacion:Listar_datos%20"
 								+ "Cargar_archivo_flujo:%20" + currfile
@@ -1243,14 +1229,12 @@ public class PrincipalActivity extends ActionBarActivity {
 								+ PrincipalActivity.PARAMETER_BY_DATE1
 								+ PrincipalActivity.PARAMETER_BY_DATE2;
 
-
 						new GetGraphTask("listar_ticket").execute(myconsultdel);
 
-						
-//						Toast toast = Toast.makeText(getApplicationContext(),
-//								getString(R.string.need_refresh),
-//								Toast.LENGTH_SHORT);
-//						toast.show();
+						// Toast toast = Toast.makeText(getApplicationContext(),
+						// getString(R.string.need_refresh),
+						// Toast.LENGTH_SHORT);
+						// toast.show();
 
 					}
 
@@ -1352,17 +1336,17 @@ public class PrincipalActivity extends ActionBarActivity {
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
-	
+
 	private void showAssignToChooseDialog(Context context) {
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-		//builder.setTitle(getString(R.string.assign_to));
-		builder.setTitle("Usuario a asignar (" + String.valueOf(users.size()) + ")");
-
+		// builder.setTitle(getString(R.string.assign_to));
+		builder.setTitle("Usuario a asignar (" + String.valueOf(users.size())
+				+ ")");
 
 		final EditText input = new EditText(this);
-		
+
 		ArrayAdapter<String> myadapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, users);
 
@@ -1371,53 +1355,51 @@ public class PrincipalActivity extends ActionBarActivity {
 
 		// ProjectAdapter myadapter = new ProjectAdapter(this);
 		// myadapter.setProjects(projects);
-		//input.setAdapter(myadapter);
-		//myadapter.notifyDataSetChanged();
+		// input.setAdapter(myadapter);
+		// myadapter.notifyDataSetChanged();
 
 		builder.setView(input);
 
 		builder.setPositiveButton(getString(R.string.accept),
 				new DialogInterface.OnClickListener() {
 
-				public void onClick(DialogInterface dialog, int which) {
+					public void onClick(DialogInterface dialog, int which) {
 						// Do do my action here
 						String touser = input.getText().toString().trim();
 						if (touser.isEmpty()) {
-					    	Toast toast = Toast.makeText(getApplicationContext(), 
-					    			getApplicationContext().getString(R.string.error_user, null),
-					    			Toast.LENGTH_SHORT);
-					    	toast.show();
+							Toast toast = Toast.makeText(
+									getApplicationContext(),
+									getApplicationContext().getString(
+											R.string.error_user, null),
+									Toast.LENGTH_SHORT);
+							toast.show();
 
-					    	return;
+							return;
 						}
-					
-						
+
 						if (!users.contains(touser)) {
-					    	Toast toast = Toast.makeText(getApplicationContext(), 
-					    			"El usuario  \"" + touser + "\" no existe en DoItAll",
-					    			Toast.LENGTH_SHORT);
-					    	toast.show();
+							Toast toast = Toast.makeText(
+									getApplicationContext(), "El usuario  \""
+											+ touser
+											+ "\" no existe en DoItAll",
+									Toast.LENGTH_SHORT);
+							toast.show();
 
-					    	return;
+							return;
 						}
 
-							
-							String idproyecto = currentprojectid;
-							String idticket = currentticket;
-							String myconsult = PrincipalActivity.URLFORM_API
-									+ "operacion:agregar_asignacion%20"
-									+ "id:%20" + idticket + "%20"
-									+ "para:%20" + touser				
-									;
-							
-							Log.d("assign_to","myconsult:" + myconsult);
-							
+						String idproyecto = currentprojectid;
+						String idticket = currentticket;
+						String myconsult = PrincipalActivity.URLFORM_API
+								+ "operacion:agregar_asignacion%20" + "id:%20"
+								+ idticket + "%20" + "para:%20" + touser;
 
-							new GetGraphTask("agregar_asignacion").execute(myconsult);
+						Log.d("assign_to", "myconsult:" + myconsult);
+
+						new GetGraphTask("agregar_asignacion")
+								.execute(myconsult);
 
 					}
-
-					
 
 				});
 
@@ -1434,7 +1416,6 @@ public class PrincipalActivity extends ActionBarActivity {
 
 		AlertDialog alert = builder.create();
 		alert.show();
-
 
 	}
 
@@ -1460,28 +1441,29 @@ public class PrincipalActivity extends ActionBarActivity {
 				Spinner typegraph = (Spinner) dialog
 						.findViewById(R.id.graphtype);
 				if (typegraph.getSelectedItemPosition() == 0) {
-					
-					if (PrincipalActivity.PARAMETER_BY_PROJECT.indexOf("ByProject") > 0 ) {
-					myconsult = PrincipalActivity.URL_API
-							+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20"+FLOWFILES_DIR+"uocarteleratres.xml"
-							+ PrincipalActivity.PARAMETER_BY_PROJECT
-							+ PrincipalActivity.PARAMETER_BY_TYPE
-							+ PrincipalActivity.PARAMETER_BY_DATE1
-							+ PrincipalActivity.PARAMETER_BY_DATE2;
 
-					}
-					else {
+					if (PrincipalActivity.PARAMETER_BY_PROJECT
+							.indexOf("ByProject") > 0) {
 						myconsult = PrincipalActivity.URL_API
-								+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20"+FLOWFILES_DIR+"ocarteleratres.xml"
+								+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20"
+								+ FLOWFILES_DIR + "uocarteleratres.xml"
 								+ PrincipalActivity.PARAMETER_BY_PROJECT
 								+ PrincipalActivity.PARAMETER_BY_TYPE
 								+ PrincipalActivity.PARAMETER_BY_DATE1
 								+ PrincipalActivity.PARAMETER_BY_DATE2;
 
-						
+					} else {
+						myconsult = PrincipalActivity.URL_API
+								+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20"
+								+ FLOWFILES_DIR + "ocarteleratres.xml"
+								+ PrincipalActivity.PARAMETER_BY_PROJECT
+								+ PrincipalActivity.PARAMETER_BY_TYPE
+								+ PrincipalActivity.PARAMETER_BY_DATE1
+								+ PrincipalActivity.PARAMETER_BY_DATE2;
+
 					}
-					Log.d("**GRAPHFORDATE",myconsult);
-					
+					Log.d("**GRAPHFORDATE", myconsult);
+
 				} else if (typegraph.getSelectedItemPosition() == 1) {
 					myconsult = PrincipalActivity.URL_API
 							+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleraproximos.xml"
@@ -1514,20 +1496,19 @@ public class PrincipalActivity extends ActionBarActivity {
 							+ PrincipalActivity.PARAMETER_BY_DATE1
 							+ PrincipalActivity.PARAMETER_BY_DATE2;
 
-//				} else if (typegraph.getSelectedItemPosition() == 5) {
-//					myconsult = PrincipalActivity.URL_API
-//							+ "operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/ucarteleratodos.xml%20Autofiltro:%20por_usuario"
-//							+ PrincipalActivity.PARAMETER_BY_TYPE
-//							+ PrincipalActivity.PARAMETER_BY_DATE1;
-//
+					// } else if (typegraph.getSelectedItemPosition() == 5) {
+					// myconsult = PrincipalActivity.URL_API
+					// +
+					// "operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/ucarteleratodos.xml%20Autofiltro:%20por_usuario"
+					// + PrincipalActivity.PARAMETER_BY_TYPE
+					// + PrincipalActivity.PARAMETER_BY_DATE1;
+					//
 				} else if (typegraph.getSelectedItemPosition() == 5) {
 					myconsult = PrincipalActivity.URL_API
 							+ "operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratodos.xml%20Autofiltro:%20por_proyecto"
 							+ PrincipalActivity.PARAMETER_BY_TYPE
 							+ PrincipalActivity.PARAMETER_BY_DATE1
 							+ PrincipalActivity.PARAMETER_BY_DATE2;
-
-
 
 				} else if (typegraph.getSelectedItemPosition() == 6) {
 					myconsult = PrincipalActivity.URL_API
@@ -1536,15 +1517,13 @@ public class PrincipalActivity extends ActionBarActivity {
 							+ PrincipalActivity.PARAMETER_BY_DATE1
 							+ PrincipalActivity.PARAMETER_BY_DATE2;
 
-
 				} else if (typegraph.getSelectedItemPosition() == 7) {
-				myconsult = PrincipalActivity.URL_API
-						+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleraasignado.xml"
-						+ PrincipalActivity.PARAMETER_BY_TYPE
-						+ PrincipalActivity.PARAMETER_BY_PROJECT
-						+ PrincipalActivity.PARAMETER_BY_DATE1
-						+ PrincipalActivity.PARAMETER_BY_DATE2;
-
+					myconsult = PrincipalActivity.URL_API
+							+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleraasignado.xml"
+							+ PrincipalActivity.PARAMETER_BY_TYPE
+							+ PrincipalActivity.PARAMETER_BY_PROJECT
+							+ PrincipalActivity.PARAMETER_BY_DATE1
+							+ PrincipalActivity.PARAMETER_BY_DATE2;
 
 				}
 
@@ -1706,14 +1685,13 @@ public class PrincipalActivity extends ActionBarActivity {
 			} else if (outmap.containsKey(s)) {
 				news = (String) outmap.get(s);
 			}
-			
+
 			temporal.push(news);
 		}
-		
-		while( !temporal.isEmpty()) {
+
+		while (!temporal.isEmpty()) {
 			result.add(temporal.pop());
 		}
-		
 
 		return result;
 	}
@@ -1805,9 +1783,9 @@ public class PrincipalActivity extends ActionBarActivity {
 						mytask.deleteTicket();
 						Log.d("makeDeleteDataConnectDialog", "Yes");
 						dialog.dismiss();
-						
+
 						boolean result = deleteNotifications(getApplicationContext());
-						Log.d("DELETINGCONNECT:",String.valueOf(result));
+						Log.d("DELETINGCONNECT:", String.valueOf(result));
 					}
 
 				});
@@ -1832,52 +1810,49 @@ public class PrincipalActivity extends ActionBarActivity {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 		builder.setTitle(getString(R.string.filter_by_date1));
-		//builder.setMessage(getString(R.string.parameter_datefrom));
+		// builder.setMessage(getString(R.string.parameter_datefrom));
 		Calendar calendar = Calendar.getInstance();
 
-
-		//LinearLayout item = (LinearLayout)findViewById(R.id.daterange);
+		// LinearLayout item = (LinearLayout)findViewById(R.id.daterange);
 		View child = getLayoutInflater().inflate(R.layout.daterange, null);
-		
+
 		builder.setView(child);
 		int currentapiVersion = android.os.Build.VERSION.SDK_INT;
-		
+
 		final DatePicker input = (DatePicker) child.findViewById(R.id.dateFrom);
-		 
-		
+
 		Log.d("makePutParameterDateDialog",
 				"Seltext:year:" + String.valueOf(calendar.get(Calendar.YEAR)));
-		//input.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-		//		calendar.get(Calendar.DAY_OF_MONTH), null);
-		
+		// input.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+		// calendar.get(Calendar.DAY_OF_MONTH), null);
+
 		final DatePicker inputto = (DatePicker) child.findViewById(R.id.dateTo);
-		
-	    if (currentapiVersion >= 11) {
-	    	
-	    	input.setCalendarViewShown(false);
-	    	inputto.setCalendarViewShown(false);
-	    	
-	    }
-		
+
+		if (currentapiVersion >= 11) {
+
+			input.setCalendarViewShown(false);
+			inputto.setCalendarViewShown(false);
+
+		}
+
 		inputto.setEnabled(false);
-		
-		final CheckBox checkto = (CheckBox) child.findViewById(R.id.checkDateto);
-		
-		
+
+		final CheckBox checkto = (CheckBox) child
+				.findViewById(R.id.checkDateto);
+
 		checkto.setOnClickListener(new OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                if(checkto.isChecked()){
-                    
-                	inputto.setEnabled(true);
-                }else{                    
-                	inputto.setEnabled(false);
-                }
-            }
-        });
-		
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if (checkto.isChecked()) {
+
+					inputto.setEnabled(true);
+				} else {
+					inputto.setEnabled(false);
+				}
+			}
+		});
 
 		builder.setPositiveButton(getString(R.string.yes_option),
 				new DialogInterface.OnClickListener() {
@@ -1885,47 +1860,49 @@ public class PrincipalActivity extends ActionBarActivity {
 					public void onClick(DialogInterface dialog, int which) {
 						// Do do my action here
 
-						Log.d("set positive","...(1)");
+						Log.d("set positive", "...(1)");
 						int year = input.getYear();
 
-						Log.d("set positive","...(2)");
+						Log.d("set positive", "...(2)");
 						Calendar calendar = Calendar.getInstance();
 
 						calendar.set(year, input.getMonth(),
 								input.getDayOfMonth(), 0, 0, 0);
 
-						Log.d("set positive","...(3)");
-					//	String fechatentativa = String.valueOf(calendar
-				//				.getTimeInMillis() / 1000 - 86399); 
+						Log.d("set positive", "...(3)");
+						// String fechatentativa = String.valueOf(calendar
+						// .getTimeInMillis() / 1000 - 86399);
 
 						String fechatentativa = String.valueOf(calendar
-								.getTimeInMillis() / 1000); //Mayor que
-						
+								.getTimeInMillis() / 1000); // Mayor que
+
 						PrincipalActivity.PARAMETER_BY_DATE1 = "%20parameters.ByDate1:"
 								+ fechatentativa;
 
 						PrincipalActivity.DESCRIPTION_DATE1_PARAMS = "-"
 								+ convertDateEpochToOnlyFormat(fechatentativa);
 						Log.d("BoxDate1", "seldate1:" + fechatentativa);
-						
-						
+
 						if (checkto.isChecked()) {
 							Calendar calendarto = Calendar.getInstance();
 							int yearto = input.getYear();
 							calendarto.set(yearto, inputto.getMonth(),
 									inputto.getDayOfMonth(), 0, 0, 0);
 							String fechahasta = String.valueOf((calendarto
-									.getTimeInMillis() / 1000)+86399-3600*4); //Mayor que
-							
+									.getTimeInMillis() / 1000) + 86399 - 3600 * 4); // Mayor
+																					// que
+
 							PrincipalActivity.PARAMETER_BY_DATE2 = "%20parameters.ByDate2:"
 									+ fechahasta;
-							Log.d("fecha hasta","seldate2:" + PrincipalActivity.PARAMETER_BY_DATE2);
-							PrincipalActivity.DESCRIPTION_DATE1_PARAMS = PrincipalActivity.DESCRIPTION_DATE1_PARAMS + "-"
+							Log.d("fecha hasta", "seldate2:"
+									+ PrincipalActivity.PARAMETER_BY_DATE2);
+							PrincipalActivity.DESCRIPTION_DATE1_PARAMS = PrincipalActivity.DESCRIPTION_DATE1_PARAMS
+									+ "-"
 									+ convertDateEpochToOnlyFormat(fechahasta);
 						}
 
 						dialog.dismiss();
-						Log.d("set positive","...(5)");	
+						Log.d("set positive", "...(5)");
 					}
 
 				});
@@ -2055,7 +2032,8 @@ public class PrincipalActivity extends ActionBarActivity {
 								+ currentticket;
 						Log.d("Borrar_ticket...consult:", "|" + myconsult + "|");
 
-						deleteAlarmTask(getApplicationContext(),recordticket.getEpochtentativedate());
+						deleteAlarmTask(getApplicationContext(),
+								recordticket.getEpochtentativedate());
 						new GetGraphTask("borrar_ticket").execute(myconsult);
 
 						Log.d("makeDeleteOptionsDialog", "Yes");
@@ -2082,128 +2060,116 @@ public class PrincipalActivity extends ActionBarActivity {
 
 	public boolean deleteAlarmTask(Context context, Long currdatetime) {
 		boolean result = false;
-		ArrayList<TicketRecord> mytickets = PrincipalActivity.readTicketForNotify(context);
+		ArrayList<TicketRecord> mytickets = PrincipalActivity
+				.readTicketForNotify(context);
 		if (mytickets == null) {
 			Log.e("PRINCIPAL deleteAlarm", "no hay tickets");
 			return false;
 		}
-		
-		Log.d("mostrando","ticket!!");
-		
+
+		Log.d("mostrando", "ticket!!");
+
 		TicketRecord myticket = null;
-		
+
 		int pos = 0;
-		
-		for (TicketRecord theticket: mytickets) {
-			
-			Log.d("PRINCIPAL deleteAlarm","currdatetime:" + String.valueOf(currdatetime));
-			Log.d("PRINCIPAL deleteAlarm","getEpochfinishdate():" + String.valueOf(theticket.getEpochtentativedate()));
-			
-			if ( currdatetime <= theticket.getEpochtentativedate()+10 && 
-					currdatetime >= theticket.getEpochtentativedate()	) {
-				
+
+		for (TicketRecord theticket : mytickets) {
+
+			Log.d("PRINCIPAL deleteAlarm",
+					"currdatetime:" + String.valueOf(currdatetime));
+			Log.d("PRINCIPAL deleteAlarm",
+					"getEpochfinishdate():"
+							+ String.valueOf(theticket.getEpochtentativedate()));
+
+			if (currdatetime <= theticket.getEpochtentativedate() + 10
+					&& currdatetime >= theticket.getEpochtentativedate()) {
+
 				break;
-				
+
 			}
 			pos = pos + 1;
-		}		
+		}
 		if (pos < mytickets.size()) {
-			mytickets.remove(pos);			
-			
+			mytickets.remove(pos);
+
 			PrincipalActivity.saveTicketForNotify(context, mytickets);
-			Log.d("PRINCIPAL deleteAlarm","DELETED: " + String.valueOf(pos));
+			Log.d("PRINCIPAL deleteAlarm", "DELETED: " + String.valueOf(pos));
 			result = true;
 		}
-		
+
 		return result;
 	}
+
 	public AlertDialog makeTaskOptionsDialog(final Context context) {
-		
-		
-		final int  isdelassign;
-		
+
+		final int isdelassign;
+
 		final String[] option;
-		
+
 		Log.d("record status", recordticket.getStatus());
 		Log.d("record assignto", recordticket.getAssignto());
-		
-		
-		if (recordticket == null ) {
-			
-			Log.d("recordticket","noinfo");
+
+		if (recordticket == null) {
+
+			Log.d("recordticket", "noinfo");
 			return null;
 		}
-			
-		Log.d("LongClick (1)",recordticket.getStatus());
-		if ( recordticket.getStatus().contentEquals("AssignTo") ) {
-			
+
+		Log.d("LongClick (1)", recordticket.getStatus());
+		if (recordticket.getStatus().contentEquals("AssignTo")) {
+
 			Log.d("record status", "...(2)...");
-			
-			if ( recordticket.getAssignto().contentEquals(currentuser)) {
-				option = new String[] {
-						getString(R.string.show_task), 
+
+			if (recordticket.getAssignto().contentEquals(currentuser)) {
+				option = new String[] { getString(R.string.show_task),
 						getString(R.string.assign_accept),
-						getString(R.string.desassign),
-						 };
+						getString(R.string.desassign), };
 				isdelassign = 2;
-				
+
 				Log.d("record status", "...(3)...");
-			}
-			else {
+			} else {
 				option = new String[] {
-						//getString(R.string.change_status),
-						getString(R.string.show_task), 
+						// getString(R.string.change_status),
+						getString(R.string.show_task),
 						getString(R.string.delete_task),
 						getString(R.string.modify_date_task),
 						getString(R.string.modify_data_task),
-						getString(R.string.desassign),
-						 };
+						getString(R.string.desassign), };
 				isdelassign = 1;
 			}
-			
-		}
-		else if (recordticket.getStatus().contentEquals("Finished")){
-			Log.d("LongClick (2)",recordticket.getStatus());
-			option = new String[] {
-					getString(R.string.show_task), 
-					getString(R.string.delete_task),
-					 };
+
+		} else if (recordticket.getStatus().contentEquals("Finished")) {
+			Log.d("LongClick (2)", recordticket.getStatus());
+			option = new String[] { getString(R.string.show_task),
+					getString(R.string.delete_task), };
 			isdelassign = 0;
-		}		
-		
-		else if ( recordticket.getAssignfrom().contentEquals(currentuser) && 
-				!recordticket.getAssignto().contentEquals(currentuser) ) {
-			Log.d("isdelassign","4");
-			option = new String[] {
-					getString(R.string.show_task), 
-					getString(R.string.desassign),				
-					getString(R.string.modify_date_task),
-					 };
-			isdelassign = 4;
-		}		
-		else if ( recordticket.getAssignto().contentEquals(currentuser) && 
-				!recordticket.getAssignfrom().contentEquals(currentuser) ) {
-			option = new String[] {
-					getString(R.string.change_status),
-					getString(R.string.show_task), 
-					getString(R.string.desassign),				
-					 };
-			isdelassign = 3;
 		}
-		else {
-			option = new String[] {
-					getString(R.string.change_status),
-					getString(R.string.show_task), 
+
+		else if (recordticket.getAssignfrom().contentEquals(currentuser)
+				&& !recordticket.getAssignto().contentEquals(currentuser)) {
+			Log.d("isdelassign", "4");
+			option = new String[] { getString(R.string.show_task),
+					getString(R.string.desassign),
+					getString(R.string.modify_date_task), };
+			isdelassign = 4;
+		} else if (recordticket.getAssignto().contentEquals(currentuser)
+				&& !recordticket.getAssignfrom().contentEquals(currentuser)) {
+			option = new String[] { getString(R.string.change_status),
+					getString(R.string.show_task),
+					getString(R.string.desassign), };
+			isdelassign = 3;
+		} else {
+			option = new String[] { getString(R.string.change_status),
+					getString(R.string.show_task),
 					getString(R.string.delete_task),
 					getString(R.string.modify_date_task),
 					getString(R.string.modify_data_task),
 					getString(R.string.assign_action),
-					//getString(R.string.task_notify),
-					 };
+			// getString(R.string.task_notify),
+			};
 			isdelassign = 0;
 		}
-		
-		
+
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.select_dialog_item, option);
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -2214,7 +2180,6 @@ public class PrincipalActivity extends ActionBarActivity {
 			public void onClick(DialogInterface dialog, int which) {
 				Log.d("makeTaskOptionsDialog", "currentticket:" + currentticket);
 
-				
 				if (recordticket.getStatus().contentEquals("Finished")) {
 					switch (which) {
 					case 0: // Cambiar estado
@@ -2225,70 +2190,64 @@ public class PrincipalActivity extends ActionBarActivity {
 						makeDeleteOptionsDialog();
 						break;
 					default:
-						Log.d("Error switch","Error switch");
+						Log.d("Error switch", "Error switch");
 						break;
 					}
-						
-					
-				}
-				else if (isdelassign == 4) {
+
+				} else if (isdelassign == 4) {
 					switch (which) {
-					case 0: // Ver	
-						loadViewTicketActivity(true,false);
+					case 0: // Ver
+						loadViewTicketActivity(true, false);
 						break;
 					case 1: // Modifica datos de la tarea
 						callAllocTasks(isdelassign);
 						break;
 					case 2:
 						makeModifyOptionsDialog();
-						break;				
+						break;
 					default:
 						break;
-					}					
+					}
 				}
-				
+
 				else if (isdelassign == 3) {
 					switch (which) {
 					case 0: // Cambiar estado
 						Log.d("makeTaskOptionsDialog", "changeStatusTask");
 						changeStatusTask();
 						break;
-					case 1: // Ver	
-						loadViewTicketActivity(true,false);
+					case 1: // Ver
+						loadViewTicketActivity(true, false);
 						break;
 					case 2: // Modifica datos de la tarea
 						callAllocTasks(isdelassign);
 						break;
-				
 
 					default:
 						break;
-					}					
-				}
-				else if (isdelassign == 2) {
+					}
+				} else if (isdelassign == 2) {
 					switch (which) {
 					case 0: // Ver
-	
-						loadViewTicketActivity(true,false);
+
+						loadViewTicketActivity(true, false);
 						break;
-					case 1: // asignacion 
+					case 1: // asignacion
 						callAllocTasks(isdelassign);
 						break;
 					case 2: // desasignacion
 						callAllocTasks(3);
-						break;	
+						break;
 					default:
 						break;
 					}
-					
-					
-				}
-				else if (isdelassign == 1) {
+
+				} else if (isdelassign == 1) {
 
 					switch (which) {
 					case 0: // Ver
-	
-						loadViewTicketActivity(true,false);
+
+						loadViewTicketActivity(true, false);
 						break;
 					case 1: // Elimina
 						makeDeleteOptionsDialog();
@@ -2297,19 +2256,18 @@ public class PrincipalActivity extends ActionBarActivity {
 						makeModifyOptionsDialog();
 						break;
 					case 3: // Modifica datos de la tarea
-						loadViewTicketActivity(false,false);
+						loadViewTicketActivity(false, false);
 						break;
 					case 4: // Modifica datos de la tarea
 						callAllocTasks(isdelassign);
 						break;
-	
+
 					default:
 						break;
 					}
 
-					
 				}
-				
+
 				else {
 					switch (which) {
 					case 0: // Cambiar estado
@@ -2317,8 +2275,8 @@ public class PrincipalActivity extends ActionBarActivity {
 						changeStatusTask();
 						break;
 					case 1: // Ver
-	
-						loadViewTicketActivity(true,false);
+
+						loadViewTicketActivity(true, false);
 						break;
 					case 2: // Elimina
 						makeDeleteOptionsDialog();
@@ -2327,7 +2285,7 @@ public class PrincipalActivity extends ActionBarActivity {
 						makeModifyOptionsDialog();
 						break;
 					case 4: // Modifica datos de la tarea
-						loadViewTicketActivity(false,false);
+						loadViewTicketActivity(false, false);
 						break;
 					case 5: // Modifica datos de la tarea
 						callAllocTasks(isdelassign);
@@ -2349,98 +2307,94 @@ public class PrincipalActivity extends ActionBarActivity {
 	}
 
 	protected void notifytaskalarm() {
-		Log.d("notifytaskalarm","notifytaskalarm...(1)...");
-		
-		
+		Log.d("notifytaskalarm", "notifytaskalarm...(1)...");
+
 		openTimePickerDialog(false);
-		Log.d("notifytaskalarm","notifytaskalarm...(2)...");
-		
+		Log.d("notifytaskalarm", "notifytaskalarm...(2)...");
+
 	}
-	
-	 private void openTimePickerDialog(boolean is24r) {
-	        Calendar calendar = Calendar.getInstance();
 
-	        timePickerDialog = new TimePickerDialog(PrincipalActivity.this,
-	                onTimeSetListener, calendar.get(Calendar.HOUR_OF_DAY),
-	                calendar.get(Calendar.MINUTE), is24r);
-	        timePickerDialog.setTitle("Set Alarm Time");
+	private void openTimePickerDialog(boolean is24r) {
+		Calendar calendar = Calendar.getInstance();
 
-	        timePickerDialog.show();
+		timePickerDialog = new TimePickerDialog(PrincipalActivity.this,
+				onTimeSetListener, calendar.get(Calendar.HOUR_OF_DAY),
+				calendar.get(Calendar.MINUTE), is24r);
+		timePickerDialog.setTitle("Set Alarm Time");
 
-	    }
-	 
-	 OnTimeSetListener onTimeSetListener = new OnTimeSetListener() {
+		timePickerDialog.show();
 
-	        @Override
-	        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+	}
 
-	            Calendar calNow = Calendar.getInstance();
-	            Calendar calSet = (Calendar) calNow.clone();
+	OnTimeSetListener onTimeSetListener = new OnTimeSetListener() {
 
-	            calSet.set(Calendar.HOUR_OF_DAY, hourOfDay);
-	            calSet.set(Calendar.MINUTE, minute);
-	            calSet.set(Calendar.SECOND, 0);
-	            calSet.set(Calendar.MILLISECOND, 0);
+		@Override
+		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 
-	            if (calSet.compareTo(calNow) <= 0) {
-	                // Today Set time passed, count to tomorrow
-	                calSet.add(Calendar.DATE, 1);
-	            }
+			Calendar calNow = Calendar.getInstance();
+			Calendar calSet = (Calendar) calNow.clone();
 
-	            setAlarm(calSet);
-	            // for this
+			calSet.set(Calendar.HOUR_OF_DAY, hourOfDay);
+			calSet.set(Calendar.MINUTE, minute);
+			calSet.set(Calendar.SECOND, 0);
+			calSet.set(Calendar.MILLISECOND, 0);
 
-	        }
-	    };
-	    
-	    private static final int ALARM_REQUEST_CODE = 1;  
-	    
-	    private void setAlarm(Calendar targetCal) {
-	    
-            Context context = this.getApplicationContext();
-            if(alarm != null){
-            	alarm.setTargetCal(targetCal);
-            	alarm.setOnetimeTimer(context, generateNumber(0, 500));
-            	Toast.makeText(context, "setting alarm", Toast.LENGTH_SHORT).show();
-            }else{
-            	Toast.makeText(context, "Alarm is null", Toast.LENGTH_SHORT).show();
-            }
-	    	 
-	    	Log.d("setAlarm","...(1)...");
-	    }  
+			if (calSet.compareTo(calNow) <= 0) {
+				// Today Set time passed, count to tomorrow
+				calSet.add(Calendar.DATE, 1);
+			}
 
-	    
-	    
-	    private void RegisterAlarmBroadcast()
-	    {
-	          Log.i("Alarm Example:RegisterAlarmBroadcast()", "Going to register Intent.RegisterAlramBroadcast");
-	 
-	        //This is the call back function(BroadcastReceiver) which will be call when your
-	        //alarm time will reached.
-	        mReceiver = new BootReceiver();
-	        aReceiver = new AlarmReceiver();
-	        
-	 
-	        // register the alarm broadcast here
-	        registerReceiver(mReceiver, new IntentFilter("novo.apps.doitall.PrincipalActivity") );
-	        registerReceiver(aReceiver, new IntentFilter("ALARM_RECEIVED") );
-	        
-	        pendingIntent = PendingIntent.getBroadcast( this, 0, new Intent("novo.apps.doitall.PrincipalActivity"),0 );
-	        alarmManager = (AlarmManager)(this.getSystemService( Context.ALARM_SERVICE ));
-	    }
-	    
-	    
-	    
-//	    private void UnregisterAlarmBroadcast()
-//	    {
-//	        alarmManager.cancel(pendingIntent);
-//	        getBaseContext().unregisterReceiver(mReceiver);
-//	        //getBaseContext().unregisterReceiver(aReceiver);
-//	    }
-//	 
-	 
-	    
-	    
+			setAlarm(calSet);
+			// for this
+
+		}
+	};
+
+	private static final int ALARM_REQUEST_CODE = 1;
+
+	private void setAlarm(Calendar targetCal) {
+
+		Context context = this.getApplicationContext();
+		if (alarm != null) {
+			alarm.setTargetCal(targetCal);
+			alarm.setOnetimeTimer(context, generateNumber(0, 500));
+			Toast.makeText(context, "setting alarm", Toast.LENGTH_SHORT).show();
+		} else {
+			Toast.makeText(context, "Alarm is null", Toast.LENGTH_SHORT).show();
+		}
+
+		Log.d("setAlarm", "...(1)...");
+	}
+
+	private void RegisterAlarmBroadcast() {
+		Log.i("Alarm Example:RegisterAlarmBroadcast()",
+				"Going to register Intent.RegisterAlramBroadcast");
+
+		// This is the call back function(BroadcastReceiver) which will be call
+		// when your
+		// alarm time will reached.
+		mReceiver = new BootReceiver();
+		aReceiver = new AlarmReceiver();
+
+		// register the alarm broadcast here
+		registerReceiver(mReceiver, new IntentFilter(
+				"novo.apps.doitall.PrincipalActivity"));
+		registerReceiver(aReceiver, new IntentFilter("ALARM_RECEIVED"));
+
+		pendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(
+				"novo.apps.doitall.PrincipalActivity"), 0);
+		alarmManager = (AlarmManager) (this
+				.getSystemService(Context.ALARM_SERVICE));
+	}
+
+	// private void UnregisterAlarmBroadcast()
+	// {
+	// alarmManager.cancel(pendingIntent);
+	// getBaseContext().unregisterReceiver(mReceiver);
+	// //getBaseContext().unregisterReceiver(aReceiver);
+	// }
+	//
+
 	protected void loadViewTicketActivity(boolean addticket, boolean showstick) {
 		// TODO Auto-generated method stub
 
@@ -2458,48 +2412,53 @@ public class PrincipalActivity extends ActionBarActivity {
 		mytask.execute(myconsult);
 
 	}
-	
+
 	public void loadSafetReport(String report) {
 		currreport = "vPor_hacer";
-		currfile = FLOWFILES_DIR+"ocarteleratres.xml";
+		currfile = FLOWFILES_DIR + "ocarteleratres.xml";
 
-		Log.d("Spinner", "2:|" + report + "|");
+
+		if (PrincipalActivity.PARAMETER_BY_PROJECT
+				.indexOf("ByProject") > 0) {
+			currfile = FLOWFILES_DIR + "uocarteleratres.xml";			
+		}
+		
+		Log.d("**", "2:|" + report + "|");
 		if (report.contentEquals("En progreso")) {
 			Log.d("Spinner", "3:" + report);
 			currreport = "vProgress";
-		} else if (report.contentEquals( getString(R.string.assign_to_others))) {
-			currfile = FLOWFILES_DIR+"carteleraasignado.xml";			
-			currreport = "vAsignadosOtros";			
-			
-		} else if (report.contentEquals( getString(R.string.assign_to_me))) {
-			currfile = FLOWFILES_DIR+"carteleraasignado.xml";
+		} else if (report.contentEquals(getString(R.string.assign_to_others))) {
+			currfile = FLOWFILES_DIR + "carteleraasignado.xml";
+			currreport = "vAsignadosOtros";
+
+		} else if (report.contentEquals(getString(R.string.assign_to_me))) {
+			currfile = FLOWFILES_DIR + "carteleraasignado.xml";
 			currreport = "vAsignadosMi";
 
 		} else if (report.contentEquals("Pospuestas")) {
 			currreport = "vPostponed";
 		} else if (report
 				.contentEquals(getString(R.string.completed_this_week))) {
-			
+
 			currreport = "vEsta_semana";
-			currfile = FLOWFILES_DIR+"cartelerafinalizadosporsemana.xml";
-			Log.d("Completadas esta semana",currreport);
-			Log.d("Completadas esta semana",currfile);
+			currfile = FLOWFILES_DIR + "cartelerafinalizadosporsemana.xml";
+			Log.d("Completadas esta semana", currreport);
+			Log.d("Completadas esta semana", currfile);
 		} else if (report
 				.contentEquals(getString(R.string.completed_after_week))) {
 			currreport = "vSemana_anterior";
-			currfile = FLOWFILES_DIR+"cartelerafinalizadosporsemana.xml";
+			currfile = FLOWFILES_DIR + "cartelerafinalizadosporsemana.xml";
 		}
 
 		else if (report.contentEquals(getString(R.string.all_tickets))) {
 
 			currreport = "Todos";
-			if (PrincipalActivity.PARAMETER_BY_PROJECT.indexOf("ByProject") > 0 ) {
-				currfile = FLOWFILES_DIR+"ucartelerabusqueda.xml";
+			if (PrincipalActivity.PARAMETER_BY_PROJECT.indexOf("ByProject") > 0) {
+				currfile = FLOWFILES_DIR + "ucartelerabusqueda.xml";
 			} else {
-				currfile = FLOWFILES_DIR+"cartelerabusqueda.xml";
+				currfile = FLOWFILES_DIR + "cartelerabusqueda.xml";
 			}
-				
-				
+
 		}
 
 		else if (report.contentEquals(getString(R.string.delayed))) {
@@ -2508,32 +2467,32 @@ public class PrincipalActivity extends ActionBarActivity {
 
 		else if (report.contentEquals(getString(R.string.next_week))) {
 			Log.d("loadSafetReport", "nextweek");
-			currfile = FLOWFILES_DIR+"carteleraproximos.xml";
+			currfile = FLOWFILES_DIR + "carteleraproximos.xml";
 			currreport = "vProxima_semana";
 
 		} else if (report.contentEquals(getString(R.string.this_week))) {
 			Log.d("loadSafetReport", "nextweek");
-			currfile = FLOWFILES_DIR+"carteleraproximos.xml";
+			currfile = FLOWFILES_DIR + "carteleraproximos.xml";
 			currreport = "vEsta_semana";
 
 		} else if (report.contentEquals(getString(R.string.this_month))) {
 			Log.d("loadSafetReport", "nextweek");
-			currfile = FLOWFILES_DIR+"cartelerapormes.xml";
+			currfile = FLOWFILES_DIR + "cartelerapormes.xml";
 			currreport = "vEste_mes";
 
 		} else if (report.contentEquals(getString(R.string.next_month))) {
 			Log.d("loadSafetReport", "nextweek");
-			currfile = FLOWFILES_DIR+"cartelerapormes.xml";
+			currfile = FLOWFILES_DIR + "cartelerapormes.xml";
 			currreport = "vProximo_mes";
 
 		} else if (report.contentEquals(getString(R.string.after_month))) {
 			Log.d("loadSafetReport", "nextweek");
-			currfile = FLOWFILES_DIR+"cartelerapormes.xml";
+			currfile = FLOWFILES_DIR + "cartelerapormes.xml";
 			currreport = "vSuperior_proximo_mes";
 
 		} else if (report.contentEquals(getString(R.string.after_week))) {
 			Log.d("loadSafetReport", "nextweek");
-			currfile = FLOWFILES_DIR+"carteleraproximos.xml";
+			currfile = FLOWFILES_DIR + "carteleraproximos.xml";
 			currreport = "vSuperior_proxima_semana";
 		}
 
@@ -2548,7 +2507,7 @@ public class PrincipalActivity extends ActionBarActivity {
 				+ PrincipalActivity.PARAMETER_BY_TYPE
 				+ PrincipalActivity.PARAMETER_BY_DATE1
 				+ PrincipalActivity.PARAMETER_BY_DATE2;
-		
+
 		;
 
 		GetGraphTask mytask = new GetGraphTask("listar_ticket");
@@ -2686,8 +2645,7 @@ public class PrincipalActivity extends ActionBarActivity {
 
 		String myconsult = PrincipalActivity.URL_API
 				+ "operacion:Siguientes_estados%20Cargar_archivo_flujo:"
-				+ FLOWFILES_DIR+"carteleratresf.xml%20Clave:"
-				+ currentticket;
+				+ FLOWFILES_DIR + "carteleratresf.xml%20Clave:" + currentticket;
 
 		Log.d("changeStatusTask..myconsult:", myconsult);
 
@@ -2698,39 +2656,40 @@ public class PrincipalActivity extends ActionBarActivity {
 	public void addListenerOnButton() {
 
 		// Select a specific button to bundle it with the action you want
-		
+
 		listtickets.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
-				Log.d("view **click","view click");
-				recordticket =  (TicketRecord) listtickets
+				Log.d("view **click", "view click");
+				recordticket = (TicketRecord) listtickets
 						.getItemAtPosition(position);
-				
+
 				String idticket = recordticket.getId();
 				currentticket = idticket;
 				currentprojectid = String.valueOf(recordticket.getProjectid());
 				currentdate = recordticket.getTentativedate();
 
-				Log.d("View TicketSelecting", "IdTicket:|" + currentticket + "|");
-				Log.d("View Ticket Selecting", "Tentativedate:|" + currentdate + "|");
-				
+				Log.d("View TicketSelecting", "IdTicket:|" + currentticket
+						+ "|");
+				Log.d("View Ticket Selecting", "Tentativedate:|" + currentdate
+						+ "|");
+
 				if (noteView.isShown()) {
 					noteView.setVisibility(View.GONE);
-					Log.d("view click","view click gone");
+					Log.d("view click", "view click gone");
 					return;
 				}
-				
-				Log.d("ver sticky","(1)");
-				noteView.setMessage(recordticket);					
+
+				Log.d("ver sticky", "(1)");
+				noteView.setMessage(recordticket);
 				noteView.setVisibility(View.VISIBLE);
 				noteView.renderText();
-				Log.d("view click","view click gone");
+				Log.d("view click", "view click gone");
 
-
-//				loadViewTicketActivity(false, true);
+				// loadViewTicketActivity(false, true);
 
 			}
 		});
@@ -2741,17 +2700,17 @@ public class PrincipalActivity extends ActionBarActivity {
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
 
-				recordticket =  (TicketRecord) listtickets
+				recordticket = (TicketRecord) listtickets
 						.getItemAtPosition(position);
-				
-				if ( (!recordticket.getOwner().contentEquals(currentuser) && 
-						!recordticket.getAssignfrom().contentEquals(currentuser))
-						&& !recordticket.getStatus().contentEquals("AssignTo")
-						) {
-					
-					Toast.makeText(getBaseContext(), getString(R.string.ticket_other_user),
+
+				if ((!recordticket.getOwner().contentEquals(currentuser) && !recordticket
+						.getAssignfrom().contentEquals(currentuser))
+						&& !recordticket.getStatus().contentEquals("AssignTo")) {
+
+					Toast.makeText(getBaseContext(),
+							getString(R.string.ticket_other_user),
 							Toast.LENGTH_SHORT).show();
- 
+
 					return false;
 				}
 				String idticket = recordticket.getId();
@@ -2763,7 +2722,7 @@ public class PrincipalActivity extends ActionBarActivity {
 				Log.d("Selecting", "Tentativedate:|" + currentdate + "|");
 
 				task_dialog = makeTaskOptionsDialog(view.getContext());
-				if (task_dialog != null )
+				if (task_dialog != null)
 					task_dialog.show();
 
 				return true;
@@ -2828,167 +2787,163 @@ public class PrincipalActivity extends ActionBarActivity {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// ---check if the request code is 1---
 		try {
-			
-		
-		Log.d("requestCode:", String.valueOf(requestCode));
-		Log.d("requestCode:", String.valueOf(resultCode));
-		if (resultCode == 1) {
 
-			Log.d("requestCode:", String.valueOf(1));
-			adapter.notifyDataSetChanged();
-			// ---if the result is OK---
-			if (resultCode == RESULT_OK) {
-			}
-		} else if (requestCode == 2) {
+			Log.d("requestCode:", String.valueOf(requestCode));
+			Log.d("requestCode:", String.valueOf(resultCode));
+			if (resultCode == 1) {
 
-			if (resultCode == 3) {
+				Log.d("requestCode:", String.valueOf(1));
+				adapter.notifyDataSetChanged();
+				// ---if the result is OK---
+				if (resultCode == RESULT_OK) {
+				}
+			} else if (requestCode == 2) {
 
-				String urlform = PrincipalActivity.URLFORM_API
-						+ data.getStringExtra("urlform");
-				Log.d("OnActivityResult...", "*Principal");
+				if (resultCode == 3) {
 
-				Boolean isnotify = data.getBooleanExtra("notifytask", false);
-				
-				Log.d("agregar_ticket", urlform);
-				Log.d("notifytask", "notify:" + isnotify.toString());
-				
-				if (isnotify) {
-					
-					 
-					Calendar currdatetime = (Calendar) data.getSerializableExtra("currdatetime");
-				
-					Log.d("PrincipalActivity DATETIME", "CALENDAR:" + currdatetime.toString());
-					TicketRecord myticket = (TicketRecord) data.getSerializableExtra("currticket");
-					
-					
-					int currnumber = generateNumber(10,100000);
-					
-					Log.d("My Ticket","summary:" + String.valueOf(currnumber));
-					
-					myticket.setId(String.valueOf(currnumber));
-				
-					ArrayList<TicketRecord> tempnotify =readTicketForNotify(getApplicationContext());  
-					if ( tempnotify != null ) {
-						ticketsforNotify = tempnotify;
-												
+					String urlform = PrincipalActivity.URLFORM_API
+							+ data.getStringExtra("urlform");
+					Log.d("OnActivityResult...", "*Principal");
+
+					Boolean isnotify = data
+							.getBooleanExtra("notifytask", false);
+
+					Log.d("agregar_ticket", urlform);
+					Log.d("notifytask", "notify:" + isnotify.toString());
+
+					if (isnotify) {
+
+						Calendar currdatetime = (Calendar) data
+								.getSerializableExtra("currdatetime");
+
+						Log.d("PrincipalActivity DATETIME", "CALENDAR:"
+								+ currdatetime.toString());
+						TicketRecord myticket = (TicketRecord) data
+								.getSerializableExtra("currticket");
+
+						int currnumber = generateNumber(10, 100000);
+
+						Log.d("My Ticket",
+								"summary:" + String.valueOf(currnumber));
+
+						myticket.setId(String.valueOf(currnumber));
+
+						ArrayList<TicketRecord> tempnotify = readTicketForNotify(getApplicationContext());
+						if (tempnotify != null) {
+							ticketsforNotify = tempnotify;
+
+						}
+
+						ticketsforNotify.add(myticket);
+
+						saveTicketForNotify(getApplicationContext(),
+								ticketsforNotify);
+
+						setAlarm(currdatetime);
+					} else {
+						Long currepoch = data.getLongExtra("currepoch", 0);
+
+						Log.d("DelAlarm", String.valueOf(currepoch));
+
+						deleteAlarmTask(getApplicationContext(), currepoch);
+
 					}
-					
-					ticketsforNotify.add(myticket);
-					
-					saveTicketForNotify(getApplicationContext(),ticketsforNotify);
-					
-					
-					setAlarm(currdatetime);
+
+					GetGraphTask mytask = new GetGraphTask("agregar_ticket");
+					mytask.execute(urlform);
+
 				}
-				else {
-					Long currepoch = data.getLongExtra("currepoch",0);
-					
-					Log.d("DelAlarm",String.valueOf(currepoch));
-					
-					deleteAlarmTask(getApplicationContext(),currepoch);
-					
-				}
-				
-				
-				GetGraphTask mytask = new GetGraphTask("agregar_ticket");
-				mytask.execute(urlform);
+
+			} else if (requestCode == 6) {
+
+				Log.d("Cerrando", "ModifyProject");
+			} else if (requestCode == 5) {
+				Log.d("return from About", "return from About");
 
 			}
-
-		} else if (requestCode == 6) {
-
-			Log.d("Cerrando", "ModifyProject");
-		} else if (requestCode == 5) {
-			Log.d("return from About", "return from About");
-
-		}
-		} catch(Exception e) {
-			Log.d("**Bk",e.getMessage());
-			Toast.makeText(getApplicationContext(), getString(R.string.no_connect_internet), Toast.LENGTH_LONG)
-    		.show(); 
+		} catch (Exception e) {
+			Log.d("**Bk", e.getMessage());
+			Toast.makeText(getApplicationContext(),
+					getString(R.string.no_connect_internet), Toast.LENGTH_LONG)
+					.show();
 		}
 	}
 
 	public static int generateNumber(int min, int max) {
-				
+
 		Random r = new Random();
 		int i1 = r.nextInt(max - min + 1) + min;
-		
+
 		return i1;
 	}
-	
-	
-	public static void saveTicketForNotify(Context context, ArrayList<TicketRecord> mytickets) {
 
-		
+	public static void saveTicketForNotify(Context context,
+			ArrayList<TicketRecord> mytickets) {
+
 		ObjectOutputStream outputStream;
 
-    	File file = new File(context.getFilesDir(),FILE_NOTIFICATIONS);
-    	Log.d("saveTicket","path:" + file.getAbsolutePath());
-    	
-   	
-    	try {
-    		
-    		  outputStream = new ObjectOutputStream(context.openFileOutput(FILE_NOTIFICATIONS, Context.MODE_PRIVATE));
-    		  outputStream.writeObject(mytickets);    		 
-    		  outputStream.close();
-    		} catch (Exception e) {
-    			Toast toast = Toast.makeText(context, 
-    	    			"Ocurrio el siguiente error al escribir la notificaciòn:" + e.getMessage(), Toast.LENGTH_LONG);
-    	    	toast.show();
-    		}
+		File file = new File(context.getFilesDir(), FILE_NOTIFICATIONS);
+		Log.d("saveTicket", "path:" + file.getAbsolutePath());
+
+		try {
+
+			outputStream = new ObjectOutputStream(context.openFileOutput(
+					FILE_NOTIFICATIONS, Context.MODE_PRIVATE));
+			outputStream.writeObject(mytickets);
+			outputStream.close();
+		} catch (Exception e) {
+			Toast toast = Toast.makeText(context,
+					"Ocurrio el siguiente error al escribir la notificaciòn:"
+							+ e.getMessage(), Toast.LENGTH_LONG);
+			toast.show();
+		}
 
 	}
 
-static public boolean deleteNotifications(Context context) {
+	static public boolean deleteNotifications(Context context) {
 
-		
 		boolean result = false;
 		ObjectInputStream inputStream;
 
 		ArrayList<TicketRecord> mytickets = null;
-    	File file = new File(context.getFilesDir(),FILE_NOTIFICATIONS);
-    	Log.d("saveTicket","path:" + file.getAbsolutePath());
-    	
-   	
-    	try {
-    		result = file.delete();
-    		
-    		} catch (Exception e) {
-    			Log.d("readTicketForNotify","no tickets");
-    			return result;
-    		}
-    	
-    	return result;
+		File file = new File(context.getFilesDir(), FILE_NOTIFICATIONS);
+		Log.d("saveTicket", "path:" + file.getAbsolutePath());
+
+		try {
+			result = file.delete();
+
+		} catch (Exception e) {
+			Log.d("readTicketForNotify", "no tickets");
+			return result;
+		}
+
+		return result;
 
 	}
 
-static public ArrayList<TicketRecord> readTicketForNotify(Context context) {
+	static public ArrayList<TicketRecord> readTicketForNotify(Context context) {
 
-		
 		ObjectInputStream inputStream;
 
 		ArrayList<TicketRecord> mytickets = null;
-    	File file = new File(context.getFilesDir(),FILE_NOTIFICATIONS);
-    	Log.d("saveTicket","path:" + file.getAbsolutePath());
-    	
-   	
-    	try {
-    		
-    		inputStream = new ObjectInputStream(context.openFileInput(FILE_NOTIFICATIONS));
-    		mytickets = (ArrayList<TicketRecord>) inputStream.readObject();    		 
-    		inputStream.close();
-    		} catch (Exception e) {
-    			Log.d("readTicketForNotify","no tickets");
-    			return null;
-    		}
-    	
-    	return mytickets;
+		File file = new File(context.getFilesDir(), FILE_NOTIFICATIONS);
+		Log.d("saveTicket", "path:" + file.getAbsolutePath());
+
+		try {
+
+			inputStream = new ObjectInputStream(
+					context.openFileInput(FILE_NOTIFICATIONS));
+			mytickets = (ArrayList<TicketRecord>) inputStream.readObject();
+			inputStream.close();
+		} catch (Exception e) {
+			Log.d("readTicketForNotify", "no tickets");
+			return null;
+		}
+
+		return mytickets;
 
 	}
 
-	
-	
 	public void restoreActionBar() {
 		ActionBar actionBar = getSupportActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
@@ -2996,7 +2951,6 @@ static public ArrayList<TicketRecord> readTicketForNotify(Context context) {
 		actionBar.setTitle(mTitle);
 	}
 
-	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -3006,9 +2960,7 @@ static public ArrayList<TicketRecord> readTicketForNotify(Context context) {
 		// When using the support library, the setOnActionExpandListener()
 		// method is
 		// static and accepts the MenuItem object as an argument
-		
-		
-		
+
 		MenuItem searchItem = menu.findItem(R.id.action_search);
 
 		final SearchView searchView = (SearchView) MenuItemCompat
@@ -3041,7 +2993,7 @@ static public ArrayList<TicketRecord> readTicketForNotify(Context context) {
 
 				Log.d("Search", "Search (4)");
 
-				currfile = FLOWFILES_DIR+"cartelerabusqueda.xml";
+				currfile = FLOWFILES_DIR + "cartelerabusqueda.xml";
 				currreport = "vBusqueda";
 				String newquery = query.replace(" ", "%20");
 				PrincipalActivity.PARAMETER_BY_SEARCH = "%20parameters.ByPattern:"
@@ -3179,80 +3131,38 @@ static public ArrayList<TicketRecord> readTicketForNotify(Context context) {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
-		 switch (item.getItemId()) {
-		    case android.R.id.home:
-		    	
-		        
-//		    	if (fragmentManager.findFragmentById(android.R.id.content) == null) {
-//		    		Log.d("fragment","(1)");
-//		    		 FragmentTransaction ft = fragmentManager.beginTransaction();
-//
-//		    		 FrameLayout layout = (FrameLayout) findViewById(R.id.container);
-//		    		 
-//		    	     ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-//		    	     ft.replace(R.id.container, new SimpleListFragment(), "List_Fragment");
-//
-//
-//		    	     if (fragment.isHidden()) {
-//
-//		    	    	 Log.d("fragment","showing");
-//		    	    	 ft.show(fragment);
-//		    	    	  layout.setVisibility(View.GONE);
-//		    	    	 //							fragmentManager
-//		    	    	 //							.beginTransaction()
-//		    	    	 //							.replace(R.id.container,
-//		    	    	 //									fragment).commit();
-//		    	     }
-//		    	     else {
-//		    	    	 Log.d("fragment","hiding");
-//		    	    	 ft.hide(fragment);
-//		    	    	 layout.setVisibility(View.VISIBLE);
-//		    	     }
-//		    	     
-//		    	     
-//		    		 ft.commit();
-//		    		 //fragmentManager.beginTransaction().add(android.R.id.content, new SimpleListFragment()).commit();
-//			    }
-//				else {
-//					Log.d("fragment","(2)");
-//					FragmentTransaction ft = fragmentManager.beginTransaction();
-//					if (fragment.isHidden()) {
-//					
-//						Log.d("fragment","showing");
-//						ft.show(fragment);
-////						fragmentManager
-////						.beginTransaction()
-////						.replace(R.id.container,
-////								fragment).commit();
-//					}
-//					else {
-//						Log.d("fragment","hiding");
-//						ft.hide(fragment);
-//					}
-//					ft.commit();
-//					
-//				}		    	
-		      // ProjectsActivity is my 'home' activity
-		    	
-		    	
-		    	currreport = "vPor_hacer";
-		    	currfile = FLOWFILES_DIR+"carteleratres.xml";
-		    	
-		    Log.d("home","home home");
-			String myconsultdel = PrincipalActivity.URL_API
-					+ "operacion:Listar_datos%20"
-					+ "Cargar_archivo_flujo:%20" + currfile
-					+ "%20Variable:" + currreport
+
+		switch (item.getItemId()) {
+		case android.R.id.home:
+
+
+			currreport = "vPor_hacer";
+			currfile = "ocarteleratres.xml";
+			
+			Log.d("HOME","Par:" + PrincipalActivity.PARAMETER_BY_PROJECT);
+			if (PrincipalActivity.PARAMETER_BY_PROJECT
+					.indexOf("ByProject") > 0) {
+
+				Log.d("HOME","Par....(2)");
+				currfile = "uocarteleratres.xml";
+			}
+			
+
+			String myconsult = PrincipalActivity.URL_API
+					+ "operacion:Listar_datos%20" + "Cargar_archivo_flujo:%20"
+					+ FLOWFILES_DIR + currfile + "%20Variable:" + currreport
 					+ PrincipalActivity.PARAMETER_BY_PROJECT
 					+ PrincipalActivity.PARAMETER_BY_TYPE
 					+ PrincipalActivity.PARAMETER_BY_DATE1
-			+ PrincipalActivity.PARAMETER_BY_DATE2;
-			
-				new GetGraphTask("listar_ticket").execute(myconsultdel);
+					+ PrincipalActivity.PARAMETER_BY_DATE2;
 
-		      return true;
-		    }
-		 
+
+			Log.d("HOME","Myconsult:" + myconsult);
+			new GetGraphTask("listar_ticket").execute(myconsult);
+
+			return true;
+		}
+
 		int id = item.getItemId();
 		if (id == R.id.action_about) {
 			Log.d("About", "About");
@@ -3273,9 +3183,9 @@ static public ArrayList<TicketRecord> readTicketForNotify(Context context) {
 			createPDF();
 			Log.d("exportlist", "after exportlist");
 		} else if (id == R.id.buttonnewticket) {
-			
+
 			callPreListprojects(true, "", false);
-		
+
 		} else if (id == R.id.help_action_link) {
 			Intent intent = new Intent();
 			intent.setAction(Intent.ACTION_VIEW);
@@ -3293,94 +3203,80 @@ static public ArrayList<TicketRecord> readTicketForNotify(Context context) {
 
 		if (isdelassign == 1 || isdelassign == 3 || isdelassign == 4) {
 			String myconsult = PrincipalActivity.URLFORM_API
-					+ "operacion:eliminar_asignacion%20"
-					+ "id:"+idticket+"%20"
-					+ "propietario:"+recordticket.getAssignfrom();
-	
-			Log.d("eliminar_asignacion","myconsult:" + myconsult);
-			
-			
+					+ "operacion:eliminar_asignacion%20" + "id:" + idticket
+					+ "%20" + "propietario:" + recordticket.getAssignfrom();
+
+			Log.d("eliminar_asignacion", "myconsult:" + myconsult);
+
 			new GetGraphTask("eliminar_asignacion").execute(myconsult);
-			
-		}
-		else if ( isdelassign == 2 ) {
+
+		} else if (isdelassign == 2) {
 			String userto = "";
 			String owner = currentuser;
 			String myconsult = PrincipalActivity.URLFORM_API
-					+ "operacion:aceptar_asignacion%20"
-					+ "%20id:"+idticket
-					+ "%20propietario:"+owner;
-	
-			Log.d("aceptar_asignacion","myconsult:" + myconsult);
-			
-			
+					+ "operacion:aceptar_asignacion%20" + "%20id:" + idticket
+					+ "%20propietario:" + owner;
+
+			Log.d("aceptar_asignacion", "myconsult:" + myconsult);
+
 			new GetGraphTask("aceptar_asignacion").execute(myconsult);
-			
-			
+
 			Log.d("callAllocTasks", "aceptar_asignacion");
-		}
-		else if ( isdelassign == 0 ) {
+		} else if (isdelassign == 0) {
 			String myconsult = PrincipalActivity.URL_API
-					+ "operacion:listar_usuarios%20"
-					+ "Rol:all";
-	
-			Log.d("callAllocTasks","myconsult:" + myconsult);
-			
-			
+					+ "operacion:listar_usuarios%20" + "Rol:all";
+
+			Log.d("callAllocTasks", "myconsult:" + myconsult);
+
 			new GetGraphTask("listar_usuarios").execute(myconsult);
 		}
 
-		
 	}
 
-	
-	
-	
-	public static class SimpleListFragment extends android.support.v4.app.ListFragment {  
-	  
-	  String[] numbers_text = new String[] { "one", "two", "three", "four",  
-	    "five", "six", "seven", "eight", "nine", "ten", "eleven",  
-	    "twelve", "thirteen", "fourteen", "fifteen" };  
-	  String[] numbers_digits = new String[] { "1", "2", "3", "4", "5", "6", "7",  
-	    "8", "9", "10", "11", "12", "13", "14", "15" };  
-	  
-	  @Override  
-	  public void onListItemClick(ListView l, View v, int position, long id) {  
-	   //new Toast(getActivity(), numbers_digits[(int) id]);
-		  Log.d("items","items");
-	  }  
-	  
-	  
-	  @Override  
-	  public View onCreateView(LayoutInflater inflater, ViewGroup container,  
-	    Bundle savedInstanceState) {  
-	   ArrayAdapter<String> adapter = new ArrayAdapter<String>(  
-	     inflater.getContext(), android.R.layout.simple_list_item_1,  
-	     numbers_text);  
-	   setListAdapter(adapter);  
-	   return super.onCreateView(inflater, container, savedInstanceState);  
-	  }  	
-	
-	 }
-	
-	
+	public static class SimpleListFragment extends
+			android.support.v4.app.ListFragment {
+
+		String[] numbers_text = new String[] { "one", "two", "three", "four",
+				"five", "six", "seven", "eight", "nine", "ten", "eleven",
+				"twelve", "thirteen", "fourteen", "fifteen" };
+		String[] numbers_digits = new String[] { "1", "2", "3", "4", "5", "6",
+				"7", "8", "9", "10", "11", "12", "13", "14", "15" };
+
+		@Override
+		public void onListItemClick(ListView l, View v, int position, long id) {
+			// new Toast(getActivity(), numbers_digits[(int) id]);
+			Log.d("items", "items");
+		}
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+					inflater.getContext(), android.R.layout.simple_list_item_1,
+					numbers_text);
+			setListAdapter(adapter);
+			return super.onCreateView(inflater, container, savedInstanceState);
+		}
+
+	}
+
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
 
-//	public static class PlaceholderFragment extends Fragment {
-//
-//		public PlaceholderFragment() {
-//		}
-//
-//		@Override
-//		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//				Bundle savedInstanceState) {
-//			View rootView = inflater.inflate(R.layout.fragment_principal,
-//					container, false);
-//			return rootView;
-//		}
-//	}
+	// public static class PlaceholderFragment extends Fragment {
+	//
+	// public PlaceholderFragment() {
+	// }
+	//
+	// @Override
+	// public View onCreateView(LayoutInflater inflater, ViewGroup container,
+	// Bundle savedInstanceState) {
+	// View rootView = inflater.inflate(R.layout.fragment_principal,
+	// container, false);
+	// return rootView;
+	// }
+	// }
 
 	public static String convertDateEpochToFormat(String epoch) {
 		String result = epoch.trim();
