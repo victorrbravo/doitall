@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/daterange"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@null"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:text="@string/datefrom"
+         style="@style/CodeFont"
+        
+
+         />
+
+    <DatePicker
+        android:id="@+id/datePlan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    
+    <CheckBox
+        android:id="@+id/checkmiddleweek"
+        style="@style/CodeFont"
+        android:text="@string/checkmiddleweek" />
+    
+        <CheckBox
+        android:id="@+id/checkendweek"
+        style="@style/CodeFont"
+        android:text="@string/checkendweek" />
+    
+        <CheckBox
+        android:id="@+id/checkstartweek"
+        style="@style/CodeFont"
+        android:text="@string/checkstartweek" />
+        
+        <CheckBox
+        android:id="@+id/checkmiddlemonth"
+        style="@style/CodeFont"
+        android:text="@string/checkmiddlemonth" />
+        
+<!-- <CheckBox
+        android:id="@+id/checkendmonth"
+        style="@style/CodeFont"
+        android:text="@string/checkendmonth" /> -->        
+        
+        
+</LinearLayout>

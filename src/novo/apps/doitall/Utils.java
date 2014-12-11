@@ -28,6 +28,76 @@ public class Utils {
 
 		return newdate;
 	}
+	/*
+	 * 0 start of week
+	 * 1 middle of week
+	 * 2 end of week
+	 */
+	static public Long dayOfNextWeek(int posweek) {
+		Long result = 0l;
+        Calendar calendar = Calendar.getInstance();
+        int factorday = 9;
+        
+        if (posweek == 0 ) {
+        	factorday = 7;
+        }
+        else if (posweek == 2 ) {
+        	 factorday = 11;
+        }
+        
+//        Log.d("Utils Date:",calendar.toString());
+        long currdate = calendar.getTimeInMillis()/1000 ;
+        Log.d("Utils Currdate:",String.valueOf(currdate));
+        long newdate = currdate + 86400;
+        
+        int dow = calendar.get(calendar.DAY_OF_WEEK)-1;
+        
+        Log.d("dow",String.valueOf(dow));        
+       	newdate = newdate + (86400*(factorday-dow));
+        Log.d("Utils middleNextWeek:",String.valueOf(newdate));
+        
+		return newdate;
+	}
+	static public Long dayOfNextMonth(int posweek) {
+		Long newdate = 0l;
+        Calendar calendar = Calendar.getInstance();
+      
+        
+//        Log.d("Utils Date:",calendar.toString());
+    
+        int currmonth = calendar.get(Calendar.MONTH);
+    
+        int curryear = calendar.get(Calendar.YEAR);
+        int nextmonth = 0;
+        if ( currmonth == Calendar.DECEMBER) {
+        	nextmonth = Calendar.JANUARY;
+        	
+        	 curryear =  curryear + 1;
+        }
+        else {
+        	nextmonth = currmonth +1;
+        }
+        
+        calendar.set(Calendar.MONTH, nextmonth);
+        calendar.set(Calendar.YEAR, curryear);
+        calendar.set(Calendar.DAY_OF_MONTH, 15);
+        
+        int dow = calendar.get(Calendar.DAY_OF_WEEK);
+        Log.d("dow",String.valueOf(dow));
+                
+        newdate = calendar.getTimeInMillis()/1000;
+        
+        int nextmonday = (8-dow);
+        if ( nextmonday > 6 ) {
+        	nextmonday = nextmonday - 7;
+        }
+        newdate = newdate + (86400*nextmonday);
+        
+       	
+        Log.d("Utils middleNextWeek:",String.valueOf(newdate));
+        
+		return newdate;
+	}
 	
 	static public Long now() {
 		

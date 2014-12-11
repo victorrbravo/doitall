@@ -14,10 +14,11 @@
     <string name="filter_by_date1">Filtrar desde fecha</string>
     <string name="select_report_graph">Seleccione un tipo de gráfico</string>
     <string name="select_report_ticket">Selecciona un listado de tipo de tareas</string>
-    <string name="title_pdf">Listado de tareas - </string>
+    <string name="title_pdf">Lista  de tareas - </string>
     <string name="path_file_pdf">Se escribió archivo PDF en la ruta: </string>
     <string name="send_to">Enviar a</string>
     <string name="report_type">Listas de tareas</string>
+    <string name="tasks_title">Lista de tareas</string>
     <string name="graph_type">Gráficos</string>
     <string name="accept">Aceptar</string>
     <string name="assign_accept">Aceptar asignación</string>
@@ -44,8 +45,10 @@
     <string name="filter_any_type">Por tipo</string>
     <string name="confirm_delete">¿Realmente desea eliminar esta tarea?</string>
     <string name="delete_project_text">¿Realmente desea eliminar el proyecto?</string>
-    <string name="nameversion">Doitall. Gestor Inteligente de tareas V 1.8.1 oct 2014</string>
+    <string name="nameversion">Doitall. Gestor Inteligente de tareas V 2.0 dic 2014</string>
     <string name="yes_option">Sí</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
     <string name="no_option">No</string>
     <string name="empty_message">No hay tareas. Agregue una nueva tarea utilizando el botón +</string>
     <string name="ticket_list_title">Listado de tareas</string>
@@ -91,6 +94,11 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
     <string name="checkdateto">Incluir fecha hasta en el filtro</string>
+    <string name="checkmiddleweek">Medio/próxima semana</string>
+    <string name="checkendweek">Final/próxima semana</string>
+    <string name="checkstartweek">Inicio/próxima semana</string>
+    <string name="checkmiddlemonth">Mediados/próximo mes</string>
+	<string name="checkendmonth">Final/próximo mes</string>    
     <string name="datefrom">Desde fecha</string>
     <string name="dateto">Hasta fecha</string>
     <string name="assign_from">Asignado por:</string>
@@ -127,6 +135,17 @@
         <item>Por tipo</item>        
         <item>Asignación de tareas</item>
     </string-array>
+  <string-array name="planets_array">
+        <item>General</item>
+        <item>Planificadas p/semana</item>
+        <item>Planificadas p/mes</item>
+        <item>Completadas p/semana</item>
+        <item>Completadas p/mes</item>        
+        <item>Por proyecto</item>
+        <item>Por tipo</item>        
+        <item>Asignación de tareas</item>
+    </string-array>
+  
   <string-array name="user_list">
         <item>vbravo</item>
         <item>ssole</item>

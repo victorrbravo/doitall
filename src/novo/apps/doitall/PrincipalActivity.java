@@ -1,6 +1,7 @@
 package novo.apps.doitall;
 
 import java.io.BufferedReader;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,6 +21,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.Stack;
@@ -49,6 +51,12 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.capricorn.ArcMenu;
+import com.capricorn.RayMenu;
+
+
+
+
 //import novo.apps.doitall.PlaceholderFragment;
 //import com.example.testmodernmenu.DrawerLayout;
 //import com.example.testmodernmenu.FragmentManager;
@@ -74,6 +82,7 @@ import android.app.Dialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.BroadcastReceiver;
@@ -92,6 +101,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -99,8 +109,10 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.util.ArrayMap;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.MenuItemCompat.OnActionExpandListener;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
@@ -111,6 +123,7 @@ import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -137,11 +150,23 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-public class PrincipalActivity extends ActionBarActivity {
+
+
+public class PrincipalActivity extends ActionBarActivity  {
+
+	private static final int[] ITEM_DRAWABLES = { R.drawable.composer_camera, R.drawable.composer_music,
+		R.drawable.composer_place, R.drawable.composer_sleep, R.drawable.composer_thought, R.drawable.composer_with };
 
 	private ImageButton newticketbutton;
 	private ImageButton button;
 	private ImageButton graphbutton;
+	private DrawerLayout mDrawerLayout;
+	private ActionBarDrawerToggle mDrawerToggle;
+	private CharSequence mDrawerTitle;
+	private CharSequence mTitle;
+	private String[] mPlanetTitles;
+	  private ListView mDrawerList;
+
 
 	private ProgressDialog progress;
 	private ActionBar actionbar;
@@ -166,20 +191,23 @@ public class PrincipalActivity extends ActionBarActivity {
 	private String lastlisttickets;
 	private String currfile;
 	private String currreport;
+	private int posMenuGraph; 
 	AlertDialog task_dialog;
-	private CharSequence mTitle;
+
 	private ArrayList<String> newstates;
 	private CanvasView noteView;
+	private RayMenu rayMenu;
+	private ArcMenu arcMenuFilter;
 	private NotificationManager myNotificationManager;
 
 	private AlarmManagerBroadcastReceiver alarm;
 
 	private ArrayList<TicketRecord> ticketsforNotify;
 
-	public static String URL_SERVER = "http://novoapps.info/intranet/register";
-	public static String URL_SERVER_LOGIN = "http://novoapps.info/intranet/login";
-	public static String FIRST_URL_GRAPH = "http://novoapps.info/media/";
-	public static String FIRST_URL_API = "http://novoapps.info/intranet/apiv2/";
+	public static String URL_SERVER = "XXXXXintranet/register";
+	public static String URL_SERVER_LOGIN = "XXXXXintranet/login";
+	public static String FIRST_URL_GRAPH = "XXXXXmedia/";
+	public static String FIRST_URL_API = "XXXXXintranet/apiv2/";
 	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=panelapp&accion=";
 	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=panelapp&accion=";
 	public static String FLOWFILES_DIR = "/home/panelapp/.safet/flowfiles/";
@@ -201,6 +229,7 @@ public class PrincipalActivity extends ActionBarActivity {
 	public static final String ONLYDATEFORMAT = "dd/MMM/yyyy";
 	Map<String, String> usersmap;
 
+	private SectionAdapter menuAdapter;
 	// Data for notification
 
 	private static int notificationIdOne = 111;
@@ -212,6 +241,9 @@ public class PrincipalActivity extends ActionBarActivity {
 	TimePickerDialog timePickerDialog;
 
 	final static int RQS_1 = 1;
+
+	private static final int LIMITMENUREPORTS = 5;
+	private static final int LIMITMENUGRAPHS = 5;
 	// used for register alarm manager
 	PendingIntent pendingIntent;
 	// used to store running alarmmanager instance
@@ -233,10 +265,15 @@ public class PrincipalActivity extends ActionBarActivity {
 		DESCRIPTION_TYPE_PARAMS = "";
 		DESCRIPTION_DATE1_PARAMS = "";
 
+		posMenuGraph = 0;
+		
 		mTitle = getTitle();
 
 		alarm = new AlarmManagerBroadcastReceiver();
 
+		
+
+		
 		isclosing = 0;
 		Log.d("PrincipalActivity", "OnCreate");
 
@@ -252,6 +289,7 @@ public class PrincipalActivity extends ActionBarActivity {
 		actionbar = getSupportActionBar();
 		actionbar.setHomeButtonEnabled(true);
 		actionbar.setDisplayHomeAsUpEnabled(true);
+
 
 		currentuser = getIntent().getStringExtra("selectuser");
 		String ticket = getIntent().getStringExtra("selectauth");
@@ -311,14 +349,239 @@ public class PrincipalActivity extends ActionBarActivity {
 		noteView.setCurrentuser(currentuser);
 
 		Log.d("noteView", "....(2)..");
-		// fragmentManager = getSupportFragmentManager();
-		// android.support.v4.app.FragmentTransaction fragmentTransaction =
-		// fragmentManager.beginTransaction();
-		// fragment = new SimpleListFragment();
-		//
+        final int itemCount = ITEM_DRAWABLES.length;
+        
+        
+        Log.d("create","....1...");
+        
+        mTitle = mDrawerTitle = getTitle();
+        Log.d("create","....2...");
+        mPlanetTitles = getResources().getStringArray(R.array.planets_array);
+        Log.d("create","....3...");
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
-		// RegisterAlarmBroadcast();
+        Log.d("create","....4...");
+        // set a custom shadow that overlays the main content when the drawer opens
+        //mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        // set up the drawer's list view with items and click listener
+        Log.d("create","....4*...");
 
+        loadMenuAdapter();
+        
+        mDrawerList.setAdapter(menuAdapter);
+        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+
+        Log.d("create","....5...");
+        // enable ActionBar app icon to behave as action to toggle nav drawer
+
+        Log.d("create","....6...");
+        mDrawerToggle = new ActionBarDrawerToggle(
+        		this, 
+        		mDrawerLayout,
+                R.drawable.ic_drawer, 
+                R.string.drawer_open, 
+                R.string.drawer_close) {
+
+            /** Called when a drawer has settled in a completely closed state. */
+            public void onDrawerClosed(View view) {
+            	Log.d("DrawerToggle","...close....");
+                super.onDrawerClosed(view);
+                actionbar.setTitle(mTitle);
+                //invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            /** Called when a drawer has settled in a completely open state. */
+            public void onDrawerOpened(View drawerView) {
+            	Log.d("DrawerToggle","...open...." + mDrawerTitle);
+                super.onDrawerOpened(drawerView);
+                
+                actionbar.setTitle(mDrawerTitle);
+                Log.d("DrawerToggle","...open...2");
+                //invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                Log.d("DrawerToggle","...open...3");
+            }
+        };
+
+        // Set the drawer toggle as the DrawerListener
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+//        if (savedInstanceState == null) {
+//            selectItem(0);
+//        }
+	}
+	
+	private void loadMenuAdapter() {
+		// TODO Auto-generated method stub
+		menuAdapter = new SectionAdapter(this);
+		menuAdapter.addSectionHeaderItem(getString(R.string.tasks_title));
+		String[] reports = getResources().getStringArray(R.array.names_report);
+		
+		posMenuGraph = 1;
+		for (int i=0; i< reports.length && i < LIMITMENUREPORTS; i++) {
+			menuAdapter.addItem(reports[i]);
+			posMenuGraph = posMenuGraph + 1;
+		}
+		
+		
+		menuAdapter.addSectionHeaderItem(getString(R.string.graph_type));
+		String[] graphs = getResources().getStringArray(R.array.graph_report);
+		
+		for (int i=0; i< graphs.length && i < LIMITMENUGRAPHS; i++) {
+			menuAdapter.addItem(graphs[i]);
+		}
+		
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.principal, menu);
+
+		// When using the support library, the setOnActionExpandListener()
+		// method is
+		// static and accepts the MenuItem object as an argument
+
+		MenuItem searchItem = menu.findItem(R.id.action_search);
+
+		final SearchView searchView = (SearchView) MenuItemCompat
+				.getActionView(searchItem);
+
+		searchView.setOnQueryTextListener(new OnQueryTextListener() {
+			@Override
+			public boolean onQueryTextChange(String newText) {
+				if (newText.length() > 0) {
+					// Search
+					Log.d("Search", "Search (1)");
+
+				} else {
+					// Do something when there's no input
+
+				}
+				return false;
+			}
+
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+
+				Log.d("Search", "Search (3)");
+				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+				imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
+
+				Toast.makeText(getBaseContext(), "Búsqueda realida con éxito",
+						Toast.LENGTH_SHORT).show();
+				setSupportProgressBarIndeterminateVisibility(true);
+
+				Log.d("Search", "Search (4)");
+
+				currfile = FLOWFILES_DIR + "cartelerabusqueda.xml";
+				currreport = "vBusqueda";
+				String newquery = query.replace(" ", "%20");
+				PrincipalActivity.PARAMETER_BY_SEARCH = "%20parameters.ByPattern:"
+						+ newquery;
+
+				String myconsult = PrincipalActivity.URL_API
+						+ "operacion:Listar_datos%20"
+						+ "Cargar_archivo_flujo:%20" + currfile
+						+ "%20Variable:" + currreport + "%20"
+						+ PrincipalActivity.PARAMETER_BY_SEARCH + "%20"
+						+ PrincipalActivity.PARAMETER_BY_PROJECT + "%20"
+						+ PrincipalActivity.PARAMETER_BY_TYPE;
+
+				Log.d("SEARCH CONSULT:", myconsult);
+				new GetGraphTask("listar_ticket").execute(myconsult);
+
+				return false;
+			}
+		});
+
+		return true;
+	}
+
+	
+    /* Called whenever we call invalidateOptionsMenu() */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // If the nav drawer is open, hide action items related to the content view
+//    	Log.d("onPrepareOptionsMenu", "....1....");
+//    	if (mDrawerLayout != null && mDrawerList != null ) {
+//    		Log.d("onPrepareOptionsMenu", "....2....");
+//    		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+//    		Log.d("onPrepareOptionsMenu", "....3....");
+//    		menu.findItem(R.id.action_search).setVisible(!drawerOpen);
+//    	}
+//    	Log.d("onPrepareOptionsMenu", "....4....");
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+
+
+	private class DrawerItemClickListener implements ListView.OnItemClickListener {
+	    @Override
+	    public void onItemClick(AdapterView parent, View view, int position, long id) {
+	        selectItem(position);
+	    }
+	}
+
+	/** Swaps fragments in the main content view */
+	private void selectItem(int position) {
+		
+	    // ************* Before Screen
+	
+//		String mytext = "Position:" + String.valueOf(position) + "posMenuGraph:" +
+//		String.valueOf(posMenuGraph);		
+//    	Toast.makeText(getApplicationContext(), 
+//    			mytext, Toast.LENGTH_SHORT).show();
+		
+		if (position == 0) {
+			mDrawerLayout.closeDrawer(mDrawerList);
+			ArrayList<String> mylist = new ArrayList<String>();
+			showInputNameDialog(this, mylist,
+					getString(R.string.ticket_list_title));
+			
+		}    	
+    	else if (position> 0 && position <  posMenuGraph ) {
+			String[] reports = getResources().getStringArray(R.array.names_report);
+			loadSafetReport(reports[position-1]);
+			
+		}
+    	else if (position == posMenuGraph) {
+    		mDrawerLayout.closeDrawer(mDrawerList);
+    		
+    		showGraphChooseDialog(this);
+
+    	}
+    	else {
+			executeGraph(position-posMenuGraph-1);
+    		
+    	}
+
+	    // ************* Before Screen
+	    // *************Create a new fragment and specify the planet to show based on position
+		
+//	    Fragment fragment = new PlanetFragment();
+//	    Bundle args = new Bundle();
+//	    args.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
+//	    fragment.setArguments(args);
+//
+//	    // Insert the fragment by replacing any existing fragment
+//	    FragmentManager fragmentManager = getSupportFragmentManager();
+//	    fragmentManager.beginTransaction()
+//	                   .replace(R.id.content_frame1, fragment)
+//	                   .commit();
+//
+//	    // Highlight the selected item, update the title, and close the drawer
+//	    mDrawerList.setItemChecked(position, true);
+//	    setTitle(mPlanetTitles[position]);
+	    // *************Create a new fragment and specify the planet to show based on position
+	    mDrawerLayout.closeDrawer(mDrawerList);
+	}
+
+	@Override
+	public void setTitle(CharSequence title) {
+	    mTitle = title;
+	    actionbar.setTitle(mTitle);
 	}
 
 	// @Override
@@ -434,29 +697,7 @@ public class PrincipalActivity extends ActionBarActivity {
 				.setNegativeButton(getString(R.string.no_option), null).show();
 	}
 
-	// @Override
-	// public void finish() {
-	// System.out.println("finish activity");
-	// System.runFinalizersOnExit(true) ;
-	// super.finish();
-	// android.os.Process.killProcess(android.os.Process.myPid());
-	// }
-	//
-	// @Override
-	// public void onBackPressed() {
-	//
-	// if (isclosing == 0) {
-	// Toast toast = Toast.makeText(getApplicationContext(),
-	// "Debe presionar de nuevo el botón para cerrar Doitall",
-	// Toast.LENGTH_SHORT);
-	// toast.show();
-	// isclosing = isclosing +1;
-	// return;
-	// }
-	//
-	// this.finish();
-	//
-	// }
+	
 
 	final class GetGraphTask extends AsyncTask<String, Void, String> {
 
@@ -1101,6 +1342,7 @@ public class PrincipalActivity extends ActionBarActivity {
 				Intent i = null;
 				i = new Intent("novo.apps.doitall.SecondActivity");
 
+//				i = new Intent("novo.apps.doitall.WebActivity");
 				// ---use putExtra() to add new key/value pairs---
 				Log.d("alljson", alljson);
 				i.putExtra("alljson", alljson);
@@ -1417,6 +1659,112 @@ public class PrincipalActivity extends ActionBarActivity {
 		AlertDialog alert = builder.create();
 		alert.show();
 
+	}
+	
+	private void executeGraph(int position) {
+		String myconsult;
+		Log.d("executeGraph", "position:" + String.valueOf(position));
+	
+		
+		if (position == 0) {
+
+			if (PrincipalActivity.PARAMETER_BY_PROJECT
+					.indexOf("ByProject") > 0) {
+				myconsult = PrincipalActivity.URL_API
+						+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20"
+						+ FLOWFILES_DIR + "uocarteleratres.xml"
+						+ PrincipalActivity.PARAMETER_BY_PROJECT
+						+ PrincipalActivity.PARAMETER_BY_TYPE
+						+ PrincipalActivity.PARAMETER_BY_DATE1
+						+ PrincipalActivity.PARAMETER_BY_DATE2;
+
+			} else {
+				myconsult = PrincipalActivity.URL_API
+						+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20"
+						+ FLOWFILES_DIR + "ocarteleratres.xml"
+						+ PrincipalActivity.PARAMETER_BY_PROJECT
+						+ PrincipalActivity.PARAMETER_BY_TYPE
+						+ PrincipalActivity.PARAMETER_BY_DATE1
+						+ PrincipalActivity.PARAMETER_BY_DATE2;
+
+			}
+			Log.d("**GRAPHFORDATE", myconsult);
+
+		} else if (position == 1) {
+			myconsult = PrincipalActivity.URL_API
+					+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleraproximos.xml"
+					+ PrincipalActivity.PARAMETER_BY_PROJECT
+					+ PrincipalActivity.PARAMETER_BY_TYPE
+					+ PrincipalActivity.PARAMETER_BY_DATE1
+					+ PrincipalActivity.PARAMETER_BY_DATE2;
+
+		} else if (position == 2) {
+			myconsult = PrincipalActivity.URL_API
+					+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerapormes.xml"
+					+ PrincipalActivity.PARAMETER_BY_PROJECT
+					+ PrincipalActivity.PARAMETER_BY_TYPE
+					+ PrincipalActivity.PARAMETER_BY_DATE1
+					+ PrincipalActivity.PARAMETER_BY_DATE2;
+
+		} else if (position == 3) {
+			myconsult = PrincipalActivity.URL_API
+					+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerafinalizadosporsemana.xml"
+					+ PrincipalActivity.PARAMETER_BY_PROJECT
+					+ PrincipalActivity.PARAMETER_BY_TYPE
+					+ PrincipalActivity.PARAMETER_BY_DATE1
+					+ PrincipalActivity.PARAMETER_BY_DATE2;
+
+		} else if (position == 4) {
+			myconsult = PrincipalActivity.URL_API
+					+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerafinalizados.xml"
+					+ PrincipalActivity.PARAMETER_BY_PROJECT
+					+ PrincipalActivity.PARAMETER_BY_TYPE
+					+ PrincipalActivity.PARAMETER_BY_DATE1
+					+ PrincipalActivity.PARAMETER_BY_DATE2;
+
+			// } else if (position == 5) {
+			// myconsult = PrincipalActivity.URL_API
+			// +
+			// "operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/ucarteleratodos.xml%20Autofiltro:%20por_usuario"
+			// + PrincipalActivity.PARAMETER_BY_TYPE
+			// + PrincipalActivity.PARAMETER_BY_DATE1;
+			//
+		} else if (position == 5) {
+			myconsult = PrincipalActivity.URL_API
+					+ "operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratodos.xml%20Autofiltro:%20por_proyecto"
+					+ PrincipalActivity.PARAMETER_BY_TYPE
+					+ PrincipalActivity.PARAMETER_BY_DATE1
+					+ PrincipalActivity.PARAMETER_BY_DATE2;
+
+		} else if (position == 6) {
+			myconsult = PrincipalActivity.URL_API
+					+ "operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratodos.xml%20Autofiltro:%20por_tipo"
+					+ PrincipalActivity.PARAMETER_BY_PROJECT
+					+ PrincipalActivity.PARAMETER_BY_DATE1
+					+ PrincipalActivity.PARAMETER_BY_DATE2;
+
+		} else if (position == 7) {
+			myconsult = PrincipalActivity.URL_API
+					+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleraasignado.xml"
+					+ PrincipalActivity.PARAMETER_BY_TYPE
+					+ PrincipalActivity.PARAMETER_BY_PROJECT
+					+ PrincipalActivity.PARAMETER_BY_DATE1
+					+ PrincipalActivity.PARAMETER_BY_DATE2;
+
+		}
+
+		else {
+			Log.d("GraphType", "Selected none");
+			return;
+		}
+
+		Log.d("showGraph *consult:", myconsult);
+
+		GetGraphTask mytask = new GetGraphTask("graficar");
+
+		mytask.execute(myconsult);
+
+		
 	}
 
 	private void showGraphChooseDialog(Context context) {
@@ -1817,7 +2165,7 @@ public class PrincipalActivity extends ActionBarActivity {
 		View child = getLayoutInflater().inflate(R.layout.daterange, null);
 
 		builder.setView(child);
-		int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+
 
 		final DatePicker input = (DatePicker) child.findViewById(R.id.dateFrom);
 
@@ -1828,6 +2176,7 @@ public class PrincipalActivity extends ActionBarActivity {
 
 		final DatePicker inputto = (DatePicker) child.findViewById(R.id.dateTo);
 
+		int currentapiVersion = android.os.Build.VERSION.SDK_INT;
 		if (currentapiVersion >= 11) {
 
 			input.setCalendarViewShown(false);
@@ -1941,6 +2290,7 @@ public class PrincipalActivity extends ActionBarActivity {
 		builder.setMessage(getString(R.string.modify_date_task));
 		Calendar calendar = Calendar.getInstance();
 
+
 		Log.d("makeModifyOptionsDialog", "Seltext:currentdate:" + currentdate);
 
 		SimpleDateFormat sf = new SimpleDateFormat(
@@ -1958,14 +2308,128 @@ public class PrincipalActivity extends ActionBarActivity {
 			return;
 		}
 
-		final DatePicker input = new DatePicker(this);
+		View child = getLayoutInflater().inflate(R.layout.dateadvance, null);
+
+		
 		Log.d("makeModifyOptionsDialog",
 				"Seltext:year:" + String.valueOf(calendar.get(Calendar.YEAR)));
+		final DatePicker input = (DatePicker) child.findViewById(R.id.datePlan);
+		
 		input.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
 				calendar.get(Calendar.DAY_OF_MONTH), null);
 
-		builder.setView(input);
+		int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+		if (currentapiVersion >= 11) {
 
+			input.setCalendarViewShown(false);
+
+		}
+
+		
+
+		final CheckBox checkmiddleweek = (CheckBox) child
+				.findViewById(R.id.checkmiddleweek);
+
+		final CheckBox checkstartweek = (CheckBox) child
+				.findViewById(R.id.checkstartweek);
+
+		final CheckBox checkendweek = (CheckBox) child
+				.findViewById(R.id.checkendweek);
+
+		final CheckBox checkmiddlemonth = (CheckBox) child
+				.findViewById(R.id.checkmiddlemonth);
+		
+		checkmiddleweek.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				 
+				Calendar calendar = Calendar.getInstance();
+
+				if (checkmiddleweek.isChecked()) {
+					Log.d("check","check 1");
+					//input.setEnabled(true);
+					Long nw = Utils.dayOfNextWeek(1)*1000;
+					calendar.setTimeInMillis(nw);
+					checkstartweek.setChecked(false);
+					checkendweek.setChecked(false);
+					checkmiddlemonth.setChecked(false);
+				}
+				input.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+						calendar.get(Calendar.DAY_OF_MONTH), null);
+			}
+		});
+		
+		checkstartweek.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				 
+				Calendar calendar = Calendar.getInstance();
+
+				if (checkstartweek.isChecked()) {
+					Log.d("check","check 1");
+					//input.setEnabled(true);
+					Long nw = Utils.dayOfNextWeek(0)*1000;
+					calendar.setTimeInMillis(nw);
+					checkmiddleweek.setChecked(false);
+					checkendweek.setChecked(false);
+					checkmiddlemonth.setChecked(false);
+
+				}
+				input.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+						calendar.get(Calendar.DAY_OF_MONTH), null);
+			}
+		});
+
+		checkendweek.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				 
+				Calendar calendar = Calendar.getInstance();
+
+				if (checkendweek.isChecked()) {
+					Log.d("check","check 1");
+					//input.setEnabled(true);
+					Long nw = Utils.dayOfNextWeek(2)*1000;
+					calendar.setTimeInMillis(nw);
+					checkmiddleweek.setChecked(false);
+					checkstartweek.setChecked(false);
+					checkmiddlemonth.setChecked(false);
+
+				}
+				input.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+						calendar.get(Calendar.DAY_OF_MONTH), null);
+			}
+		});
+		
+		checkmiddlemonth.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				 
+				Calendar calendar = Calendar.getInstance();
+
+				if (checkmiddlemonth.isChecked()) {
+					Log.d("check","check 1");
+					//input.setEnabled(true);
+					Long nw = Utils.dayOfNextMonth(1)*1000;
+					calendar.setTimeInMillis(nw);
+					checkmiddleweek.setChecked(false);
+					checkstartweek.setChecked(false);
+					checkendweek.setChecked(false);
+
+				}
+				input.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+						calendar.get(Calendar.DAY_OF_MONTH), null);
+			}
+		});
+
+		builder.setView(child);
+
+		Log.d("makeModifyOptionsDialog","set child");
+		
 		builder.setPositiveButton(getString(R.string.yes_option),
 				new DialogInterface.OnClickListener() {
 
@@ -2657,10 +3121,10 @@ public class PrincipalActivity extends ActionBarActivity {
 
 		// Select a specific button to bundle it with the action you want
 
-		listtickets.setOnItemClickListener(new OnItemClickListener() {
+		listtickets.setOnItemLongClickListener(new OnItemLongClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
 				Log.d("view **click", "view click");
@@ -2680,7 +3144,7 @@ public class PrincipalActivity extends ActionBarActivity {
 				if (noteView.isShown()) {
 					noteView.setVisibility(View.GONE);
 					Log.d("view click", "view click gone");
-					return;
+					return true;
 				}
 
 				Log.d("ver sticky", "(1)");
@@ -2690,15 +3154,23 @@ public class PrincipalActivity extends ActionBarActivity {
 				Log.d("view click", "view click gone");
 
 				// loadViewTicketActivity(false, true);
+				return true;
 
 			}
 		});
 
-		listtickets.setOnItemLongClickListener(new OnItemLongClickListener() {
+		listtickets.setOnItemClickListener(new OnItemClickListener() {
+		
 
 			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View view,
+			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
+
+				if (noteView.isShown()) {
+					noteView.setVisibility(View.GONE);
+					Log.d("view click", "view click gone");
+					return;
+				}
 
 				recordticket = (TicketRecord) listtickets
 						.getItemAtPosition(position);
@@ -2711,7 +3183,7 @@ public class PrincipalActivity extends ActionBarActivity {
 							getString(R.string.ticket_other_user),
 							Toast.LENGTH_SHORT).show();
 
-					return false;
+					return;
 				}
 				String idticket = recordticket.getId();
 				currentticket = idticket;
@@ -2725,7 +3197,7 @@ public class PrincipalActivity extends ActionBarActivity {
 				if (task_dialog != null)
 					task_dialog.show();
 
-				return true;
+				return;
 			}
 
 		});
@@ -2951,72 +3423,8 @@ public class PrincipalActivity extends ActionBarActivity {
 		actionBar.setTitle(mTitle);
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
 
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.principal, menu);
-
-		// When using the support library, the setOnActionExpandListener()
-		// method is
-		// static and accepts the MenuItem object as an argument
-
-		MenuItem searchItem = menu.findItem(R.id.action_search);
-
-		final SearchView searchView = (SearchView) MenuItemCompat
-				.getActionView(searchItem);
-
-		searchView.setOnQueryTextListener(new OnQueryTextListener() {
-			@Override
-			public boolean onQueryTextChange(String newText) {
-				if (newText.length() > 0) {
-					// Search
-					Log.d("Search", "Search (1)");
-
-				} else {
-					// Do something when there's no input
-
-				}
-				return false;
-			}
-
-			@Override
-			public boolean onQueryTextSubmit(String query) {
-
-				Log.d("Search", "Search (3)");
-				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-				imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
-
-				Toast.makeText(getBaseContext(), "Búsqueda realida con éxito",
-						Toast.LENGTH_SHORT).show();
-				setSupportProgressBarIndeterminateVisibility(true);
-
-				Log.d("Search", "Search (4)");
-
-				currfile = FLOWFILES_DIR + "cartelerabusqueda.xml";
-				currreport = "vBusqueda";
-				String newquery = query.replace(" ", "%20");
-				PrincipalActivity.PARAMETER_BY_SEARCH = "%20parameters.ByPattern:"
-						+ newquery;
-
-				String myconsult = PrincipalActivity.URL_API
-						+ "operacion:Listar_datos%20"
-						+ "Cargar_archivo_flujo:%20" + currfile
-						+ "%20Variable:" + currreport + "%20"
-						+ PrincipalActivity.PARAMETER_BY_SEARCH + "%20"
-						+ PrincipalActivity.PARAMETER_BY_PROJECT + "%20"
-						+ PrincipalActivity.PARAMETER_BY_TYPE;
-
-				Log.d("SEARCH CONSULT:", myconsult);
-				new GetGraphTask("listar_ticket").execute(myconsult);
-
-				return false;
-			}
-		});
-
-		return true;
-	}
-
+	
 	public void createPDF() {
 		Document doc = new Document();
 
@@ -3131,36 +3539,18 @@ public class PrincipalActivity extends ActionBarActivity {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
-
+		if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+//        
+//        return super.onOptionsItemSelected(item);
+        
+// *************Anterior
 		switch (item.getItemId()) {
 		case android.R.id.home:
-
-
-			currreport = "vPor_hacer";
-			currfile = "ocarteleratres.xml";
-			
-			Log.d("HOME","Par:" + PrincipalActivity.PARAMETER_BY_PROJECT);
-			if (PrincipalActivity.PARAMETER_BY_PROJECT
-					.indexOf("ByProject") > 0) {
-
-				Log.d("HOME","Par....(2)");
-				currfile = "uocarteleratres.xml";
-			}
-			
-
-			String myconsult = PrincipalActivity.URL_API
-					+ "operacion:Listar_datos%20" + "Cargar_archivo_flujo:%20"
-					+ FLOWFILES_DIR + currfile + "%20Variable:" + currreport
-					+ PrincipalActivity.PARAMETER_BY_PROJECT
-					+ PrincipalActivity.PARAMETER_BY_TYPE
-					+ PrincipalActivity.PARAMETER_BY_DATE1
-					+ PrincipalActivity.PARAMETER_BY_DATE2;
-
-
-			Log.d("HOME","Myconsult:" + myconsult);
-			new GetGraphTask("listar_ticket").execute(myconsult);
-
-			return true;
+				return super.onOptionsItemSelected(item);				
+			default:
+					break;
 		}
 
 		int id = item.getItemId();
@@ -3307,5 +3697,31 @@ public class PrincipalActivity extends ActionBarActivity {
 		return result;
 
 	}
+    /**
+     * Fragment that appears in the "content_frame", shows a planet
+     */
+    public static class PlanetFragment extends Fragment {
+        public static final String ARG_PLANET_NUMBER = "planet_number";
 
+        public PlanetFragment() {
+            // Empty constructor required for fragment subclasses
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_planet, container, false);
+            int i = getArguments().getInt(ARG_PLANET_NUMBER);
+            String planet = getResources().getStringArray(R.array.planets_array)[i];
+
+            int imageId = getResources().getIdentifier(planet.toLowerCase(Locale.getDefault()),
+                            "drawable", getActivity().getPackageName());
+            ((ImageView) rootView.findViewById(R.id.image)).setImageResource(imageId);
+            getActivity().setTitle(planet);
+            return rootView;
+        }
+    }
+
+	
 }
+
