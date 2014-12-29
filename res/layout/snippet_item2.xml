@@ -4,12 +4,13 @@
     android:layout_height="wrap_content"
     android:background="#2F2F2F"
     android:gravity="center_vertical" >
-
+    
+    
     <TextView
         android:id="@+id/textSeparator"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:gravity="left"
         android:padding="8dp"
         android:text=""
         android:textAllCaps="true"
@@ -17,5 +18,5 @@
         android:textColor="#FFF"
         android:textStyle="bold"
         android:visibility="visible" />
-
+    
 </LinearLayout>

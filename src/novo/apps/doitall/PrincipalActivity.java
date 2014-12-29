@@ -51,8 +51,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.capricorn.ArcMenu;
-import com.capricorn.RayMenu;
 
 
 
@@ -75,6 +73,7 @@ import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.text.FontFactory;
 
 import android.R.bool;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -196,18 +195,16 @@ public class PrincipalActivity extends ActionBarActivity  {
 
 	private ArrayList<String> newstates;
 	private CanvasView noteView;
-	private RayMenu rayMenu;
-	private ArcMenu arcMenuFilter;
 	private NotificationManager myNotificationManager;
 
 	private AlarmManagerBroadcastReceiver alarm;
 
 	private ArrayList<TicketRecord> ticketsforNotify;
 
-	public static String URL_SERVER = "XXXXXintranet/register";
-	public static String URL_SERVER_LOGIN = "XXXXXintranet/login";
-	public static String FIRST_URL_GRAPH = "XXXXXmedia/";
-	public static String FIRST_URL_API = "XXXXXintranet/apiv2/";
+	public static String URL_SERVER = "http://server.novoapps.info/intranet/register";
+	public static String URL_SERVER_LOGIN = "http://server.novoapps.info/intranet/login";
+	public static String FIRST_URL_GRAPH = "http://server.novoapps.info/media/";
+	public static String FIRST_URL_API = "http://server.novoapps.info/intranet/apiv2/";
 	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=panelapp&accion=";
 	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=panelapp&accion=";
 	public static String FLOWFILES_DIR = "/home/panelapp/.safet/flowfiles/";
@@ -242,8 +239,8 @@ public class PrincipalActivity extends ActionBarActivity  {
 
 	final static int RQS_1 = 1;
 
-	private static final int LIMITMENUREPORTS = 5;
-	private static final int LIMITMENUGRAPHS = 5;
+	private static final int LIMITMENUREPORTS = 6;
+	private static final int LIMITMENUGRAPHS = 6;
 	// used for register alarm manager
 	PendingIntent pendingIntent;
 	// used to store running alarmmanager instance
@@ -536,6 +533,9 @@ public class PrincipalActivity extends ActionBarActivity  {
 		
 		if (position == 0) {
 			mDrawerLayout.closeDrawer(mDrawerList);
+			if (menuAdapter != null) {
+				menuAdapter.setHas_separator(false);
+			}
 			ArrayList<String> mylist = new ArrayList<String>();
 			showInputNameDialog(this, mylist,
 					getString(R.string.ticket_list_title));
@@ -548,7 +548,9 @@ public class PrincipalActivity extends ActionBarActivity  {
 		}
     	else if (position == posMenuGraph) {
     		mDrawerLayout.closeDrawer(mDrawerList);
-    		
+    		if (menuAdapter != null) {
+				menuAdapter.setHas_separator(false);
+			}
     		showGraphChooseDialog(this);
 
     	}
@@ -576,6 +578,9 @@ public class PrincipalActivity extends ActionBarActivity  {
 //	    setTitle(mPlanetTitles[position]);
 	    // *************Create a new fragment and specify the planet to show based on position
 	    mDrawerLayout.closeDrawer(mDrawerList);
+	    if (menuAdapter != null) {
+			menuAdapter.setHas_separator(false);
+		}
 	}
 
 	@Override
@@ -1663,9 +1668,13 @@ public class PrincipalActivity extends ActionBarActivity  {
 	
 	private void executeGraph(int position) {
 		String myconsult;
+		String[] reports = getResources().getStringArray(R.array.names_report);
+		String myselect = reports[position];
+		
+		
 		Log.d("executeGraph", "position:" + String.valueOf(position));
 	
-		
+	
 		if (position == 0) {
 
 			if (PrincipalActivity.PARAMETER_BY_PROJECT
@@ -1690,7 +1699,7 @@ public class PrincipalActivity extends ActionBarActivity  {
 			}
 			Log.d("**GRAPHFORDATE", myconsult);
 
-		} else if (position == 1) {
+		} else if (position == 2) {
 			myconsult = PrincipalActivity.URL_API
 					+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleraproximos.xml"
 					+ PrincipalActivity.PARAMETER_BY_PROJECT
@@ -1698,7 +1707,7 @@ public class PrincipalActivity extends ActionBarActivity  {
 					+ PrincipalActivity.PARAMETER_BY_DATE1
 					+ PrincipalActivity.PARAMETER_BY_DATE2;
 
-		} else if (position == 2) {
+		} else if (position == 3) {
 			myconsult = PrincipalActivity.URL_API
 					+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerapormes.xml"
 					+ PrincipalActivity.PARAMETER_BY_PROJECT
@@ -1706,7 +1715,7 @@ public class PrincipalActivity extends ActionBarActivity  {
 					+ PrincipalActivity.PARAMETER_BY_DATE1
 					+ PrincipalActivity.PARAMETER_BY_DATE2;
 
-		} else if (position == 3) {
+		} else if (position == 1) {
 			myconsult = PrincipalActivity.URL_API
 					+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerafinalizadosporsemana.xml"
 					+ PrincipalActivity.PARAMETER_BY_PROJECT
@@ -1714,7 +1723,7 @@ public class PrincipalActivity extends ActionBarActivity  {
 					+ PrincipalActivity.PARAMETER_BY_DATE1
 					+ PrincipalActivity.PARAMETER_BY_DATE2;
 
-		} else if (position == 4) {
+		} else if (position == 5) {
 			myconsult = PrincipalActivity.URL_API
 					+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerafinalizados.xml"
 					+ PrincipalActivity.PARAMETER_BY_PROJECT
@@ -1722,14 +1731,7 @@ public class PrincipalActivity extends ActionBarActivity  {
 					+ PrincipalActivity.PARAMETER_BY_DATE1
 					+ PrincipalActivity.PARAMETER_BY_DATE2;
 
-			// } else if (position == 5) {
-			// myconsult = PrincipalActivity.URL_API
-			// +
-			// "operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/ucarteleratodos.xml%20Autofiltro:%20por_usuario"
-			// + PrincipalActivity.PARAMETER_BY_TYPE
-			// + PrincipalActivity.PARAMETER_BY_DATE1;
-			//
-		} else if (position == 5) {
+		} else if (position == 4) {
 			myconsult = PrincipalActivity.URL_API
 					+ "operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratodos.xml%20Autofiltro:%20por_proyecto"
 					+ PrincipalActivity.PARAMETER_BY_TYPE
@@ -2154,6 +2156,7 @@ public class PrincipalActivity extends ActionBarActivity  {
 
 	}
 
+	@SuppressLint("NewApi")
 	public void makePutParameterDateDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -2283,6 +2286,7 @@ public class PrincipalActivity extends ActionBarActivity  {
 
 	}
 
+	@SuppressLint("NewApi")
 	public void makeModifyOptionsDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 

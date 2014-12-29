@@ -11,8 +11,17 @@ import android.widget.TextView;
 
 class SectionAdapter extends BaseAdapter {
 
+	private boolean has_separator;
 	private static final int TYPE_ITEM = 0;
 	private static final int TYPE_SEPARATOR = 1;
+
+	public boolean isHas_separator() {
+		return has_separator;
+	}
+
+	public void setHas_separator(boolean has_separator) {
+		this.has_separator = has_separator;
+	}
 
 	private ArrayList<String> mData = new ArrayList<String>();
 	private TreeSet<Integer> sectionHeader = new TreeSet<Integer>();
@@ -22,6 +31,7 @@ class SectionAdapter extends BaseAdapter {
 	public SectionAdapter(Context context) {
 		mInflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		has_separator = false;
 	}
 
 	public void addItem(final String item) {
@@ -63,7 +73,6 @@ class SectionAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder holder = null;
 		int rowType = getItemViewType(position);
-
 		if (convertView == null) {
 			holder = new ViewHolder();
 			switch (rowType) {
@@ -72,8 +81,16 @@ class SectionAdapter extends BaseAdapter {
 				holder.textView = (TextView) convertView.findViewById(R.id.text);
 				break;
 			case TYPE_SEPARATOR:
-				convertView = mInflater.inflate(R.layout.snippet_item2, null);
-				holder.textView = (TextView) convertView.findViewById(R.id.textSeparator);
+				if (has_separator) {
+					convertView = mInflater.inflate(R.layout.snippet_item2, null);
+					holder.textView = (TextView) convertView.findViewById(R.id.textSeparator);
+						
+				}
+				else {
+					convertView = mInflater.inflate(R.layout.snippet_item3, null);
+					holder.textView = (TextView) convertView.findViewById(R.id.textSeparator);
+					has_separator = true;
+				}
 				break;
 			}
 			convertView.setTag(holder);

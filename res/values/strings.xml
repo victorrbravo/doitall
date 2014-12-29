@@ -110,9 +110,9 @@
         <item>Por hacer</item>
         <item>Atrasadas</item>        
         <item>Para la próxima semana</item>
-		<item>Asignados a mí</item>        
-        <item>Asignados a otros</item>
-		<item>Completadas e/semana</item>                
+		<item>Completadas e/semana</item> 
+        <item>Asignados a mí</item>        
+        <item>Asignados a otros</item>           
         <item>Completadas ant/semana</item>
          <item>Todas las tareas</item>         
         <item>Este mes</item>       
@@ -127,11 +127,11 @@
   
   <string-array name="graph_report">
         <item>General</item>
+        <item>Completadas p/semana</item>
         <item>Planificadas p/semana</item>
         <item>Planificadas p/mes</item>
-        <item>Completadas p/semana</item>
+         <item>Por proyecto</item>
         <item>Completadas p/mes</item>        
-        <item>Por proyecto</item>
         <item>Por tipo</item>        
         <item>Asignación de tareas</item>
     </string-array>

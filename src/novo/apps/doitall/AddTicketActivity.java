@@ -369,9 +369,9 @@ public class AddTicketActivity extends Activity {
 
 		    	
 		    	String title  = input.getText().toString().trim();
-		    	if (title.length() > 15 ) {
+		    	if (title.length() > 20 ) {
 			    	Toast toast = Toast.makeText(getApplicationContext(), 
-			    			"Coloque un nombre de proyecto más corto (menor a 15 caracteres)", Toast.LENGTH_SHORT);
+			    			"Coloque un nombre de proyecto más corto (menor a 20 caracteres)", Toast.LENGTH_SHORT);
 			    	toast.show();
 
 		    		return;
@@ -408,6 +408,10 @@ public class AddTicketActivity extends Activity {
     public void makeDeleteProjectDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
+		if (myselect.getCount() == 0 ) {
+    		return;
+    	}
+    
 		builder.setTitle(getString(R.string.delete_project_dialog));
 		String currproject = myselect.getSelectedItem().toString();
 		
@@ -420,7 +424,14 @@ public class AddTicketActivity extends Activity {
 
 		    public void onClick(DialogInterface dialog, int which) {
 		        // Do do my action here
+		    	Log.d("onClick","select...");
+		    	if (myselect.getCount() == 0 ) {
+		    		return;
+		    	}
 		    	int pos = myselect.getSelectedItemPosition();
+		    	if (pos == -1 ) {
+		    		return;
+		    	}
 		    	String projectid = String.valueOf(projects.get(pos).getProjectid());
 		    	
 
