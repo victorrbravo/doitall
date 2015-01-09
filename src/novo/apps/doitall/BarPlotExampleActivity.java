@@ -23,9 +23,13 @@ import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -66,13 +70,14 @@ import com.androidplot.ui.YLayoutStyle;
 public class BarPlotExampleActivity extends Activity
 {
 
-    private static final String NO_SELECTION_TXT = "Seleccione una barra";
+    private static final String NO_SELECTION_TXT = "Seleccione un punto";
     private XYPlot plot;
 
     private Spinner spRenderStyle, spWidthStyle;
     private SeekBar sbFixedWidth, sbVariableWidth;
     
     private ArrayList<String> mydatax;
+    private ArrayList<String> mydataextra;
     private ArrayList<Integer> mydatay;
     
     
@@ -84,12 +89,14 @@ public class BarPlotExampleActivity extends Activity
     private String alljson;
     
     
-    private MyBarFormatter formatter1;
+    //private MyBarFormatter formatter1;
 
-
+    private LineAndPointFormatter formatter1;
+    
     private MyBarFormatter selectionFormatter;
 
     private TextLabelWidget selectionWidget;
+    private TextLabelWidget valueWidget;
 
     private Pair<Integer, XYSeries> selection;
 
@@ -99,6 +106,7 @@ public class BarPlotExampleActivity extends Activity
 
         super.onCreate(savedInstanceState);
         mydatax = new ArrayList<String>();
+        mydataextra = new ArrayList<String>();
         mydatay = new ArrayList<Integer>();
         
         
@@ -116,7 +124,10 @@ public class BarPlotExampleActivity extends Activity
         processJSON();
         Log.d("BarPlot","............(1)...");
 
-        formatter1 = new MyBarFormatter(Color.argb(200, 100, 150, 100), Color.LTGRAY);
+        //formatter1 = new MyBarFormatter(Color.argb(200, 100, 150, 100), Color.LTGRAY);
+        
+        formatter1 = new LineAndPointFormatter(Color.RED, Color.GREEN, Color.TRANSPARENT, null);
+        
         selectionFormatter = new MyBarFormatter(Color.YELLOW, Color.WHITE);
 
         selectionWidget = new TextLabelWidget(plot.getLayoutManager(), NO_SELECTION_TXT,
@@ -125,8 +136,15 @@ public class BarPlotExampleActivity extends Activity
                         PixelUtils.dpToPix(100), SizeLayoutType.ABSOLUTE),
                 TextOrientationType.HORIZONTAL);
 
-        
+
+        valueWidget = new TextLabelWidget(plot.getLayoutManager(), getString(R.string.without_value),
+                new SizeMetrics(
+                        PixelUtils.dpToPix(100), SizeLayoutType.ABSOLUTE,
+                        PixelUtils.dpToPix(100), SizeLayoutType.ABSOLUTE),
+                TextOrientationType.HORIZONTAL);
+
         selectionWidget.getLabelPaint().setTextSize(PixelUtils.dpToPix(16));
+        valueWidget.getLabelPaint().setTextSize(PixelUtils.dpToPix(16));
         
         Log.d("BarPlot","............(2)...");
 
@@ -134,12 +152,19 @@ public class BarPlotExampleActivity extends Activity
         Paint p = new Paint();
         p.setARGB(100, 0, 0, 0);
         selectionWidget.setBackgroundPaint(p);
+        valueWidget.setBackgroundPaint(p);
 
         selectionWidget.position(
                 0, XLayoutStyle.RELATIVE_TO_CENTER,
                 PixelUtils.dpToPix(45), YLayoutStyle.ABSOLUTE_FROM_TOP,
                 AnchorPosition.TOP_MIDDLE);
         selectionWidget.pack();
+
+        valueWidget.position(
+                0, XLayoutStyle.RELATIVE_TO_CENTER,
+                PixelUtils.dpToPix(45), YLayoutStyle.ABSOLUTE_FROM_CENTER,
+                AnchorPosition.TOP_MIDDLE);
+        valueWidget.pack();
 
         
         Log.d("BarPlot","............(3)...");
@@ -187,11 +212,58 @@ public class BarPlotExampleActivity extends Activity
         Log.d("BarPlot","............(10)...");
 
         plot.setDomainValueFormat(new GraphXLabelFormat());
-        
+        Log.d("BarPlot","............setDomainValueFormat...");
         updatePlot();
-        
-        
+        Log.d("BarPlot","............updatePlot()...");
+                
 
+    }
+    
+    public static JSONArray sortJsonArray(JSONArray array) throws JSONException {
+        List<JSONObject> jsons = new ArrayList<JSONObject>();
+        for (int i = 0; i < array.length(); i++) {
+            jsons.add(array.getJSONObject(i));
+        }
+        Collections.sort(jsons, new Comparator<JSONObject>() {
+            @Override
+            public int compare(JSONObject lhs, JSONObject rhs) {
+                int lid = 0;
+                int rid = 0;
+				try {
+					String mynumber1 = lhs.getString("name").replaceAll("[^0-9]", "");
+					//Log.d("Compare","mynumber1:" + mynumber1);
+					if (mynumber1.isEmpty() ) {
+						lid = -100;
+					}
+					else {
+						lid = Integer.parseInt(mynumber1);
+					}
+					String mynumber2 = rhs.getString("name").replaceAll("[^0-9]", "");
+					//Log.d("Compare","mynumber2:" + mynumber2);
+					if (mynumber2.isEmpty() ) {
+						rid = -100;
+					}
+					else {
+						rid = Integer.parseInt(mynumber2);;
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				int result = 0;
+				if (lid < rid ) {
+					result = -1;
+				}
+				else {
+					result = 1;
+				}
+				
+                // Here you could parse string id to integer and then compare.
+                return result;
+            }
+        });
+        return new JSONArray(jsons);
     }
     
     public class GraphXLabelFormat extends Format {
@@ -236,14 +308,17 @@ public class BarPlotExampleActivity extends Activity
 			plot.setTitle(mytitle);
 			
 			JSONArray jArray = jdata.getJSONArray("nodes");
-			Log.d("BarChart","jArray:" + String.valueOf(jArray.length()));		
+			JSONArray jnewArray = sortJsonArray(jArray);
+			Log.d("BarChart","jnewArray:" + String.valueOf(jnewArray.length()));		
 			
 			
-			for (int i = 0; i < jArray.length(); i++) {
-				JSONObject mynode = jArray.getJSONObject(i);
+			for (int i = 0; i < jnewArray.length(); i++) {
+				JSONObject mynode = jnewArray.getJSONObject(i);
 				String namenode = mynode.getString("name");
-
-				
+				String title = "";
+				if (mynode.has("title")) {
+					title = mynode.getString("title");
+				}			
 
 				String parameter1 = mynode.getString("parameter1").trim();
 				if (!SimplePieChartActivity.isNumeric(parameter1)) {    				
@@ -261,7 +336,8 @@ public class BarPlotExampleActivity extends Activity
     				continue;
     			}
     			
-				mydatax.add(namenode);
+				mydatax.add(namenode.replaceAll("[^0-9]", ""));
+				mydataextra.add(title);
     			
     			mydatay.add(counttasks);
 	
@@ -298,9 +374,9 @@ public class BarPlotExampleActivity extends Activity
 
 
         // Setup the BarRenderer with our selected options
-        MyBarRenderer renderer = ((MyBarRenderer)plot.getRenderer(MyBarRenderer.class));
-        renderer.setBarWidthStyle(BarRenderer.BarWidthStyle.FIXED_WIDTH);
-        renderer.setBarWidth(55);
+     //   MyBarRenderer renderer = ((MyBarRenderer)plot.getRenderer(MyBarRenderer.class));
+     //   renderer.setBarWidthStyle(BarRenderer.BarWidthStyle.FIXED_WIDTH);
+     //   renderer.setBarWidth(55);
         
 //        renderer.setBarRenderStyle((BarRenderer.BarRenderStyle)spRenderStyle.getSelectedItem());
 //        renderer.setBarWidthStyle((BarRenderer.BarWidthStyle)spWidthStyle.getSelectedItem());
@@ -366,10 +442,12 @@ public class BarPlotExampleActivity extends Activity
 
         if(selection == null) {
             selectionWidget.setText(NO_SELECTION_TXT);
+            valueWidget.setText(getString(R.string.without_value));
         } else {
         	if (selection.first < mydatax.size()) {
         		selectionWidget.setText("Selección: " + mydatax.get(selection.first) +
         				" Valor: " + selection.second.getY(selection.first));
+                valueWidget.setText(mydataextra.get(selection.first));
         	}
         }
         plot.redraw();

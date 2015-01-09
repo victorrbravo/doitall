@@ -14,6 +14,7 @@ import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -201,10 +202,10 @@ public class PrincipalActivity extends ActionBarActivity  {
 
 	private ArrayList<TicketRecord> ticketsforNotify;
 
-	public static String URL_SERVER = "http://server.novoapps.info/intranet/register";
-	public static String URL_SERVER_LOGIN = "http://server.novoapps.info/intranet/login";
-	public static String FIRST_URL_GRAPH = "http://server.novoapps.info/media/";
-	public static String FIRST_URL_API = "http://server.novoapps.info/intranet/apiv2/";
+	public static String URL_SERVER = "http://XXXXXXXXXXXX/intranet/register";
+	public static String URL_SERVER_LOGIN = "http://XXXXXXXXXXXX/intranet/login";
+	public static String FIRST_URL_GRAPH = "http://XXXXXXXXXXXX/media/";
+	public static String FIRST_URL_API = "http://XXXXXXXXXXXX/intranet/apiv2/";
 	public static String SECOND_URL_API = "/?tipoaccion=console&aplicacion=panelapp&accion=";
 	public static String SECOND_URLFORM_API = "/?tipoaccion=form&aplicacion=panelapp&accion=";
 	public static String FLOWFILES_DIR = "/home/panelapp/.safet/flowfiles/";
@@ -1666,7 +1667,7 @@ public class PrincipalActivity extends ActionBarActivity  {
 
 	}
 	
-	private void executeGraph(int position) {
+	private void executeGraph(int position)  {
 		String myconsult;
 		String[] reports = getResources().getStringArray(R.array.names_report);
 		String myselect = reports[position];
@@ -1698,10 +1699,19 @@ public class PrincipalActivity extends ActionBarActivity  {
 
 			}
 			Log.d("**GRAPHFORDATE", myconsult);
+		} else if (position == 1) {
+			myconsult = PrincipalActivity.URL_API
+					+ "operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerafiltros.xml%20Autofiltro:por_finalizado%20"					
+					+ PrincipalActivity.PARAMETER_BY_PROJECT
+					+ PrincipalActivity.PARAMETER_BY_TYPE
+					+ PrincipalActivity.PARAMETER_BY_DATE1
+					+ PrincipalActivity.PARAMETER_BY_DATE2;
+			
 
 		} else if (position == 2) {
 			myconsult = PrincipalActivity.URL_API
-					+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleraproximos.xml"
+//					+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleraproximos.xml"
+					+ "operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleraplanificados.xml%20Autofiltro:por_tentativo%20parameters.ByPeriod:week%20"					
 					+ PrincipalActivity.PARAMETER_BY_PROJECT
 					+ PrincipalActivity.PARAMETER_BY_TYPE
 					+ PrincipalActivity.PARAMETER_BY_DATE1
@@ -1709,27 +1719,13 @@ public class PrincipalActivity extends ActionBarActivity  {
 
 		} else if (position == 3) {
 			myconsult = PrincipalActivity.URL_API
-					+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerapormes.xml"
+//					+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerapormes.xml"
++ "operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleraplanificados.xml%20Autofiltro:por_tentativo%20parameters.ByPeriod:month%20"					
 					+ PrincipalActivity.PARAMETER_BY_PROJECT
 					+ PrincipalActivity.PARAMETER_BY_TYPE
 					+ PrincipalActivity.PARAMETER_BY_DATE1
 					+ PrincipalActivity.PARAMETER_BY_DATE2;
 
-		} else if (position == 1) {
-			myconsult = PrincipalActivity.URL_API
-					+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerafinalizadosporsemana.xml"
-					+ PrincipalActivity.PARAMETER_BY_PROJECT
-					+ PrincipalActivity.PARAMETER_BY_TYPE
-					+ PrincipalActivity.PARAMETER_BY_DATE1
-					+ PrincipalActivity.PARAMETER_BY_DATE2;
-
-		} else if (position == 5) {
-			myconsult = PrincipalActivity.URL_API
-					+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerafinalizados.xml"
-					+ PrincipalActivity.PARAMETER_BY_PROJECT
-					+ PrincipalActivity.PARAMETER_BY_TYPE
-					+ PrincipalActivity.PARAMETER_BY_DATE1
-					+ PrincipalActivity.PARAMETER_BY_DATE2;
 
 		} else if (position == 4) {
 			myconsult = PrincipalActivity.URL_API
@@ -1738,20 +1734,49 @@ public class PrincipalActivity extends ActionBarActivity  {
 					+ PrincipalActivity.PARAMETER_BY_DATE1
 					+ PrincipalActivity.PARAMETER_BY_DATE2;
 
+
+		} else if (position == 5) {
+			Log.d("Autofiltros", "Autofiltros..(1)..");
+			
+			myconsult = PrincipalActivity.URL_API
+					+ "operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerafiltros.xml%20Autofiltro:por_finalizado%20parameters.ByPeriod:month%20"									
+					+ PrincipalActivity.PARAMETER_BY_PROJECT
+					+ PrincipalActivity.PARAMETER_BY_TYPE
+					+ PrincipalActivity.PARAMETER_BY_DATE1
+					+ PrincipalActivity.PARAMETER_BY_DATE2;
+
 		} else if (position == 6) {
+			myconsult = PrincipalActivity.URL_API					
+					//+ "operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratodos.xml%20Autofiltro:%20por_tipo"
+					+ "operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerafiltros.xml%20Autofiltro:por_finalizado%20parameters.ByPeriod:quarter%20"
+					+ PrincipalActivity.PARAMETER_BY_PROJECT
+					+ PrincipalActivity.PARAMETER_BY_DATE1
+					+ PrincipalActivity.PARAMETER_BY_DATE2;
+
+
+		} else if (position == 7) {
 			myconsult = PrincipalActivity.URL_API
 					+ "operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratodos.xml%20Autofiltro:%20por_tipo"
 					+ PrincipalActivity.PARAMETER_BY_PROJECT
 					+ PrincipalActivity.PARAMETER_BY_DATE1
 					+ PrincipalActivity.PARAMETER_BY_DATE2;
 
-		} else if (position == 7) {
+		} else if (position == 8) {
 			myconsult = PrincipalActivity.URL_API
 					+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleraasignado.xml"
 					+ PrincipalActivity.PARAMETER_BY_TYPE
 					+ PrincipalActivity.PARAMETER_BY_PROJECT
 					+ PrincipalActivity.PARAMETER_BY_DATE1
 					+ PrincipalActivity.PARAMETER_BY_DATE2;
+
+		}
+		else if (position == 9) {
+		myconsult = PrincipalActivity.URL_API
+				+ "operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleraplanificados.xml%20Autofiltro:por_tentativo%20parameters.ByPeriod:quarter%20"				
+				+ PrincipalActivity.PARAMETER_BY_TYPE
+				+ PrincipalActivity.PARAMETER_BY_PROJECT
+				+ PrincipalActivity.PARAMETER_BY_DATE1
+				+ PrincipalActivity.PARAMETER_BY_DATE2;
 
 		}
 
@@ -1769,6 +1794,7 @@ public class PrincipalActivity extends ActionBarActivity  {
 		
 	}
 
+	
 	private void showGraphChooseDialog(Context context) {
 
 		final Dialog dialog = new Dialog(context);
@@ -1789,108 +1815,12 @@ public class PrincipalActivity extends ActionBarActivity  {
 			public void onClick(View v) {
 				String myconsult = "";
 				Spinner typegraph = (Spinner) dialog
-						.findViewById(R.id.graphtype);
-				if (typegraph.getSelectedItemPosition() == 0) {
-
-					if (PrincipalActivity.PARAMETER_BY_PROJECT
-							.indexOf("ByProject") > 0) {
-						myconsult = PrincipalActivity.URL_API
-								+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20"
-								+ FLOWFILES_DIR + "uocarteleratres.xml"
-								+ PrincipalActivity.PARAMETER_BY_PROJECT
-								+ PrincipalActivity.PARAMETER_BY_TYPE
-								+ PrincipalActivity.PARAMETER_BY_DATE1
-								+ PrincipalActivity.PARAMETER_BY_DATE2;
-
-					} else {
-						myconsult = PrincipalActivity.URL_API
-								+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20"
-								+ FLOWFILES_DIR + "ocarteleratres.xml"
-								+ PrincipalActivity.PARAMETER_BY_PROJECT
-								+ PrincipalActivity.PARAMETER_BY_TYPE
-								+ PrincipalActivity.PARAMETER_BY_DATE1
-								+ PrincipalActivity.PARAMETER_BY_DATE2;
-
-					}
-					Log.d("**GRAPHFORDATE", myconsult);
-
-				} else if (typegraph.getSelectedItemPosition() == 1) {
-					myconsult = PrincipalActivity.URL_API
-							+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleraproximos.xml"
-							+ PrincipalActivity.PARAMETER_BY_PROJECT
-							+ PrincipalActivity.PARAMETER_BY_TYPE
-							+ PrincipalActivity.PARAMETER_BY_DATE1
-							+ PrincipalActivity.PARAMETER_BY_DATE2;
-
-				} else if (typegraph.getSelectedItemPosition() == 2) {
-					myconsult = PrincipalActivity.URL_API
-							+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerapormes.xml"
-							+ PrincipalActivity.PARAMETER_BY_PROJECT
-							+ PrincipalActivity.PARAMETER_BY_TYPE
-							+ PrincipalActivity.PARAMETER_BY_DATE1
-							+ PrincipalActivity.PARAMETER_BY_DATE2;
-
-				} else if (typegraph.getSelectedItemPosition() == 3) {
-					myconsult = PrincipalActivity.URL_API
-							+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerafinalizadosporsemana.xml"
-							+ PrincipalActivity.PARAMETER_BY_PROJECT
-							+ PrincipalActivity.PARAMETER_BY_TYPE
-							+ PrincipalActivity.PARAMETER_BY_DATE1
-							+ PrincipalActivity.PARAMETER_BY_DATE2;
-
-				} else if (typegraph.getSelectedItemPosition() == 4) {
-					myconsult = PrincipalActivity.URL_API
-							+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/cartelerafinalizados.xml"
-							+ PrincipalActivity.PARAMETER_BY_PROJECT
-							+ PrincipalActivity.PARAMETER_BY_TYPE
-							+ PrincipalActivity.PARAMETER_BY_DATE1
-							+ PrincipalActivity.PARAMETER_BY_DATE2;
-
-					// } else if (typegraph.getSelectedItemPosition() == 5) {
-					// myconsult = PrincipalActivity.URL_API
-					// +
-					// "operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/ucarteleratodos.xml%20Autofiltro:%20por_usuario"
-					// + PrincipalActivity.PARAMETER_BY_TYPE
-					// + PrincipalActivity.PARAMETER_BY_DATE1;
-					//
-				} else if (typegraph.getSelectedItemPosition() == 5) {
-					myconsult = PrincipalActivity.URL_API
-							+ "operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratodos.xml%20Autofiltro:%20por_proyecto"
-							+ PrincipalActivity.PARAMETER_BY_TYPE
-							+ PrincipalActivity.PARAMETER_BY_DATE1
-							+ PrincipalActivity.PARAMETER_BY_DATE2;
-
-				} else if (typegraph.getSelectedItemPosition() == 6) {
-					myconsult = PrincipalActivity.URL_API
-							+ "operacion:Generar_gr%E1fico_con_autofiltro%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleratodos.xml%20Autofiltro:%20por_tipo"
-							+ PrincipalActivity.PARAMETER_BY_PROJECT
-							+ PrincipalActivity.PARAMETER_BY_DATE1
-							+ PrincipalActivity.PARAMETER_BY_DATE2;
-
-				} else if (typegraph.getSelectedItemPosition() == 7) {
-					myconsult = PrincipalActivity.URL_API
-							+ "operacion:Generar_gr%E1fico_coloreado%20Cargar_archivo_flujo:%20/home/panelapp/.safet/flowfiles/carteleraasignado.xml"
-							+ PrincipalActivity.PARAMETER_BY_TYPE
-							+ PrincipalActivity.PARAMETER_BY_PROJECT
-							+ PrincipalActivity.PARAMETER_BY_DATE1
-							+ PrincipalActivity.PARAMETER_BY_DATE2;
-
-				}
-
-				else {
-					Log.d("GraphType", "Selected none");
-					return;
-				}
-
-				Log.d("showGraph *consult:", myconsult);
-
-				GetGraphTask mytask = new GetGraphTask("graficar");
-
-				mytask.execute(myconsult);
-
+						.findViewById(R.id.graphtype);				
 				dialog.dismiss();
+				executeGraph(typegraph.getSelectedItemPosition());
 			}
 		});
+		
 
 		Log.d("showInputNameDialog", "entrando 8");
 		Button dialogCancel = (Button) dialog
